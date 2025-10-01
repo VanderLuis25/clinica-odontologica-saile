@@ -1,0 +1,532 @@
+/* ====== Container principal ====== */
+.procedimentos-container {
+  padding: 1.5rem;
+  background: #f9fafb;
+  min-height: 100vh;
+  font-family: "Roboto", sans-serif;
+  color: #322b33;
+  font-weight: 500;
+  width: 100%;
+}
+
+.procedimentos-container h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #810d9e;
+  text-align: center;
+}
+
+/* ====== Tabs ====== */
+.proc-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.proc-tabs button {
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 10px;
+  background: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.proc-tabs button:hover {
+  background: #d1d5db;
+  transform: translateY(-2px);
+}
+
+.proc-tabs button.active {
+  background: #810d9e;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(49, 46, 49, 0.404);
+}
+
+/* ---------------------------------------------------------------------- */
+/* ====== LAYOUT ATUALIZADO: Form SEMPRE em cima da Tabela (100% da largura) ====== */
+/* ---------------------------------------------------------------------- */
+.proc-content-layout {
+  display: flex;
+  flex-direction: column;
+  /* FORÇA o empilhamento vertical em qualquer tela */
+  gap: 1.5rem;
+  align-items: stretch;
+  /* Garante que os filhos ocupem 100% da largura */
+}
+
+/* Garante que ambos ocupem 100% da largura do contêiner em qualquer tamanho */
+.proc-content-layout .proc-card,
+.proc-content-layout .proc-table-wrapper {
+  width: 100%;
+  flex-basis: auto;
+  /* Remove regras de proporção (flex: 1 1 Xpx) */
+  order: initial;
+  /* Remove regras de ordenação, segue a ordem do HTML (Form -> Tabela) */
+}
+
+
+/*
+======================================================
+====== NOVOS ESTILOS PARA O BOTÃO NOVO PROCEDIMENTO ======
+======================================================
+*/
+
+/* Contêiner do botão principal (acima do formulário) */
+.proc-form-toggler {
+  margin-bottom: 20px;
+  text-align: right;
+  /* Alinha o botão para a direita */
+}
+
+/* Estilo para o botão Novo Procedimento/Esconder */
+.proc-btn-new {
+  background-color: #810d9e;
+  /* Roxo principal, chamativo */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.2s, transform 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.proc-btn-new:hover {
+  background-color: #670885;
+  transform: translateY(-1px);
+}
+
+/* Estilo para quando o botão for "Cancelar/Esconder" (vermelho) */
+.proc-btn-new.proc-btn-cancel {
+  background-color: #dc3545;
+  /* Vermelho para cancelar/esconder */
+}
+
+.proc-btn-new.proc-btn-cancel:hover {
+  background-color: #c82333;
+}
+
+/* Contêiner do Título quando o formulário está visível */
+.proc-form-header {
+  display: flex;
+  justify-content: flex-start;
+  /* Título à esquerda */
+  align-items: center;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  /* Alinhamento visual com o card */
+}
+
+.proc-form-header h3 {
+  font-size: 1.5rem;
+  color: #810d9e;
+  margin: 0;
+  font-weight: 700;
+}
+
+/*
+======================================================
+====== FIM DOS NOVOS ESTILOS PARA O BOTÃO ======
+======================================================
+*/
+
+
+/* ====== Card/Form ====== */
+.proc-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: 0.3s;
+}
+
+.proc-card:hover {
+  transform: translateY(-2px);
+}
+
+.proc-card h3 {
+  font-size: 1.25rem;
+  color: #810d9e;
+  margin-bottom: 0.8rem;
+}
+
+/* ... (restante do seu CSS inalterado) ... */
+
+.proc-card input,
+.proc-card textarea,
+.proc-card select {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  transition: 0.2s;
+}
+
+.proc-card input:focus,
+.proc-card textarea:focus,
+.proc-card select:focus {
+  border-color: #670885;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* ====== Barra de busca no form ====== */
+.proc-search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.proc-search-bar input {
+  width: 100%;
+  padding-left: 2.5rem;
+}
+
+.proc-search-icon {
+  position: absolute;
+  left: 12px;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* ====== Resultados de busca ====== */
+.proc-search-results {
+  list-style: none;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.proc-search-results li {
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.proc-search-results li:hover,
+.proc-search-results li.active {
+  background: #012572;
+  color: #fff;
+}
+
+/* ====== Dados do paciente ====== */
+.proc-patient-data {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.6rem;
+}
+
+/* ====== Seção harmonização ====== */
+.proc-harmonizacao-section h4 {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* ====== Botões ====== */
+.proc-form-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.proc-form-buttons button {
+  flex: 1;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.proc-form-buttons button[type="submit"] {
+  background: #8a1ca5;
+  color: #fff;
+}
+
+.proc-form-buttons button[type="submit"]:hover {
+  background: #4e0261;
+  transform: scale(1.03);
+}
+
+.proc-form-buttons .proc-btn-clear {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.proc-form-buttons .proc-btn-clear:hover {
+  background: #e5e7eb;
+  transform: scale(1.03);
+}
+
+/* ====== Tabela ====== */
+.proc-table-wrapper {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  border-left-width: 5px;
+  border-left-style: solid;
+  border-left-color: #750791;
+}
+
+.proc-table-header {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.proc-table-header input,
+.proc-table-header select {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.proc-table-container {
+  overflow-x: auto;
+}
+
+.proc-prontuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.proc-prontuarios-table th,
+.proc-prontuarios-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.proc-prontuarios-table th {
+  background: #7c0699;
+  color: #fbfdff;
+  font-weight: 600;
+}
+
+/* --- AJUSTES PARA BOTÕES APENAS COM ÍCONES (Tabela Desktop) --- */
+.proc-table-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.proc-table-actions button {
+  display: flex;
+  justify-content: center;
+  /* Centraliza o ícone horizontalmente */
+  align-items: center;
+  /* Centraliza o ícone verticalmente */
+  width: 32px;
+  /* Largura fixa para botão quadrado */
+  height: 32px;
+  /* Altura fixa para botão quadrado */
+  padding: 0;
+  /* Padding zerado */
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  /* Tamanho do ícone */
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* CORREÇÃO CRÍTICA: Garante que o ícone SVG dentro do botão seja branco */
+.proc-table-actions button svg {
+  color: white;
+}
+
+.proc-btn-edit {
+  background: #2563eb;
+  color: white;
+}
+
+.proc-btn-edit:hover {
+  background: #1e40af;
+}
+
+.proc-btn-delete {
+  background: #dc2626;
+  color: white;
+}
+
+.proc-btn-delete:hover {
+  background: #991b1b;
+}
+
+/* ====== Mensagem sem dados ====== */
+.proc-no-data-message {
+  padding: 1rem;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  border-radius: 8px;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+/* ====== Responsividade Geral ====== */
+@media (max-width: 768px) {
+  .proc-tabs button {
+    flex: 1;
+    font-size: 0.85rem;
+  }
+
+  .proc-form-buttons button {
+    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+
+  /* Ajuste o botão Novo Procedimento para telas menores */
+  .proc-form-toggler {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .proc-btn-new {
+    width: 100%;
+    /* Ocupa toda a largura */
+  }
+
+  .proc-prontuarios-table th,
+  .proc-prontuarios-table td {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .procedimentos-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .proc-card,
+  .proc-table-wrapper {
+    padding: 1rem;
+  }
+
+  .proc-form-buttons {
+    flex-direction: column;
+  }
+
+  .proc-form-buttons button {
+    width: 100%;
+  }
+
+  /* Garante que o título seja menor no mobile */
+  .proc-form-header h3 {
+    font-size: 1.2rem;
+  }
+}
+
+/* ====== Tabela Mobile como Cards (aparece apenas em telas <768px) ====== */
+.proc-procedimentos-cards {
+  display: none;
+  /* padrão: oculto */
+}
+
+@media (max-width: 960px) {
+  .proc-prontuarios-table {
+    display: none;
+    /* esconde tabela desktop */
+  }
+
+  .proc-procedimentos-cards {
+    display: flex;
+    /* mostra cards */
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .proc-procedimento-card {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .proc-procedimento-card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+  }
+
+  .proc-procedimento-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .proc-procedimento-info span {
+    width: 48%;
+    font-size: 0.9rem;
+  }
+
+  .proc-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    justify-content: flex-end;
+    /* Adicionado: Alinha à direita */
+  }
+
+  /* --- AJUSTE PARA BOTÕES DE ÍCONES NO CARD MOBILE --- */
+  .proc-card-actions button {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+
+  .proc-card-actions button svg {
+    color: white;
+  }
+
+  /* --- FIM DOS AJUSTES --- */
+}

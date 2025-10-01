@@ -1,0 +1,63 @@
+
+.assinatura-container {
+  margin: 20px 0;
+}
+
+.assinatura-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.assinatura-header h4 {
+  margin: 0;
+  color: #333;
+}
+
+.btn-clear-signature {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-clear-signature:hover:not(:disabled) {
+  background: #ff3742;
+}
+
+.btn-clear-signature:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.assinatura-area {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* Make it responsive */
+}
+
+.signature-canvas {
+  display: block;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+  width: 100%; /* Canvas takes full width of its container */
+}
+
+.assinatura-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.placeholder-text {
+  color: #999;
+  font-size: 16px;
+  font-style: italic;
+}

@@ -1,0 +1,191 @@
+/* Estilos para a página de gerenciamento de usuários */
+
+/* =========================
+   Layout e Tipografia
+========================= */
+.usuarios-container {
+  padding: 30px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* Coluna do formulário (1/3) e da lista (2/3) */
+  gap: 40px;
+  align-items: start;
+}
+
+.usuarios-container h2 {
+  grid-column: 1 / -1; /* Título ocupa a largura total */
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #800580;
+  border-bottom: 3px solid #800580;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.usuarios-container h3 {
+  font-size: 1.5rem;
+  color: #5e035e;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   Formulário Moderno
+========================= */
+.usuarios-form {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+}
+
+.usuarios-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.usuarios-form input,
+.usuarios-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.usuarios-form input:focus,
+.usuarios-form select:focus {
+  outline: none;
+  border-color: #800580;
+  box-shadow: 0 0 0 3px rgba(128, 5, 128, 0.15);
+}
+
+.usuarios-form button[type="submit"] {
+  background: #800580;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: 10px;
+}
+
+.usuarios-form button[type="submit"]:hover {
+  background: #5e035e;
+  transform: translateY(-1px);
+}
+
+.usuarios-form .btn-cancel {
+  background: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.usuarios-form .btn-cancel:hover {
+  background: #5a6268;
+}
+
+.preview-foto {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #800580;
+  margin: 10px auto;
+}
+
+.msg {
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.msg:empty {
+  display: none;
+}
+
+/* =========================
+   Lista e Tabela
+========================= */
+.usuarios-lista {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+  overflow-x: auto; /* Permite rolagem horizontal em telas pequenas */
+}
+
+.usuarios-lista table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.usuarios-lista th,
+.usuarios-lista td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.usuarios-lista th {
+  background-color: #800580;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.usuarios-lista tbody tr:hover {
+  background-color: #f4f0fd;
+}
+
+.usuarios-lista .btn-edit,
+.usuarios-lista .btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.usuarios-lista .btn-edit {
+  color: #007bff;
+}
+
+.usuarios-lista .btn-delete {
+  color: #dc3545;
+  margin-left: 5px;
+}
+
+.usuarios-lista .btn-edit:hover,
+.usuarios-lista .btn-delete:hover {
+  transform: scale(1.2);
+}
+
+/* =========================
+   Responsividade
+========================= */
+@media (max-width: 768px) {
+  .usuarios-container {
+    grid-template-columns: 1fr; /* Empilha as colunas */
+  }
+}

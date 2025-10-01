@@ -1,0 +1,488 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto Condensed", sans-serif;
+}
+
+/* ---------------- HEADER ---------------- */
+.header-logo {
+  display: flex;
+  justify-content: space-between;
+  /* Logo esquerda, user direita */
+  align-items: center;
+  padding: 10px 20px;
+  background: #fff;
+  border-bottom: 5px solid #800580;
+}
+
+.header-logo img {
+  height: 80px;
+  max-width: 280px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.user-photo {
+  width: 80px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #800580;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.user-photo:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.user-icon {
+  font-size: 44px;
+  color: #800580;
+}
+
+.user-name {
+  font-weight: bold;
+  color: #800580;
+}
+
+.user-perfil {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+/* ---------------- BODY ---------------- */
+body {
+  background-color: #ffffff;
+  color: #333;
+}
+
+/* |--------------------------------------------------------------------------
+| LOGIN: LAYOUT DE DUAS COLUNAS
+|--------------------------------------------------------------------------
+*/
+
+.login-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100vh;
+  background: #f0f0f0;
+
+}
+
+/* 1. Lateral Esquerda - Branding (60%) */
+.login-identity {
+  flex: 3;
+  background-color: #800580;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+  gap: 30px;
+  
+}
+
+.login-identity .logo-large {
+  width: 250px;
+  height: auto;
+  margin-bottom: 0;
+}
+
+.login-identity .welcome-message {
+  font-size: 2.2rem;
+  font-weight: 600;
+  max-width: 450px;
+  line-height: 1.3;
+  color: #fff;
+}
+
+/* 2. Lateral Direita - Formulário (40%) */
+.login-box {
+  flex: 2;
+  background: #fff;
+  padding: 60px 50px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+  width: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-box h2 {
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 1.8rem;
+}
+
+/* Oculta seletores de perfil antigos */
+.perfil-selection {
+  display: none;
+}
+
+.login-logo {
+  display: none;
+}
+
+.login-error {
+  color: #eb220b;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+/* |--------------------------------------------------------------------------
+| INPUTS E AÇÕES DE LOGIN
+|--------------------------------------------------------------------------
+*/
+
+.input-group {
+  position: relative;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+  transition: color 0.3s;
+}
+
+/* Ícone dentro do input */
+.input-group .input-icon {
+  position: absolute;
+  margin: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #800580;
+  font-size: 1.5rem;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  /* Ajuste para o ícone */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-group.focused label,
+.input-group input:focus {
+  color: #800580;
+  border-color: #800580;
+  box-shadow: 0 0 0 3px rgba(128, 5, 128, 0.2);
+  outline: none;
+}
+
+/* Botão de "olho" para mostrar/esconder senha */
+.password-toggle {
+  position: absolute;
+  right: 5px;
+  top: 60%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #800580;
+  font-size: 1.5rem;
+  padding: 10px;
+  z-index: 20;
+  /* Garante que fique acima do input */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.password-toggle:hover {
+  color: #4b034be0;
+}
+
+/* Opções (Lembrar-me e Esqueci Senha) */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+}
+
+.login-options label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #555;
+}
+
+.login-options input[type="checkbox"] {
+  margin-right: 5px;
+  accent-color: #800580;
+}
+
+.forgot-password-link {
+  color: #800580;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+/* Botão de Acesso Principal */
+.btn-login.primary-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #a10ba1;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn-login.primary-button:hover {
+  background-color: #4b034be0;
+}
+
+
+/* ---------------- APP LAYOUT ---------------- */
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.layout {
+  display: flex;
+  position: relative;
+}
+
+/* ---------------- MENU LATERAL ---------------- */
+.menu-lateral {
+  width: 200px;
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: width 0.3s;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.menu-lateral.collapsed {
+  width: 60px;
+  padding: 20px 10px;
+}
+
+.menu-lateral ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.menu-lateral li {
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.menu-lateral a {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.menu-lateral a .icon {
+  font-size: 25px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.menu-lateral a .label {
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+.menu-lateral.collapsed a .label {
+  display: none;
+}
+
+.menu-lateral a.active {
+  background-color: #800580;
+  font-weight: bold;
+}
+
+/* Botão de colapsar menu */
+.collapse-btn {
+  background: none;
+  border: none;
+  color: #800580;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin: 10px;
+}
+
+/* ---------------- MAIN CONTENT ---------------- */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+/* ---------------- LOGOUT ---------------- */
+.logout-btn {
+  margin-top: 20px;
+  padding: 10px;
+  width: 100%;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #7e150a;
+}
+
+/* ---------------- RESPONSIVIDADE ---------------- */
+@media (max-width: 1024px) {
+  .menu-lateral {
+    width: 180px;
+    padding: 15px;
+  }
+
+  /* Ajuste de layout em telas médias */
+  .login-identity {
+    flex: 2;
+    /* Diminui um pouco o espaço da identidade */
+    padding: 30px;
+  }
+
+  .login-box {
+    flex: 1.5;
+    /* Prioriza o formulário */
+    padding: 40px 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .layout {
+    flex-direction: column;
+  }
+
+  /* CORREÇÃO RESPONSIVA PRINCIPAL: Login vira coluna única */
+  .login-container {
+    flex-direction: column;
+    height: auto;
+    /* Deixa o conteúdo definir a altura */
+  }
+
+  .login-identity {
+    flex: auto;
+    padding: 40px 20px;
+    min-height: 200px;
+    /* Garante altura mínima para celular */
+  }
+
+  .login-identity .welcome-message {
+    font-size: 1.5rem;
+  }
+
+  .login-box {
+    flex: auto;
+    padding: 30px 20px;
+    box-shadow: none;
+    /* Remove a sombra na transição */
+    border-radius: 0;
+  }
+
+  /* FIM DA CORREÇÃO RESPONSIVA DO LOGIN */
+
+  .menu-lateral {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .menu-lateral ul {
+    display: flex;
+    flex-direction: row;
+    padding: 0 10px;
+  }
+
+  .menu-lateral li {
+    margin-right: 15px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .menu-lateral a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .menu-lateral a .icon {
+    font-size: 25px;
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+
+  .menu-lateral a .label {
+    white-space: nowrap;
+    font-size: 14px;
+    opacity: 1;
+  }
+
+  .menu-lateral.collapsed {
+    width: 100%;
+  }
+
+  .main-content {
+    padding: 10px;
+  }
+}
