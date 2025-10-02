@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-// Define a URL base da API.
+// Define a URL base da API usando a variável de ambiente do Vite.
 // Em produção (quando `VITE_API_URL` é definido pelo Netlify), usa a rota relativa '/api'.
 // Em desenvolvimento, usa o servidor local 'http://localhost:5000'.
 // A rota '/api' é redirecionada para a nossa Netlify Function pelo arquivo `netlify.toml`.
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const api = axios.create({
-  baseURL: baseURL,
+  baseURL: API_URL,
 });
 
 // Interceptor para adicionar o token de autenticação em todas as requisições
