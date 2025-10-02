@@ -20,7 +20,7 @@ import relatoriosRouter from './routes/relatorios.js';     // 💡 Adicionado
 
 dotenv.config();
 
-export const app = express(); // 💡 EXPORTAR o app
+const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Handle __dirname in ES Modules
@@ -63,23 +63,7 @@ app.use('/profissionais', profissionaisRouter); // 💡 Adicionado
 app.use('/lembretes', lembretesRouter);         // 💡 Adicionado
 app.use('/relatorios', relatoriosRouter);       // 💡 Adicionado
 
-let isConnected;
-
-// 💡 Função para conectar ao banco de dados
-export const connectToDatabase = async () => {
-  if (isConnected) {
-    console.log('=> usando conexão de DB existente');
-    return;
-  }
-
-  console.log('=> criando nova conexão com o DB');
-  await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-  isConnected = true;
-};
-
-// 💡 Inicia o servidor APENAS se este arquivo for executado diretamente (para desenvolvimento local)
-if (process.env.NODE_ENV !== 'production_netlify') { // Usaremos essa variável no futuro
-  connectToDatabase()
-    .then(() => server.listen(PORT, () => console.log(`Servidor rodando na porta: ${PORT}`)))
-    .catch((error) => console.log(error.message));
-}
+// Conexão com o DB e inicialização do servidor (seu código de conexão aqui)
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => server.listen(PORT, () => console.log(`Servidor rodando na porta: ${PORT}`))) // 💡 Alterado de app.listen para server.listen
+  .catch((error) => console.log(error.message));
