@@ -2,16 +2,18 @@
 # Este arquivo informa ao Netlify como construir e fazer o deploy do seu site.
 
 [build]
-  # Diretório base: O Netlify executará os comandos a partir desta pasta.
-  base = "frontend"
-
   # Comando de build: Comando que o Netlify usará para construir seu site.
-  # Ele executará o script "build" do arquivo `frontend/package.json`.
+  # Ele executará o script "build" do `package.json` da raiz, que por sua vez
+  # chama o build do frontend.
   command = "npm run build"
 
   # Diretório de publicação: A pasta que contém os arquivos finais do site (gerada pelo comando de build).
   # O Netlify publicará o conteúdo de `frontend/dist`.
-  publish = "dist"
+  publish = "frontend/dist"
+
+  # Diretório das Funções: Informa ao Netlify onde encontrar as funções serverless.
+  # O Netlify irá procurar por `netlify/functions/api.js`.
+  functions = "netlify/functions"
 
 [build.environment]
   # Garante que o Netlify use uma versão do Node.js compatível com suas dependências.
