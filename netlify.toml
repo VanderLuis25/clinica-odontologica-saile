@@ -16,6 +16,9 @@
 [build.environment]
   # Garante que o Netlify use uma versão do Node.js compatível com suas dependências.
   NODE_VERSION = "18"
+  # Define a URL da API para o build de produção. O prefixo VITE_ é necessário
+  # para que o Vite exponha essa variável para o código do frontend.
+  VITE_API_URL = "/api"
 
 # Redirecionamento para a API
 # Todas as chamadas para /api/* serão redirecionadas para nossa função serverless.
