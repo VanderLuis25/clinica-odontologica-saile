@@ -6,6 +6,10 @@
   # Ele executará o script "build" do `package.json` da raiz, que por sua vez
   # chama o build do frontend.
   command = "npm run build"
+  
+  # Comando Pós-Instalação: Garante que as dependências do backend também sejam instaladas.
+  # Isso é crucial para que as Netlify Functions (sua API) funcionem.
+  command = "npm install --prefix backend"
 
   # Diretório de publicação: A pasta que contém os arquivos finais do site (gerada pelo comando de build).
   # O Netlify publicará o conteúdo de `frontend/dist`.
