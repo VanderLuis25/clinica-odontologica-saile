@@ -16,3 +16,10 @@
 [build.environment]
   # Garante que o Netlify use uma versão do Node.js compatível com suas dependências.
   NODE_VERSION = "18"
+
+# Redirecionamento para a API
+# Todas as chamadas para /api/* serão redirecionadas para nossa função serverless.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
