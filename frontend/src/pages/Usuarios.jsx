@@ -289,7 +289,7 @@ export default function Usuarios() {
             {funcionarios.map((f) => (
               <tr key={f._id}>
                 <td>{f.nome}</td>
-                <td>{f.cro || "N/A"}</td>
+                <td>{f.profissional === 'Dr(a)' ? f.cro : "N/A"}</td>
                 <td>{f.tel}</td>
                 <td>{f.email}</td>
                 <td>{f.funcao}</td>
