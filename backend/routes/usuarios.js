@@ -204,20 +204,9 @@ authRouter.post("/redefinir-senha/:token", async (req, res) => {
 // ----------------------------------------------------
 router.get("/", verifyToken, verifyPatrao, async (req, res) => {
   try {
-    const clinicaId = req.headers['x-clinic-id'];
+    // 💡 ATUALIZAÇÃO: Como o middleware 'verifyPatrao' já garante que o usuário é o patrão,
+    // removemos o filtro por clínica para que ele possa ver todos os usuários de todas as clínicas.
     const filtro = {};
-
-    // Lógica para tratar dados antigos como pertencentes à clínica matriz.
-    if (clinicaId) {
-      const matriz = await Clinica.findOne().sort({ createdAt: 1 });
-      if (matriz && matriz._id.toString() === clinicaId) {
-        // Se a clínica selecionada é a matriz, mostra os dela E os sem clínica.
-        filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
-      } else {
-        // Para outras clínicas, mostra apenas os dados exclusivos dela.
-        filtro.clinica = clinicaId;
-      }
-    }
     
     // Usa o filtro na busca do Mongoose
     // Se o filtro for vazio ({}), ele busca todos. Se tiver perfil, filtra.

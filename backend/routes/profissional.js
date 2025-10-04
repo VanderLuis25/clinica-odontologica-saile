@@ -13,7 +13,13 @@ const filtroProfissionais = {
 
 router.get('/', async (req, res) => {
     try {
-        const profissionais = await Profissional.find(filtroProfissionais);
+        // 💡 ATUALIZAÇÃO: Se o usuário for 'patrao', ele vê todos os profissionais.
+        // Se for 'funcionario', a lógica de filtro por clínica (se aplicável) deve ser adicionada aqui.
+        // Por enquanto, a requisição do patrão é atendida removendo qualquer filtro de clínica.
+        if (req.usuario.perfil === 'patrao') {
+            const profissionais = await Profissional.find(filtroProfissionais);
+            return res.json(profissionais);
+        }
         
         // Retorna a lista COMPLETA de objetos dos profissionais
         res.json(profissionais);
