@@ -67,6 +67,7 @@ app.use('/relatorios', relatoriosRouter);       // 💡 Adicionado
 app.use('/api/clinicas', auth, clinicasRouter); // 💡 NOVO: Aplicar middleware de autenticação na rota de clínicas
 
 // Conexão com o DB e inicialização do servidor (seu código de conexão aqui)
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// As opções { useNewUrlParser, useUnifiedTopology } não são mais necessárias nas versões recentes do Mongoose.
+mongoose.connect(process.env.MONGO_URI)
   .then(() => server.listen(PORT, () => console.log(`Servidor rodando na porta: ${PORT}`))) // 💡 Alterado de app.listen para server.listen
   .catch((error) => console.log(error.message));
