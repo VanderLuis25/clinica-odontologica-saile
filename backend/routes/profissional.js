@@ -1,34 +1,48 @@
 // routes/Profissional.js CORRIGIDO E COMPLETO
 
 import express from 'express';
-import Profissional from '../models/User.js'; // Assumindo que profissionais são salvos no modelo User
+import User from '../models/User.js'; // Profissionais são usuários
+import Clinica from '../models/Clinica.js'; // Importar Clinica para filtro
 
 const router = express.Router();
 
-const filtroProfissionais = { 
-    // Filtro para buscar apenas os usuários marcados como Profissionais
-    profissional: 'Dr(a)' 
-};
-
-
+// GET: Listar todos os profissionais (Dentistas)
 router.get('/', async (req, res) => {
     try {
-        // 💡 ATUALIZAÇÃO: Se o usuário for 'patrao', ele vê todos os profissionais.
-        // Se for 'funcionario', a lógica de filtro por clínica (se aplicável) deve ser adicionada aqui.
-        // Por enquanto, a requisição do patrão é atendida removendo qualquer filtro de clínica.
+        // Filtro base para pegar apenas usuários que são profissionais (dentistas)
+        const filtro = { profissional: 'Dr(a)' };
+
         if (req.usuario.perfil === 'patrao') {
-            const profissionais = await Profissional.find(filtroProfissionais);
-            return res.json(profissionais);
+            const clinicaId = req.headers['x-clinic-id'];
+            if (clinicaId) {
+                const matriz = await Clinica.findOne().sort({ createdAt: 1 });
+                if (matriz && matriz._id.toString() === clinicaId) {
+                    // Patrão na Matriz: vê profissionais da matriz e os sem clínica.
+                    filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
+                } else {
+                    // Patrão em outra clínica: vê apenas profissionais daquela clínica.
+                    filtro.clinica = clinicaId;
+                }
+            }
+        } else if (req.usuario.perfil === 'funcionario') {
+            // Funcionário (Atendente, etc.): vê apenas profissionais da sua própria clínica.
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            if (funcionarioLogado && funcionarioLogado.clinica) {
+                filtro.clinica = funcionarioLogado.clinica;
+            } else {
+                // Funcionário sem clínica não vê nenhum profissional.
+                return res.json([]);
+            }
         }
-        
-        // Retorna a lista COMPLETA de objetos dos profissionais
+
+        const profissionais = await User.find(filtro, { password: 0 }).populate('clinica', 'nome');
         res.json(profissionais);
-        
+
     } catch (err) {
         console.error("❌ Erro ao buscar profissionais:", err);
-        res.status(500).json({ 
-            message: 'Erro interno do servidor ao buscar profissionais.', 
-            error: err.message 
+        res.status(500).json({
+            message: 'Erro interno do servidor ao buscar profissionais.',
+            error: err.message
         });
     }
 });

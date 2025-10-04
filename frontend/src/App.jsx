@@ -169,11 +169,11 @@ export default function App() {
                 </>
               )}
 
-              {/* Menu do Profissional (Dr/Dra) */}
+              {/* Menu do Profissional (Dr/Dra) e Atendente */}
               {(perfil === 'patrao' || tipoProfissional === 'Dr(a)') && (
                 <>
                   <li>
-                    <Link to="/procedimentos" className={location.pathname === "/procedimentos" ? "active" : ""} onClick={() => setMobileMenu(false)}>
+                    <Link to="/procedimentos" className={location.pathname === "/procedimentos" ? "active" : ""} onClick={() => setMobileMenu(false)}> 
                       <FaTooth className="icon" /><span className="label">Procedimentos</span>
                     </Link>
                   </li>
@@ -183,6 +183,15 @@ export default function App() {
                     </Link>
                   </li>
                 </>
+              )}
+              
+              {/* Menu de Profissionais (Patrão, Dr(a) e Atendente) */}
+              {(perfil === 'patrao' || tipoProfissional === 'Dr(a)' || tipoProfissional === 'Atendente') && (
+                <li>
+                  <Link to="/profissionais" className={location.pathname === "/profissionais" ? "active" : ""} onClick={() => setMobileMenu(false)}>
+                    <FaUserCog className="icon" /><span className="label">Profissionais</span>
+                  </Link>
+                </li>
               )}
 
               {/* Menu Comum para todos */}
@@ -204,11 +213,6 @@ export default function App() {
               {/* Menu Exclusivo do Patrão */}
               {perfil === "patrao" && (
                 <>
-                  <li>
-                    <Link to="/profissionais" className={location.pathname === "/profissionais" ? "active" : ""} onClick={() => setMobileMenu(false)}>
-                      <FaUserCog className="icon" /><span className="label">Profissionais</span>
-                    </Link>
-                  </li>
                   <li>
                     <Link to="/relatorios" className={location.pathname === "/relatorios" ? "active" : ""} onClick={() => setMobileMenu(false)}>
                       <FaChartBar className="icon" /><span className="label">Relatórios</span>
@@ -253,13 +257,17 @@ export default function App() {
               {/* Rotas do Profissional */}
               {(perfil === 'patrao' || tipoProfissional === 'Dr(a)') && (
                 <><Route path="/procedimentos" element={<Procedimentos />} /><Route path="/prontuarios" element={<Prontuarios />} /></>
-              )}
+              )} 
+
+              {/* Rota de Profissionais (Patrão, Dr(a) e Atendente) */}
+              {(perfil === 'patrao' || tipoProfissional === 'Dr(a)' || tipoProfissional === 'Atendente') && (
+                <Route path="/profissionais" element={<Profissionais />} />
+              )} 
 
               {/* Rotas exclusivas do Patrão */}
               {perfil === "patrao" && <Route path="/usuarios" element={<Usuarios />} />}
               {perfil === "patrao" && <Route path="/relatorios" element={<Relatorios />} />}
               {perfil === "patrao" && <Route path="/clinicas" element={<Clinicas />} />} {/* 3. Adicionar nova rota */}
-              {perfil === "patrao" && <Route path="/profissionais" element={<Profissionais />} />}
 
               <Route path="*" element={<Navigate to="/home" />} />
             </Routes>
