@@ -22,6 +22,13 @@ const userSchema = new mongoose.Schema({
     default: "Atendente" 
   },
   foto: { type: String },
+
+  // 💡 NOVO: Campo para associar o usuário a uma clínica
+  clinica: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Clinica',
+    required: false // Pode ser false para permitir usuários sem clínica (como o patrão)
+  }
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);

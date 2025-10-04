@@ -17,7 +17,7 @@ import prontuariosRouter from './routes/prontuarios.js';
 import profissionaisRouter from './routes/profissional.js'; // 💡 Adicionado
 import lembretesRouter from './routes/lembretes.js';       // 💡 Adicionado
 import relatoriosRouter from './routes/relatorios.js';     // 💡 Adicionado
-import { auth } from './middleware/auth.js';               // 💡 NOVO: Importar middleware de autenticação
+import { auth } from './routes/auth.js';                   // 💡 CORREÇÃO: Importar do local correto
 import clinicasRouter from './routes/clinicas.js';         // 💡 NOVO: Importar rotas da clínica
 
 dotenv.config();
