@@ -145,7 +145,7 @@ export default function App() {
             <span className="user-clinic-name">
               - {nomeClinica}
             </span>)}
-          </div> {/* Fecha o div.user-info */}
+          </div>
         </header>
 
         <div className="layout">
