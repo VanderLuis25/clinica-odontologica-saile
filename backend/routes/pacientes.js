@@ -1,6 +1,7 @@
 import express from 'express';
 import Paciente from '../models/Paciente.js';
 import Clinica from '../models/Clinica.js'; // Importar Clinica
+import User from '../models/User.js'; // 💡 Importar User para buscar dados do funcionário
 
 const router = express.Router();
 
@@ -22,8 +23,12 @@ router.get('/', async (req, res) => {
                 }
             }
         } else if (req.usuario.perfil === 'funcionario') {
-            // Funcionário: vê apenas dados da sua própria clínica.
-            filtro.clinica = req.usuario.clinicaId;
+            // 💡 CORREÇÃO: Busca o usuário logado para garantir o ID da clínica correto.
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            if (funcionarioLogado && funcionarioLogado.clinica) {
+                // Funcionário: vê apenas dados da sua própria clínica.
+                filtro.clinica = funcionarioLogado.clinica;
+            }
         }
 
         const pacientes = await Paciente.find(filtro)
