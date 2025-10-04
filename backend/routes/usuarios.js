@@ -1,5 +1,6 @@
 import express from "express";
 import User from "../models/User.js";
+import Clinica from "../models/Clinica.js"; // Importar Clinica
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import multer from "multer";
