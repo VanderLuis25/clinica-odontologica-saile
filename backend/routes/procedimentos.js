@@ -1,5 +1,6 @@
 import express from 'express';
 import Procedimento from '../models/Procedimento.js';
+import Clinica from '../models/Clinica.js'; // Importar Clinica
 import Financeiro from '../models/Financeiro.js'; // 💡 Importar o modelo Financeiro
 
 const router = express.Router();
@@ -9,7 +10,19 @@ router.get('/', async (req, res) => {
     try {
         // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
         const clinicaId = req.headers['x-clinic-id'];
-        const filtro = clinicaId ? { clinica: clinicaId } : {};
+        const filtro = {};
+
+        // Lógica para tratar dados antigos como pertencentes à clínica matriz.
+        if (clinicaId) {
+            const matriz = await Clinica.findOne().sort({ createdAt: 1 });
+            if (matriz && matriz._id.toString() === clinicaId) {
+                // Se a clínica selecionada é a matriz, mostra os dela E os sem clínica.
+                filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
+            } else {
+                // Para outras clínicas, mostra apenas os dados exclusivos dela.
+                filtro.clinica = clinicaId;
+            }
+        }
 
         // 💡 CORREÇÃO CRÍTICA: Uso de .populate('paciente')
         // Isso garante que o campo 'paciente' não retorne apenas o ID, mas o objeto completo do paciente,

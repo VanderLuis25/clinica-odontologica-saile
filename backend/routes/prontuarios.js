@@ -1,5 +1,6 @@
 import express from "express";
 import Prontuario from "../models/Prontuario.js";
+import Clinica from '../models/Clinica.js'; // Importar Clinica
 
 const router = express.Router();
 
@@ -8,7 +9,19 @@ router.get("/", async (req, res) => {
   try {
     // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
     const clinicaId = req.headers['x-clinic-id'];
-    const filtro = clinicaId ? { clinica: clinicaId } : {};
+    const filtro = {};
+
+    // Lógica para tratar dados antigos como pertencentes à clínica matriz.
+    if (clinicaId) {
+        const matriz = await Clinica.findOne().sort({ createdAt: 1 });
+        if (matriz && matriz._id.toString() === clinicaId) {
+            // Se a clínica selecionada é a matriz, mostra os dela E os sem clínica.
+            filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
+        } else {
+            // Para outras clínicas, mostra apenas os dados exclusivos dela.
+            filtro.clinica = clinicaId;
+        }
+    }
 
     const prontuarios = await Prontuario.find(filtro).sort({ createdAt: -1 });
     res.json(prontuarios);

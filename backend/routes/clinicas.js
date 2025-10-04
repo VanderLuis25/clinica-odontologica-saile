@@ -16,7 +16,8 @@ const isPatrao = (req, res, next) => {
 // Listar todas as clínicas
 router.get('/', isPatrao, async (req, res) => {
   try {
-    const clinicas = await Clinica.find();
+    // Garante que a clínica mais antiga (matriz) venha primeiro.
+    const clinicas = await Clinica.find().sort({ createdAt: 1 });
     res.json(clinicas);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar clínicas.' });
