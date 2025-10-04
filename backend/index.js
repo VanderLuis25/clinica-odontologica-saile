@@ -98,8 +98,14 @@ app.get("/usuarios", auth, async (req, res) => {
   
   // 3. Filtra os usuários pela clínica selecionada
   const filter = {};
+  // Se uma clínica for selecionada, mostra os usuários daquela clínica
+  // E também os usuários que ainda não têm uma clínica definida (os antigos).
   if (req.clinicaId) {
-    filter.clinica = req.clinicaId;
+    filter.$or = [
+      { clinica: req.clinicaId },
+      { clinica: { $exists: false } },
+      { clinica: null }
+    ];
   }
 
   // Popula o nome da clínica para exibir no frontend
