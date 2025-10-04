@@ -23,7 +23,7 @@ window.addEventListener("unhandledrejection", (event) => {
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  FaHome, FaClipboardList, FaTooth, FaMoneyBill, FaFileMedical, FaChartBar, FaUserCog,
+  FaHome, FaClipboardList, FaTooth, FaMoneyBill, FaFileMedical, FaChartBar, FaUserCog, FaHospital,
   FaBars, FaCalendarAlt, FaSignOutAlt, FaUserCircle
 } from "react-icons/fa";
 
@@ -41,6 +41,7 @@ import Procedimentos from "./pages/Procedimentos.jsx";
 import Agendamentos from "./pages/Agendamentos.jsx"; // Certifique-se de que esta importação está correta // Importando o componente Agendamento
 import Prontuarios from "./pages/Prontuarios.jsx";
 import Financeiro from "./pages/Financeiro.jsx";
+import Clinicas from "./pages/Clinicas.jsx"; // 1. Importar a nova página
 import Relatorios from "./pages/Relatorios.jsx";
 
 import Usuarios from "./pages/Usuarios.jsx";
@@ -211,6 +212,12 @@ export default function App() {
                       <FaUserCog className="icon" /><span className="label">Usuários</span>
                     </Link>
                   </li>
+                  {/* 2. Adicionar novo link no menu */}
+                  <li>
+                    <Link to="/clinicas" className={location.pathname === "/clinicas" ? "active" : ""} onClick={() => setMobileMenu(false)}>
+                      <FaHospital className="icon" /><span className="label">Gerenciar Clínicas</span>
+                    </Link>
+                  </li>
                 </>
               )}
 
@@ -244,6 +251,7 @@ export default function App() {
               {/* Rotas exclusivas do Patrão */}
               {perfil === "patrao" && <Route path="/usuarios" element={<Usuarios />} />}
               {perfil === "patrao" && <Route path="/relatorios" element={<Relatorios />} />}
+              {perfil === "patrao" && <Route path="/clinicas" element={<Clinicas />} />} {/* 3. Adicionar nova rota */}
               {perfil === "patrao" && <Route path="/profissionais" element={<Profissionais />} />}
 
               <Route path="*" element={<Navigate to="/home" />} />

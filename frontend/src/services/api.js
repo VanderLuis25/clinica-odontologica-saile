@@ -48,6 +48,8 @@ export const apiService = {
   // ------------------ Clínicas (NOVO) ------------------
   getClinicas: () => api.get('/api/clinicas'),
   createClinica: (data) => api.post('/api/clinicas', data),
+  updateClinica: (id, data) => api.put(`/api/clinicas/${id}`, data),
+  deleteClinica: (id) => api.delete(`/api/clinicas/${id}`),
 
 
   // ------------------ Usuários / Profissionais ------------------

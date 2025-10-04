@@ -130,6 +130,36 @@ app.post('/api/clinicas', auth, isPatrao, async (req, res) => {
 });
 
 // Adicione aqui as rotas para ATUALIZAR (PUT) e DELETAR (DELETE) clínicas se necessário
-// ...
+
+// Atualizar clínica
+app.put('/api/clinicas/:id', auth, isPatrao, async (req, res) => {
+  try {
+    const clinicaAtualizada = await Clinica.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!clinicaAtualizada) {
+      return res.status(404).json({ error: 'Clínica não encontrada.' });
+    }
+    res.json(clinicaAtualizada);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar clínica.' });
+  }
+});
+
+// Deletar clínica
+app.delete('/api/clinicas/:id', auth, isPatrao, async (req, res) => {
+  try {
+    // Verificação de segurança: não permite excluir clínica se houver usuários nela.
+    const usuariosNaClinica = await Usuario.countDocuments({ clinica: req.params.id });
+    if (usuariosNaClinica > 0) {
+      return res.status(400).json({ error: 'Não é possível excluir. Existem usuários associados a esta clínica.' });
+    }
+    const clinicaDeletada = await Clinica.findByIdAndDelete(req.params.id);
+    if (!clinicaDeletada) {
+      return res.status(404).json({ error: 'Clínica não encontrada.' });
+    }
+    res.json({ message: 'Clínica excluída com sucesso.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao excluir clínica.' });
+  }
+});
 
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
