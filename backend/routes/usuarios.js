@@ -200,15 +200,23 @@ router.post("/redefinir-senha/:token", async (req, res) => {
 // ----------------------------------------------------
 router.get("/", verifyToken, verifyPatrao, async (req, res) => {
   try {
-    // Captura o parâmetro 'perfil' da URL (ex: ?perfil=funcionario)
-    const { perfil } = req.query; 
+    // 💡 CORREÇÃO: Lógica de filtro por clínica consolidada aqui.
+    const clinicaId = req.headers['x-clinic-id'];
+    const filtro = {};
 
-    // Cria um objeto de filtro. Se 'perfil' estiver presente, adiciona { perfil: valor }
-    const filtro = perfil ? { perfil } : {};
+    // Se uma clínica for selecionada, mostra os usuários daquela clínica
+    // E também os usuários que ainda não têm uma clínica definida (os antigos).
+    if (clinicaId) {
+      filtro.$or = [
+        { clinica: clinicaId },
+        { clinica: { $exists: false } },
+        { clinica: null }
+      ];
+    }
     
     // Usa o filtro na busca do Mongoose
     // Se o filtro for vazio ({}), ele busca todos. Se tiver perfil, filtra.
-    // 💡 CORREÇÃO: Adicionado .populate() para buscar os dados da clínica associada.
+    // O .populate() garante que os dados da clínica (como o nome) sejam incluídos.
     const users = await User.find(filtro, { password: 0 }).populate('clinica', 'nome'); 
     
     res.json(users);

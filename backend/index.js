@@ -90,29 +90,6 @@ const auth = (req, res, next) => {
   }
 };
 
-// Exemplo de rota protegida ATUALIZADA para filtrar por clínica
-app.get("/usuarios", auth, async (req, res) => {
-  if (req.usuario.perfil !== "patrao") {
-    return res.status(403).json({ error: "Acesso negado" });
-  }
-  
-  // 3. Filtra os usuários pela clínica selecionada
-  const filter = {};
-  // Se uma clínica for selecionada, mostra os usuários daquela clínica
-  // E também os usuários que ainda não têm uma clínica definida (os antigos).
-  if (req.clinicaId) {
-    filter.$or = [
-      { clinica: req.clinicaId },
-      { clinica: { $exists: false } },
-      { clinica: null }
-    ];
-  }
-
-  // Popula o nome da clínica para exibir no frontend
-  const usuarios = await Usuario.find(filter).populate('clinica', 'nome');
-  res.json(usuarios);
-});
-
 // 4. NOVAS ROTAS PARA GERENCIAMENTO DE CLÍNICAS (Apenas para o Patrão)
 const isPatrao = (req, res, next) => {
   if (req.usuario.perfil !== 'patrao') {
