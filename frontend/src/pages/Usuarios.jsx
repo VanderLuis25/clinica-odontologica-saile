@@ -1,174 +1,168 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../services/api.js";
 import "./Usuarios.css";
 
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const initialState = {
+
+export default function Usuarios() {
+  const navigate = useNavigate();
+  const [funcionarios, setFuncionarios] = useState([]);
+  const [perfil] = useState(localStorage.getItem("perfil") || "funcionario");
+  const [editando, setEditando] = useState(null);
+
+  const [novoFuncionario, setNovoFuncionario] = useState({
     nome: "",
     cpf: "",
     tel: "",
     email: "",
     funcao: "",
     username: "",
-    password: "", // Senha deve ser controlada separadamente
+    password: "",
     profissional: "Atendente",
     cro: "",
     foto: null,
-  };
-  
-// Hook para gerenciar o formulário de funcionário
-const useFormularioFuncionario = (onSuccess) => {
-    const [funcionario, setFuncionario] = useState(initialState);
-    const [editando, setEditando] = useState(null);
-    const [previewFoto, setPreviewFoto] = useState(null);
-    const [msg, setMsg] = useState("");
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+  });
 
-    const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        if (files && files[0]) {
-            setFuncionario({ ...funcionario, [name]: files[0] });
-            setPreviewFoto(URL.createObjectURL(files[0]));
-        } else if (name === "profissional" && value !== "Dr(a)") {
-            setFuncionario({ ...funcionario, [name]: value, cro: "" });
-        } else {
-            setFuncionario({ ...funcionario, [name]: value });
-        }
-    };
+  const [previewFoto, setPreviewFoto] = useState(null);
+  const [msg, setMsg] = useState("");
 
-    const limparFormulario = useCallback(() => {
-        setFuncionario(initialState);
-        setPreviewFoto(null);
-        setEditando(null);
-        setMsg("");
-    }, []);
-
-    const handleEditar = useCallback((func) => {
-        setFuncionario({
-            nome: func.nome || "",
-            cpf: func.cpf || "",
-            tel: func.tel || "",
-            email: func.email || "",
-            funcao: func.funcao || "",
-            username: func.username || "",
-            password: "",
-            profissional: func.profissional || "Atendente",
-            cro: func.cro || "",
-            foto: null,
-        });
-        setPreviewFoto(func.foto ? `${baseURL}${func.foto}` : null);
-        setEditando(func._id);
-        setMsg("");
-        window.scrollTo(0, 0); // Rola para o topo para ver o formulário
-    }, []);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setMsg("");
-
-        try {
-            if (funcionario.profissional === "Dr(a)" && !funcionario.cro) {
-                setMsg("O campo CRO é obrigatório para profissionais Dr(a).");
-                return;
-            }
-
-            const formData = new FormData();
-            Object.keys(funcionario).forEach((key) => {
-                const value = funcionario[key];
-                if (value !== null && value !== "" && !(editando && key === "password" && value === "")) {
-                    formData.append(key, value);
-                }
-            });
-
-            if (editando) {
-                await apiService.updateUsuario(editando, formData);
-                setMsg("Funcionário atualizado com sucesso!");
-            } else {
-                if (!funcionario.password) {
-                    setMsg("Senha é obrigatória para novo funcionário.");
-                    return;
-                }
-                formData.append("perfil", "funcionario");
-                await apiService.createUsuario(formData);
-                setMsg("Funcionário criado com sucesso!");
-            }
-
-            limparFormulario();
-            onSuccess(); // Chama o callback para recarregar a lista
-        } catch (err) {
-            console.error("Erro ao salvar funcionário:", err);
-            setMsg(err.message || "Ocorreu um erro ao salvar.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return { funcionario, editando, previewFoto, msg, loading, handleChange, handleSubmit, handleEditar, limparFormulario };
-};
-
-// Hook para gerenciar a lista de funcionários
-const useFuncionarios = () => {
-    const [funcionarios, setFuncionarios] = useState([]);
-    const [msg, setMsg] = useState("");
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
-
-    const carregarFuncionarios = useCallback(async () => {
-        setLoading(true);
-        try {
-            const { data: lista } = await apiService.getUsuarios();
-            const funcionariosFiltrados = lista.filter((u) => u.perfil !== "patrao");
-            setFuncionarios(funcionariosFiltrados);
-        } catch (err) {
-            console.error("Erro ao carregar funcionários:", err);
-            setMsg(err.message || "Erro ao carregar funcionários.");
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    const handleExcluir = async (id) => {
-        if (window.confirm("Deseja realmente excluir este funcionário?")) {
-            try {
-                await apiService.deleteUsuario(id);
-                setMsg("Funcionário excluído com sucesso!");
-                carregarFuncionarios(); // Recarrega a lista
-            } catch (err) {
-                console.error("Erro ao excluir funcionário:", err);
-                setMsg(err.message || "Erro ao excluir funcionário.");
-            }
-        }
-    };
-
-    useEffect(() => {
-        carregarFuncionarios();
-    }, [carregarFuncionarios]);
-
-    return { funcionarios, loading, msg, carregarFuncionarios, handleExcluir };
-};
-
-export default function Usuarios() {
-  const perfil = localStorage.getItem("perfil");
-  const { funcionarios, loading: loadingLista, msg: msgLista, carregarFuncionarios, handleExcluir } = useFuncionarios();
-  const { funcionario, editando, previewFoto, msg: msgForm, loading: loadingForm, handleChange, handleSubmit, handleEditar, limparFormulario } = useFormularioFuncionario(carregarFuncionarios);
-
-  // Proteção de Rota
-  if (perfil !== "patrao") {
-    return <p>Você não tem permissão para acessar esta página.</p>;
-  }
-
-  const handleApiError = (error) => {
-    const navigate = useNavigate();
+  const carregarFuncionarios = async () => {
     try {
-        // Lógica para lidar com erros de API, como redirecionar para o login em caso de 401
-    } catch (e) {
-        //...
+      const { data: lista } = await apiService.getUsuarios();
+      const funcionariosFiltrados = lista.filter((u) => u.perfil !== "patrao");
+      setFuncionarios(funcionariosFiltrados);
+    } catch (err) {
+      console.error(err);
+      if (err.message && err.message.includes("401")) {
+        setMsg("Sessão expirada. Faça login novamente.");
+        setTimeout(() => navigate("/login"), 2000);
+      } else {
+        setMsg("Erro ao carregar funcionários: " + err.message);
+      }
     }
-  }
+  };
+
+  useEffect(() => {
+    if (perfil === "patrao") carregarFuncionarios();
+  }, [perfil, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (files && files[0]) {
+      setNovoFuncionario({ ...novoFuncionario, [name]: files[0] });
+      setPreviewFoto(URL.createObjectURL(files[0]));
+    } else {
+      if (name === "profissional" && value !== "Dr(a)") {
+        setNovoFuncionario({ ...novoFuncionario, [name]: value, cro: "" });
+      } else {
+        setNovoFuncionario({ ...novoFuncionario, [name]: value });
+      }
+    }
+  };
+
+  const limparFormulario = () => {
+    setNovoFuncionario({
+      nome: "",
+      cpf: "",
+      tel: "",
+      email: "",
+      funcao: "",
+      username: "",
+      password: "",
+      profissional: "Atendente",
+      cro: "",
+      foto: null,
+    });
+    setPreviewFoto(null);
+    setEditando(null);
+    setMsg("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (novoFuncionario.profissional === "Dr(a)" && !novoFuncionario.cro) {
+        setMsg("O campo CRO é obrigatório para profissionais Dr(a).");
+        return;
+      }
+
+      const formData = new FormData();
+      Object.keys(novoFuncionario).forEach((key) => {
+        const value = novoFuncionario[key];
+        if (
+          value !== null &&
+          value !== "" &&
+          !(editando && key === "password" && value === "")
+        ) {
+          formData.append(key, value);
+        }
+      });
+
+      if (!editando) {
+        if (!novoFuncionario.password) {
+          setMsg("Senha é obrigatória para novo funcionário.");
+          return;
+        }
+        formData.append("perfil", "funcionario");
+        await apiService.createUsuario(formData);
+        setMsg("Funcionário criado com sucesso!");
+      } else {
+        await apiService.updateUsuario(editando, formData);
+        setMsg("Funcionário editado com sucesso!");
+      }
+
+      limparFormulario();
+      carregarFuncionarios();
+    } catch (err) {
+      console.error("Erro no handleSubmit:", err);
+      if (err.message && err.message.includes("401")) {
+        setMsg("Sessão expirada. Faça login novamente.");
+        setTimeout(() => navigate("/login"), 2000);
+      } else {
+        setMsg(err.message || "Erro ao salvar funcionário.");
+      }
+    }
+  };
+
+  const handleEditar = (func) => {
+    setNovoFuncionario({
+      nome: func.nome || "",
+      cpf: func.cpf || "",
+      tel: func.tel || "",
+      email: func.email || "",
+      funcao: func.funcao || "",
+      username: func.username || "",
+      password: "",
+      profissional: func.profissional || "Atendente",
+      cro: func.cro || "",
+      foto: null,
+    });
+    setPreviewFoto(func.foto ? `${baseURL}${func.foto}` : null);
+    setEditando(func._id);
+    setMsg("");
+  };
+
+  const handleExcluir = async (id) => {
+    if (window.confirm("Deseja realmente excluir este funcionário?")) {
+      try {
+        await apiService.deleteUsuario(id);
+        setMsg("Funcionário excluído com sucesso!");
+        carregarFuncionarios();
+      } catch (err) {
+        if (err.message && err.message.includes("401")) {
+          setMsg("Sessão expirada. Faça login novamente.");
+          setTimeout(() => navigate("/login"), 2000);
+        } else {
+          setMsg(err.message || "Erro ao excluir funcionário");
+        }
+      }
+    }
+  };
+
+  if (perfil !== "patrao")
+    return <p>Você não tem permissão para acessar esta página.</p>;
 
   return (
     <div className="usuarios-container">
@@ -181,7 +175,7 @@ export default function Usuarios() {
             type="text"
             name="nome"
             placeholder="Nome"
-            value={funcionario.nome}
+            value={novoFuncionario.nome}
             onChange={handleChange}
             required
           />
@@ -189,7 +183,7 @@ export default function Usuarios() {
             type="text"
             name="cpf"
             placeholder="CPF"
-            value={funcionario.cpf}
+            value={novoFuncionario.cpf}
             onChange={handleChange}
             required
           />
@@ -197,7 +191,7 @@ export default function Usuarios() {
             type="text"
             name="tel"
             placeholder="Telefone"
-            value={funcionario.tel}
+            value={novoFuncionario.tel}
             onChange={handleChange}
             required
           />
@@ -205,7 +199,7 @@ export default function Usuarios() {
             type="email"
             name="email"
             placeholder="Email"
-            value={funcionario.email}
+            value={novoFuncionario.email}
             onChange={handleChange}
             required
           />
@@ -213,7 +207,7 @@ export default function Usuarios() {
             type="text"
             name="funcao"
             placeholder="Especialidade/Função"
-            value={funcionario.funcao}
+            value={novoFuncionario.funcao}
             onChange={handleChange}
             required
           />
@@ -221,7 +215,7 @@ export default function Usuarios() {
             type="text"
             name="username"
             placeholder="Usuário"
-            value={funcionario.username}
+            value={novoFuncionario.username}
             onChange={handleChange}
             required
           />
@@ -229,13 +223,13 @@ export default function Usuarios() {
             type="password"
             name="password"
             placeholder={editando ? "Nova Senha (opcional)" : "Senha"}
-            value={funcionario.password}
+            value={novoFuncionario.password}
             onChange={handleChange}
           />
 
           <select
             name="profissional"
-            value={funcionario.profissional}
+            value={novoFuncionario.profissional}
             onChange={handleChange}
             required
           >
@@ -244,12 +238,12 @@ export default function Usuarios() {
             <option value="Dona">Dona/Gerência</option>
           </select>
 
-          {funcionario.profissional === "Dr(a)" && (
+          {novoFuncionario.profissional === "Dr(a)" && (
             <input
               type="text"
               name="cro"
               placeholder="CRO (Registro Profissional)"
-              value={funcionario.cro}
+              value={novoFuncionario.cro}
               onChange={handleChange}
               required
             />
@@ -260,8 +254,8 @@ export default function Usuarios() {
             <img src={previewFoto} alt="Preview" className="preview-foto" />
           )}
 
-          <button type="submit" disabled={loadingForm}>
-            {loadingForm ? "Salvando..." : (editando ? "Salvar Alterações" : "Cadastrar")}
+          <button type="submit">
+            {editando ? "Salvar Alterações" : "Cadastrar"}
           </button>
           {editando && (
             <button
@@ -273,13 +267,12 @@ export default function Usuarios() {
             </button>
           )}
         </form>
-        {msgForm && <p className="msg">{msgForm}</p>}
+        {msg && <p className="msg">{msg}</p>}
       </div>
 
       <div className="usuarios-lista">
         <h3>Lista de Funcionários</h3>
-        {loadingLista && <p>Carregando funcionários...</p>}
-        {!loadingLista && <table>
+        <table>
           <thead>
             <tr>
               <th>Nome</th>
@@ -316,8 +309,7 @@ export default function Usuarios() {
               </tr>
             ))}
           </tbody>
-        </table>}
-        {msgLista && <p className="msg">{msgLista}</p>}
+        </table>
       </div>
     </div>
   );

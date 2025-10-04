@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Este schema parece representar um PROCEDIMENTO REALIZADO, não um item de catálogo.
 const procedimentoSchema = new mongoose.Schema({
     tipo: { 
         type: String,
@@ -22,13 +21,6 @@ const procedimentoSchema = new mongoose.Schema({
     paciente: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Paciente', // Assume que o seu modelo de paciente se chama 'Paciente'
-        required: true
-    },
-
-    // 💡 CRÍTICO: Adicionar referência à Clínica
-    clinica: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Clinica',
         required: true
     },
     
