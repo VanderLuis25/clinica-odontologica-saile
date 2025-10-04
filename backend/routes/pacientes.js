@@ -7,20 +7,23 @@ const router = express.Router();
 // 1. ROTA PRINCIPAL: GET / (Listar todos os pacientes OTIMIZADA)
 router.get('/', async (req, res) => {
     try {
-        // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
-        const clinicaId = req.headers['x-clinic-id'];
         const filtro = {};
-
-        // Lógica para tratar dados antigos como pertencentes à clínica matriz.
-        if (clinicaId) {
-            const matriz = await Clinica.findOne().sort({ createdAt: 1 });
-            if (matriz && matriz._id.toString() === clinicaId) {
-                // Se a clínica selecionada é a matriz, mostra os dela E os sem clínica.
-                filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
-            } else {
-                // Para outras clínicas, mostra apenas os dados exclusivos dela.
-                filtro.clinica = clinicaId;
+        
+        if (req.usuario.perfil === 'patrao') {
+            const clinicaId = req.headers['x-clinic-id'];
+            if (clinicaId) {
+                const matriz = await Clinica.findOne().sort({ createdAt: 1 });
+                if (matriz && matriz._id.toString() === clinicaId) {
+                    // Patrão na Matriz: vê dados da matriz e dados antigos sem clínica.
+                    filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
+                } else {
+                    // Patrão em outra clínica: vê apenas dados daquela clínica.
+                    filtro.clinica = clinicaId;
+                }
             }
+        } else if (req.usuario.perfil === 'funcionario') {
+            // Funcionário: vê apenas dados da sua própria clínica.
+            filtro.clinica = req.usuario.clinicaId;
         }
 
         const pacientes = await Paciente.find(filtro)

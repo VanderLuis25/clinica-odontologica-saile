@@ -15,7 +15,7 @@ export const auth = (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    // Anexa o payload decodificado (ex: { id: '...', perfil: '...' }) ao request
+    // Anexa o payload decodificado (ex: { id: '...', perfil: '...', clinicaId: '...' }) ao request
     req.usuario = decoded; 
     next();
   } catch (err) {

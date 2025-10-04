@@ -79,13 +79,13 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ username }).populate('clinica'); // Popula os dados da clínica
+    const user = await User.findOne({ username }).populate('clinica');
     if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
     const senhaValida = await bcrypt.compare(password, user.password);
     if (!senhaValida) return res.status(401).json({ message: "Senha incorreta" });
 
-    const token = jwt.sign({ id: user._id, perfil: user.perfil }, SECRET_KEY, { expiresIn: "8h" });
+    const token = jwt.sign({ id: user._id, perfil: user.perfil, clinicaId: user.clinica?._id }, SECRET_KEY, { expiresIn: "8h" });
 
     res.json({
       token,
