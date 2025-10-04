@@ -79,7 +79,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).populate('clinica'); // Popula os dados da clínica
     if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
     const senhaValida = await bcrypt.compare(password, user.password);
@@ -96,6 +96,7 @@ router.post("/login", async (req, res) => {
         profissional: user.profissional || "",
         funcao: user.funcao,
         foto: user.foto ? user.foto : "",
+        clinica: user.clinica || null, // Retorna o objeto da clínica
       },
     });
   } catch (err) {

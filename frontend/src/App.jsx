@@ -57,6 +57,7 @@ export default function App() {
   // ✅ 1. Obter o tipo de profissional (Dr(a), Atendente, etc.) do localStorage
   // Este valor é salvo no Login.jsx
   const tipoProfissional = localStorage.getItem("tipoProfissional");
+  const nomeClinica = localStorage.getItem("nomeClinica"); // ✅ Obter nome da clínica
 
   const foto = localStorage.getItem("fotoUsuario"); // URL completa do backend
 
@@ -138,6 +139,11 @@ export default function App() {
             <span className="user-perfil">
               {/* ✅ 2. Exibir o perfil de forma mais detalhada */}
               ({perfil === "patrao" ? "Patrão(a)" : tipoProfissional || "Funcionário(a)"})
+            </span>
+            {/* Exibe o nome da clínica se o usuário não for o patrão e tiver uma clínica associada */}
+            {perfil !== 'patrao' && nomeClinica && (
+            <span className="user-clinic-name">
+              - {nomeClinica}
             </span>
           </div>
         </header>
