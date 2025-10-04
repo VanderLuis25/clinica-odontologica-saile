@@ -10,20 +10,22 @@ export default function Usuarios() {
   const navigate = useNavigate();
   const [funcionarios, setFuncionarios] = useState([]);
   const [perfil] = useState(localStorage.getItem("perfil") || "funcionario");
-  const [editando, setEditando] = useState(null);
-
-  const [novoFuncionario, setNovoFuncionario] = useState({
+  
+  const initialState = {
     nome: "",
     cpf: "",
     tel: "",
     email: "",
     funcao: "",
     username: "",
-    password: "",
+    password: "", // Senha deve ser controlada separadamente
     profissional: "Atendente",
     cro: "",
     foto: null,
-  });
+  };
+
+  const [editando, setEditando] = useState(null);
+  const [novoFuncionario, setNovoFuncionario] = useState(initialState);
 
   const [previewFoto, setPreviewFoto] = useState(null);
   const [msg, setMsg] = useState("");
@@ -53,28 +55,15 @@ export default function Usuarios() {
     if (files && files[0]) {
       setNovoFuncionario({ ...novoFuncionario, [name]: files[0] });
       setPreviewFoto(URL.createObjectURL(files[0]));
+    } else if (name === "profissional" && value !== "Dr(a)") {
+      setNovoFuncionario({ ...novoFuncionario, [name]: value, cro: "" });
     } else {
-      if (name === "profissional" && value !== "Dr(a)") {
-        setNovoFuncionario({ ...novoFuncionario, [name]: value, cro: "" });
-      } else {
-        setNovoFuncionario({ ...novoFuncionario, [name]: value });
-      }
+      setNovoFuncionario({ ...novoFuncionario, [name]: value });
     }
   };
 
   const limparFormulario = () => {
-    setNovoFuncionario({
-      nome: "",
-      cpf: "",
-      tel: "",
-      email: "",
-      funcao: "",
-      username: "",
-      password: "",
-      profissional: "Atendente",
-      cro: "",
-      foto: null,
-    });
+    setNovoFuncionario(initialState);
     setPreviewFoto(null);
     setEditando(null);
     setMsg("");
@@ -91,11 +80,7 @@ export default function Usuarios() {
       const formData = new FormData();
       Object.keys(novoFuncionario).forEach((key) => {
         const value = novoFuncionario[key];
-        if (
-          value !== null &&
-          value !== "" &&
-          !(editando && key === "password" && value === "")
-        ) {
+        if (value !== null && value !== "" && !(editando && key === "password" && value === "")) {
           formData.append(key, value);
         }
       });

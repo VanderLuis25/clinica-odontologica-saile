@@ -51,9 +51,15 @@ app.post("/login", async (req, res) => {
     return res.status(401).json({ error: "Credenciais inválidas" });
   }
 
-  const token = jwt.sign({ id: usuario._id, perfil: usuario.perfil }, JWT_SECRET, { expiresIn: "12h" });
+  // Incluir a clínica do usuário no token para controle de acesso
+  const tokenPayload = { 
+    id: usuario._id, 
+    perfil: usuario.perfil,
+    clinicaId: usuario.clinica // Assumindo que o modelo Usuario agora tem um campo 'clinica'
+  };
+  const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: "12h" });
 
-  res.json({ token, perfil: usuario.perfil });
+  res.json({ token, perfil: usuario.perfil, clinicaId: usuario.clinica });
 });
 
 // Middleware de autenticação
