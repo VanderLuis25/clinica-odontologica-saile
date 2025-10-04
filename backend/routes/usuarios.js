@@ -200,7 +200,7 @@ router.post("/redefinir-senha/:token", async (req, res) => {
 // ----------------------------------------------------
 router.get("/", verifyToken, verifyPatrao, async (req, res) => {
   try {
-    // Captura o parâmetro 'perfil' da URL (ex: ?perfil=profissional)
+    // Captura o parâmetro 'perfil' da URL (ex: ?perfil=funcionario)
     const { perfil } = req.query; 
 
     // Cria um objeto de filtro. Se 'perfil' estiver presente, adiciona { perfil: valor }
@@ -208,7 +208,8 @@ router.get("/", verifyToken, verifyPatrao, async (req, res) => {
     
     // Usa o filtro na busca do Mongoose
     // Se o filtro for vazio ({}), ele busca todos. Se tiver perfil, filtra.
-    const users = await User.find(filtro, { password: 0 }); 
+    // 💡 CORREÇÃO: Adicionado .populate() para buscar os dados da clínica associada.
+    const users = await User.find(filtro, { password: 0 }).populate('clinica', 'nome'); 
     
     res.json(users);
   } catch (err) {
@@ -219,11 +220,12 @@ router.get("/", verifyToken, verifyPatrao, async (req, res) => {
 
 router.post("/", verifyToken, verifyPatrao, upload.single("foto"), async (req, res) => {
   try {
-    const { username, password, nome, cpf, tel, email, funcao, perfil, profissional } = req.body;
+    // 💡 CORREÇÃO: Adicionado 'clinica' à desestruturação
+    const { username, password, nome, cpf, tel, email, funcao, perfil, profissional, clinica } = req.body;
     if (!username || !password) return res.status(400).send("Usuário e senha obrigatórios.");
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
+    let newUser = new User({
       username,
       password: hashedPassword,
       nome,
@@ -234,8 +236,12 @@ router.post("/", verifyToken, verifyPatrao, upload.single("foto"), async (req, r
       perfil: perfil || "funcionario",
       profissional: profissional || "Atendente",
       foto: req.file ? `/uploads/${req.file.filename}` : "",
+      clinica: clinica || null, // 💡 CORREÇÃO: Salva a clínica
     });
     await newUser.save();
+
+    // Popula a clínica antes de retornar para garantir que o nome esteja disponível
+    newUser = await User.findById(newUser._id).populate('clinica', 'nome');
     res.status(201).json(newUser);
   } catch (err) {
     res.status(500).send("Erro ao criar usuário: " + err.message);
@@ -248,7 +254,10 @@ router.put("/:id", verifyToken, verifyPatrao, upload.single("foto"), async (req,
     const updates = { ...req.body };
     if (updates.password) updates.password = await bcrypt.hash(updates.password, 10);
     if (req.file) updates.foto = `/uploads/${req.file.filename}`;
-    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+
+    // 💡 CORREÇÃO: Adicionado .populate() para retornar o usuário atualizado com os dados da clínica
+    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true })
+                                  .populate('clinica', 'nome');
     res.json(updatedUser);
   } catch (err) {
     res.status(500).send("Erro ao atualizar usuário: " + err.message);
