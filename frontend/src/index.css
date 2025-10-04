@@ -486,3 +486,46 @@ body {
     padding: 10px;
   }
 }
+
+/* =============================================== */
+/* ====== Estilos para o Seletor de Clínica ====== */
+/* =============================================== */
+
+/* Container principal do seletor no cabeçalho */
+.clinic-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Espaçamento entre o texto e o seletor */
+  margin-left: 2rem; /* Espaçamento do logo */
+  background-color: #f3f4f6; /* Um fundo sutil para agrupar */
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Estilo para o texto "Visualizando Clínica:" */
+.clinic-selector label {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  color: #4b5563; /* Cinza escuro */
+  white-space: nowrap; /* Evita que o texto quebre */
+}
+
+/* Estilo para o campo <select> */
+.clinic-selector select {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #ffffff;
+  font-weight: 600;
+  color: #810d9e; /* Cor roxa principal do sistema */
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Efeito de foco para o <select> */
+.clinic-selector select:focus {
+  outline: none;
+  border-color: #810d9e;
+  box-shadow: 0 0 0 3px rgba(129, 13, 158, 0.2);
+}

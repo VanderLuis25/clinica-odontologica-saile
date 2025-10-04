@@ -1,0 +1,310 @@
+/* ======================================== */
+/* ====== PÁGINA DE PROFISSIONAIS ====== */
+/* ======================================== */
+
+.profissionais-page {
+    padding: 20px;
+    background-color: #f9fafb;
+}
+
+.profissionais-titulo {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #800580;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.profissional-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.profissional-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.profissional-foto {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-info h3 {
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.especialidade {
+    font-size: 1rem;
+    color: #800580;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.profissional-contato {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.profissional-contato p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.agenda-btn {
+    margin-top: auto;
+    padding: 12px 20px;
+    background-color: #800580;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color 0.3s;
+}
+
+.agenda-btn:hover {
+    background-color: #6a046a;
+}
+
+/* Mensagens de loading e erro */
+.loading-msg,
+.empty-msg {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 40px;
+}
+
+/* ======================================== */
+/* ====== MODAL DA AGENDA ====== */
+/* ======================================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: #f9f9f9;
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+    font-size: 1.8rem;
+    color: #800580;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.fechar-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.fechar-btn:hover {
+    color: #333;
+}
+
+.agenda-secao {
+    margin-bottom: 25px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+}
+
+.agenda-secao h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lista-agendamentos {
+    list-style: none;
+    padding: 0;
+}
+
+.agendamento-vazio {
+    color: #777;
+    font-style: italic;
+    padding: 10px;
+}
+
+.agendamento-item-detalhe {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.agendamento-info-principal {
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+.agendamento-detalhes {
+    font-size: 0.9rem;
+    color: #666;
+    padding-left: 20px;
+    margin-top: 5px;
+    line-height: 1.5;
+}
+
+.agendamento-detalhes p {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Calendário */
+.navegacao-mes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.navegacao-mes h3 {
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.navegacao-mes button {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendario-simples {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.dias-semana-header {
+    display: contents;
+}
+
+.dias-semana-header span {
+    text-align: center;
+    font-weight: bold;
+    color: #888;
+    padding-bottom: 10px;
+}
+
+.dia-agenda {
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 60px;
+}
+
+.dia-agenda .data {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.dia-agenda .status {
+    font-size: 0.75rem;
+}
+
+.dia-livre { background-color: #e8f5e9; color: #388e3c; }
+.dia-parcial { background-color: #fff3e0; color: #f57c00; }
+.dia-lotado { background-color: #ffebee; color: #d32f2f; }
+.dia-passado, .dia-fechado { background-color: #f5f5f5; color: #aaa; cursor: not-allowed; }
+
+.dia-hoje { border: 2px solid #800580; }
+.dia-selecionado { background-color: #800580; color: #fff; transform: scale(1.05); }
+
+/* Detalhes do dia */
+.detalhes-dia-modal {
+    position: relative;
+    margin-top: 20px;
+    padding: 20px;
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 10px;
+}
+
+.detalhes-dia-modal h4 {
+    font-size: 1.3rem;
+    color: #800580;
+}
+
+.fechar-detalhes-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
