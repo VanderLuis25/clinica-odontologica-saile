@@ -9,6 +9,8 @@ import path from "path";
 import crypto from "crypto"; // 1. Importar crypto para gerar o token
 import nodemailer from "nodemailer"; // 2. Importar nodemailer para enviar email
 
+// Create two routers: one for public auth routes, one for protected user routes
+export const authRouter = express.Router();
 const router = express.Router();
 const SECRET_KEY = process.env.SECRET_KEY || "sua-chave-secreta-muito-segura";
 
@@ -44,7 +46,7 @@ const verifyPatrao = (req, res, next) => {
 // ----------------------------------------------------
 // ROTA DE LOGIN
 // ----------------------------------------------------
-router.post("/login", async (req, res) => {
+authRouter.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -111,7 +113,7 @@ router.post("/login", async (req, res) => {
 // ----------------------------------------------------
 // ✅ ETAPA 1: ROTA PARA SOLICITAR REDEFINIÇÃO DE SENHA
 // ----------------------------------------------------
-router.post("/esqueci-senha", async (req, res) => {
+authRouter.post("/esqueci-senha", async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
@@ -167,7 +169,7 @@ router.post("/esqueci-senha", async (req, res) => {
 // ----------------------------------------------------
 // ✅ ETAPA 2: ROTA PARA REDEFINIR A SENHA COM O TOKEN
 // ----------------------------------------------------
-router.post("/redefinir-senha/:token", async (req, res) => {
+authRouter.post("/redefinir-senha/:token", async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;

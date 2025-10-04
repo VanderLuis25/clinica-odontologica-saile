@@ -8,7 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Importe suas rotas
-import usuariosRouter from './routes/usuarios.js';
+import usuariosRouter, { authRouter } from './routes/usuarios.js';
 import pacientesRouter from './routes/pacientes.js';
 import procedimentosRouter from './routes/procedimentos.js';
 import agendamentosRouter from './routes/agendamentos.js';
@@ -55,7 +55,8 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Use suas rotas
-app.use('/usuarios', auth, usuariosRouter);
+app.use('/auth', authRouter); // Public auth routes (login, etc.)
+app.use('/usuarios', auth, usuariosRouter); // Protected user routes (CRUD)
 app.use('/pacientes', auth, pacientesRouter);
 app.use('/procedimentos', auth, procedimentosRouter);
 app.use('/agendamentos', auth, agendamentosRouter);

@@ -43,7 +43,7 @@ api.interceptors.response.use(
 // Exporta um objeto com todas as funções da API
 export const apiService = {
   // ------------------ Autenticação ------------------
-  login: (username, password) => api.post('/usuarios/login', { username, password }),
+  login: (username, password) => api.post('/auth/login', { username, password }),
 
   // ------------------ Clínicas (NOVO) ------------------
   getClinicas: () => api.get('/api/clinicas'),
