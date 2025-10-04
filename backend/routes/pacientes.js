@@ -28,6 +28,9 @@ router.get('/', async (req, res) => {
             if (funcionarioLogado && funcionarioLogado.clinica) {
                 // Funcionário: vê apenas dados da sua própria clínica.
                 filtro.clinica = funcionarioLogado.clinica;
+            } else {
+                // Se o funcionário não tem clínica, ele não pode ver nenhum paciente.
+                return res.json([]);
             }
         }
 
