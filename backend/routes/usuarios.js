@@ -217,7 +217,7 @@ router.get("/", verifyToken, verifyPatrao, async (req, res) => {
     // Usa o filtro na busca do Mongoose
     // Se o filtro for vazio ({}), ele busca todos. Se tiver perfil, filtra.
     // O .populate() garante que os dados da clínica (como o nome) sejam incluídos.
-    const users = await User.find(filtro, { password: 0 }).populate('clinica', 'nome'); 
+    const users = await User.find(filtro, { password: 0 }).populate('clinica'); 
     
     res.json(users);
   } catch (err) {
@@ -249,7 +249,7 @@ router.post("/", verifyToken, verifyPatrao, upload.single("foto"), async (req, r
     await newUser.save();
 
     // Popula a clínica antes de retornar para garantir que o nome esteja disponível
-    newUser = await User.findById(newUser._id).populate('clinica', 'nome');
+    newUser = await User.findById(newUser._id).populate('clinica');
     res.status(201).json(newUser);
   } catch (err) {
     res.status(500).send("Erro ao criar usuário: " + err.message);
@@ -265,7 +265,7 @@ router.put("/:id", verifyToken, verifyPatrao, upload.single("foto"), async (req,
 
     // 💡 CORREÇÃO: Adicionado .populate() para retornar o usuário atualizado com os dados da clínica
     const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true })
-                                  .populate('clinica', 'nome');
+                                  .populate('clinica');
     res.json(updatedUser);
   } catch (err) {
     res.status(500).send("Erro ao atualizar usuário: " + err.message);
