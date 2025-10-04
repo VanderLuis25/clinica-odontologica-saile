@@ -54,12 +54,12 @@ app.post("/login", async (req, res) => {
   // Incluir a clínica do usuário no token para controle de acesso
   const tokenPayload = { 
     id: usuario._id, 
-    perfil: usuario.perfil,
-    clinicaId: usuario.clinica // Assumindo que o modelo Usuario agora tem um campo 'clinica'
+    perfil: usuario.perfil
+    // clinicaId: usuario.clinica // 💡 ADICIONAR QUANDO O MODELO 'Usuario' TIVER O CAMPO 'clinica'
   };
   const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: "12h" });
 
-  res.json({ token, perfil: usuario.perfil, clinicaId: usuario.clinica });
+  res.json({ token, user: usuario });
 });
 
 // Middleware de autenticação
