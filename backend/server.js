@@ -55,14 +55,14 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Use suas rotas
-app.use('/usuarios', usuariosRouter);
-app.use('/pacientes', pacientesRouter);
-app.use('/procedimentos', procedimentosRouter);
-app.use('/agendamentos', agendamentosRouter);
-app.use('/financeiro', financeiroRouter);
-app.use('/prontuarios', prontuariosRouter);
-app.use('/profissionais', profissionaisRouter); // 💡 Adicionado
-app.use('/lembretes', lembretesRouter);         // 💡 Adicionado
+app.use('/usuarios', auth, usuariosRouter);
+app.use('/pacientes', auth, pacientesRouter);
+app.use('/procedimentos', auth, procedimentosRouter);
+app.use('/agendamentos', auth, agendamentosRouter);
+app.use('/financeiro', auth, financeiroRouter);
+app.use('/prontuarios', auth, prontuariosRouter);
+app.use('/profissionais', auth, profissionaisRouter); // 💡 Adicionado
+app.use('/lembretes', auth, lembretesRouter);         // 💡 Adicionado
 app.use('/relatorios', relatoriosRouter);       // 💡 Adicionado
 app.use('/api/clinicas', auth, clinicasRouter); // 💡 NOVO: Aplicar middleware de autenticação na rota de clínicas
 
