@@ -9,6 +9,7 @@ const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 export default function Usuarios() {
   const navigate = useNavigate();
   const [funcionarios, setFuncionarios] = useState([]);
+  const [clinicas, setClinicas] = useState([]); // 1. Estado para armazenar as clínicas
   const [perfil] = useState(localStorage.getItem("perfil") || "funcionario");
   const [editando, setEditando] = useState(null);
 
@@ -23,6 +24,7 @@ export default function Usuarios() {
     profissional: "Atendente",
     cro: "",
     foto: null,
+    clinica: "", // 2. Campo para o ID da clínica
   });
 
   const [previewFoto, setPreviewFoto] = useState(null);
@@ -31,7 +33,8 @@ export default function Usuarios() {
   const carregarFuncionarios = async () => {
     try {
       const { data: lista } = await apiService.getUsuarios();
-      const funcionariosFiltrados = lista.filter((u) => u.perfil !== "patrao");
+      // A API agora já filtra por clínica, mas mantemos o filtro de 'patrao' no frontend
+      const funcionariosFiltrados = lista.filter((u) => u.perfil !== "patrao" && u.username !== 'patrao');
       setFuncionarios(funcionariosFiltrados);
     } catch (err) {
       console.error(err);
@@ -45,8 +48,19 @@ export default function Usuarios() {
   };
 
   useEffect(() => {
-    if (perfil === "patrao") carregarFuncionarios();
-  }, [perfil, navigate]);
+    if (perfil !== "patrao") return;
+
+    const carregarDadosIniciais = async () => {
+      try {
+        const { data: clinicasData } = await apiService.getClinicas();
+        setClinicas(clinicasData);
+        await carregarFuncionarios();
+      } catch (error) {
+        setMsg("Erro ao carregar dados iniciais: " + error.message);
+      }
+    };
+    carregarDadosIniciais();
+  }, [perfil, navigate]); // Dependências corretas
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -74,6 +88,7 @@ export default function Usuarios() {
       profissional: "Atendente",
       cro: "",
       foto: null,
+      clinica: "",
     });
     setPreviewFoto(null);
     setEditando(null);
@@ -135,9 +150,10 @@ export default function Usuarios() {
       funcao: func.funcao || "",
       username: func.username || "",
       password: "",
-      profissional: func.profissional || "Atendente",
+      profissional: func.profissional || "Atendente", // Corrigido para pegar o valor correto
       cro: func.cro || "",
       foto: null,
+      clinica: func.clinica?._id || "", // 3. Preenche a clínica ao editar
     });
     setPreviewFoto(func.foto ? `${baseURL}${func.foto}` : null);
     setEditando(func._id);
@@ -238,6 +254,20 @@ export default function Usuarios() {
             <option value="Dona">Dona/Gerência</option>
           </select>
 
+          {/* 4. NOVO: Seletor de Clínica */}
+          <select
+            name="clinica"
+            value={novoFuncionario.clinica}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Selecione a Clínica</option>
+            {clinicas.map(c => (
+              <option key={c._id} value={c._id}>{c.nome}</option>
+            ))}
+          </select>
+
+
           {novoFuncionario.profissional === "Dr(a)" && (
             <input
               type="text"
@@ -280,6 +310,7 @@ export default function Usuarios() {
               <th>Telefone</th>
               <th>Email</th>
               <th>Função/Especialidade</th>
+              <th>Clínica</th>
               <th>Tipo</th>
               <th>Usuário</th>
               <th>Ações</th>
@@ -293,6 +324,7 @@ export default function Usuarios() {
                 <td>{f.tel}</td>
                 <td>{f.email}</td>
                 <td>{f.funcao}</td>
+                <td>{f.clinica?.nome || 'N/A'}</td>
                 <td>{f.profissional}</td>
                 <td>{f.username}</td>
                 <td>

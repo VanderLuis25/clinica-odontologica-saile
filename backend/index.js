@@ -7,6 +7,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Usuario = require("./models/Usuario");
+const Clinica = require("./models/Clinica"); // 1. Importar o modelo Clinica
 
 const app = express();
 // Use a variável de ambiente para a porta ou 5000 como padrão
@@ -53,7 +54,11 @@ app.post("/login", async (req, res) => {
 
   const token = jwt.sign({ id: usuario._id, perfil: usuario.perfil }, JWT_SECRET, { expiresIn: "12h" });
 
-  res.json({ token, perfil: usuario.perfil });
+  // Retorna o usuário completo para o frontend ter acesso a todos os dados
+  // Omitindo a senha por segurança
+  const userResponse = usuario.toObject();
+  delete userResponse.senha;
+  res.json({ token, user: userResponse });
 });
 
 // Middleware de autenticação
@@ -61,10 +66,14 @@ const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ error: "Token necessário" });
 
+  // 2. Middleware agora extrai o ID da clínica do header
+  const clinicaId = req.headers['x-clinic-id'];
+
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.usuario = decoded;
+    if (clinicaId) req.clinicaId = clinicaId; // Adiciona o ID da clínica na requisição
     next();
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
@@ -74,14 +83,53 @@ const auth = (req, res, next) => {
   }
 };
 
-// Exemplo de rota protegida
+// Exemplo de rota protegida ATUALIZADA para filtrar por clínica
 app.get("/usuarios", auth, async (req, res) => {
   if (req.usuario.perfil !== "patrao") {
     return res.status(403).json({ error: "Acesso negado" });
   }
   
-  const usuarios = await Usuario.find();
+  // 3. Filtra os usuários pela clínica selecionada
+  const filter = {};
+  if (req.clinicaId) {
+    filter.clinica = req.clinicaId;
+  }
+
+  // Popula o nome da clínica para exibir no frontend
+  const usuarios = await Usuario.find(filter).populate('clinica', 'nome');
   res.json(usuarios);
 });
+
+// 4. NOVAS ROTAS PARA GERENCIAMENTO DE CLÍNICAS (Apenas para o Patrão)
+const isPatrao = (req, res, next) => {
+  if (req.usuario.perfil !== 'patrao') {
+    return res.status(403).json({ error: 'Acesso negado. Apenas para administradores.' });
+  }
+  next();
+};
+
+// Listar todas as clínicas
+app.get('/api/clinicas', auth, isPatrao, async (req, res) => {
+  try {
+    const clinicas = await Clinica.find();
+    res.json(clinicas);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar clínicas.' });
+  }
+});
+
+// Criar nova clínica
+app.post('/api/clinicas', auth, isPatrao, async (req, res) => {
+  try {
+    const novaClinica = new Clinica(req.body);
+    await novaClinica.save();
+    res.status(201).json(novaClinica);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar clínica.' });
+  }
+});
+
+// Adicione aqui as rotas para ATUALIZAR (PUT) e DELETAR (DELETE) clínicas se necessário
+// ...
 
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));

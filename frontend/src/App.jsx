@@ -20,7 +20,7 @@ window.addEventListener("unhandledrejection", (event) => {
   }
 });
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaHome, FaClipboardList, FaTooth, FaMoneyBill, FaFileMedical, FaChartBar, FaUserCog,
@@ -28,6 +28,8 @@ import {
 } from "react-icons/fa";
 
 // Contexto Global
+import { apiService } from "./services/api.js"; // Importar apiService
+
 import { SystemDataProvider } from "./context/SystemDataContext.jsx";
 
 // Páginas
@@ -61,12 +63,41 @@ export default function App() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [imgError, setImgError] = useState(false);
 
+  // 💡 NOVO: Estados para controle de clínicas
+  const [clinicas, setClinicas] = useState([]);
+  const [selectedClinicId, setSelectedClinicId] = useState(localStorage.getItem('selectedClinicId') || '');
+
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Carrega as clínicas disponíveis para o patrão
+  useEffect(() => {
+    if (perfil === 'patrao') {
+      apiService.getClinicas()
+        .then(response => {
+          setClinicas(response.data);
+          // Se nenhuma clínica estiver selecionada, seleciona a primeira da lista
+          if (!localStorage.getItem('selectedClinicId') && response.data.length > 0) {
+            const firstClinicId = response.data[0]._id;
+            localStorage.setItem('selectedClinicId', firstClinicId);
+            setSelectedClinicId(firstClinicId);
+          }
+        })
+        .catch(err => console.error("Erro ao buscar clínicas:", err));
+    }
+  }, [perfil]);
+
+  const handleClinicChange = (e) => {
+    const newClinicId = e.target.value;
+    setSelectedClinicId(newClinicId);
+    localStorage.setItem('selectedClinicId', newClinicId);
+    window.location.reload(); // Recarrega a página para atualizar todos os dados
+  };
 
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
+    window.location.reload();
   };
 
   if (!token) return <Login />;
@@ -76,6 +107,21 @@ export default function App() {
       <div className="app-container">
         <header className="header-logo">
           <img src={logo} alt="Logo" />
+
+          {/* 💡 NOVO: Seletor de Clínica para o Patrão */}
+          {perfil === 'patrao' && clinicas.length > 0 && (
+            <div className="clinic-selector">
+              <label htmlFor="clinic-select">Visualizando Clínica:</label>
+              <select id="clinic-select" value={selectedClinicId} onChange={handleClinicChange}>
+                {clinicas.map(c => (
+                  <option key={c._id} value={c._id}>
+                    {c.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="user-info">
             {!imgError && foto ? (
               <img

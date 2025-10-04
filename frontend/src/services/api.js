@@ -13,7 +13,11 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
+      // Adiciona o token de autenticação
       config.headers['Authorization'] = `Bearer ${token}`;
+      // 💡 NOVO: Adiciona o ID da clínica selecionada em todas as requisições
+      const clinicaId = localStorage.getItem('selectedClinicId');
+      if (clinicaId) config.headers['x-clinic-id'] = clinicaId;
     }
     return config;
   },
@@ -40,6 +44,11 @@ api.interceptors.response.use(
 export const apiService = {
   // ------------------ Autenticação ------------------
   login: (username, password) => api.post('/usuarios/login', { username, password }),
+
+  // ------------------ Clínicas (NOVO) ------------------
+  getClinicas: () => api.get('/api/clinicas'),
+  createClinica: (data) => api.post('/api/clinicas', data),
+
 
   // ------------------ Usuários / Profissionais ------------------
   getUsuarios: (perfil = "") => api.get(perfil ? `/usuarios?perfil=${perfil}` : '/usuarios'),

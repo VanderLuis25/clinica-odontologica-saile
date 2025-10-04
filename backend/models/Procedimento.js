@@ -23,6 +23,14 @@ const procedimentoSchema = new mongoose.Schema({
         ref: 'Paciente', // Assume que o seu modelo de paciente se chama 'Paciente'
         required: true
     },
+
+    // 💡 NOVO: Referência à Clínica
+    clinica: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Clinica',
+        required: true,
+        index: true // Otimiza consultas por clínica
+    },
     
     // Campos de Informações Básicas do Paciente (para manter no histórico)
     idade: {
