@@ -144,8 +144,8 @@ export default function App() {
             {perfil !== 'patrao' && nomeClinica && (
             <span className="user-clinic-name">
               - {nomeClinica}
-            </span>
-          </div>
+            </span>)}
+          </div> {/* Fecha o div.user-info */}
         </header>
 
         <div className="layout">
