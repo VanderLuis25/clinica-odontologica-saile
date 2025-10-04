@@ -8,7 +8,11 @@ const router = express.Router();
 // GET: Buscar todos os agendamentos, populando paciente, procedimento e profissional
 router.get('/', async (req, res) => {
     try {
-        const agendamentos = await Agendamento.find()
+        // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
+        const clinicaId = req.headers['x-clinic-id'];
+        const filtro = clinicaId ? { clinica: clinicaId } : {};
+
+        const agendamentos = await Agendamento.find(filtro)
             .populate({
                 path: 'paciente',
                 // ✅ CORREÇÃO APLICADA AQUI: Mudado de 'tel' para 'telefone'
@@ -33,6 +37,7 @@ router.get('/', async (req, res) => {
 // POST: Criar novo agendamento
 router.post('/', async (req, res) => {
     try {
+        const clinicaId = req.headers['x-clinic-id'];
         const { paciente, procedimento, data, hora, profissional } = req.body;
 
         // Validação dos campos obrigatórios
@@ -43,6 +48,7 @@ router.post('/', async (req, res) => {
         // Converte a data para o formato correto
         const newAgendamento = new Agendamento({
             ...req.body,
+            clinica: clinicaId, // 💡 ATUALIZAÇÃO: Associa o agendamento à clínica.
             data: new Date(data) // Converte a data se necessário
         });
 

@@ -6,7 +6,11 @@ const router = express.Router();
 // 1. ROTA PRINCIPAL: GET / (Listar todos os pacientes OTIMIZADA)
 router.get('/', async (req, res) => {
     try {
-        const pacientes = await Paciente.find()
+        // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
+        const clinicaId = req.headers['x-clinic-id'];
+        const filtro = clinicaId ? { clinica: clinicaId } : {};
+
+        const pacientes = await Paciente.find(filtro)
             // Retornando a dataNascimento para cálculo de idade no frontend
             .select('nome cpf telefone dataNascimento') 
             .sort({ nome: 1 });
@@ -20,12 +24,17 @@ router.get('/', async (req, res) => {
 // 2. ROTA DE BUSCA: GET /search
 router.get('/search', async (req, res) => {
     const { termo } = req.query;
+    const clinicaId = req.headers['x-clinic-id'];
+
     try {
         if (!termo) {
             return res.status(200).json([]);
         }
         const regex = new RegExp(termo, 'i');
-        const pacientes = await Paciente.find({
+
+        // 💡 ATUALIZAÇÃO: A busca também respeita a clínica selecionada.
+        const filtro = {
+            clinica: clinicaId,
             $or: [
                 { nome: { $regex: regex } },
                 { cpf: { $regex: regex } }
@@ -33,6 +42,8 @@ router.get('/search', async (req, res) => {
         })
         .select('_id nome cpf telefone dataNascimento') 
         .limit(10);
+
+        const pacientes = await Paciente.find(filtro);
 
         res.json(pacientes);
     } catch (err) {
@@ -44,7 +55,12 @@ router.get('/search', async (req, res) => {
 // 3. ROTA POST: Criar novo paciente
 router.post('/', async (req, res) => {
     try {
-        const novoPaciente = new Paciente(req.body);
+        // 💡 ATUALIZAÇÃO: Associa o novo paciente à clínica selecionada.
+        const clinicaId = req.headers['x-clinic-id'];
+        const novoPaciente = new Paciente({
+            ...req.body,
+            clinica: clinicaId
+        });
         await novoPaciente.save();
         res.status(201).json(novoPaciente);
     } catch (error) {

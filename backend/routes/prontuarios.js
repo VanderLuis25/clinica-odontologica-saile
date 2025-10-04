@@ -6,7 +6,11 @@ const router = express.Router();
 // GET: Buscar todos os prontuários
 router.get("/", async (req, res) => {
   try {
-    const prontuarios = await Prontuario.find().sort({ createdAt: -1 });
+    // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
+    const clinicaId = req.headers['x-clinic-id'];
+    const filtro = clinicaId ? { clinica: clinicaId } : {};
+
+    const prontuarios = await Prontuario.find(filtro).sort({ createdAt: -1 });
     res.json(prontuarios);
   } catch (err) {
     res.status(500).json({ message: "Erro ao buscar prontuários", error: err.message });
@@ -16,7 +20,12 @@ router.get("/", async (req, res) => {
 // POST: Criar novo prontuário
 router.post("/", async (req, res) => {
   try {
-    const novoProntuario = new Prontuario(req.body);
+    // 💡 ATUALIZAÇÃO: Associa o prontuário à clínica selecionada.
+    const clinicaId = req.headers['x-clinic-id'];
+    const novoProntuario = new Prontuario({
+      ...req.body,
+      clinica: clinicaId
+    });
     await novoProntuario.save();
     res.status(201).json(novoProntuario);
   } catch (err) {

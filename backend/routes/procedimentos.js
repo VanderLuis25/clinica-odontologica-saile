@@ -7,10 +7,14 @@ const router = express.Router();
 // 1. ROTA GET: Listar todos os procedimentos
 router.get('/', async (req, res) => {
     try {
+        // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
+        const clinicaId = req.headers['x-clinic-id'];
+        const filtro = clinicaId ? { clinica: clinicaId } : {};
+
         // 💡 CORREÇÃO CRÍTICA: Uso de .populate('paciente')
         // Isso garante que o campo 'paciente' não retorne apenas o ID, mas o objeto completo do paciente,
         // permitindo que o frontend acesse p.paciente.nome e p.paciente.cpf (ou seja, p.paciente)
-        const procedimentos = await Procedimento.find().populate('paciente');
+        const procedimentos = await Procedimento.find(filtro).populate('paciente');
         res.json(procedimentos);
     } catch (err) {
         res.status(500).json({ message: 'Erro ao buscar procedimentos', error: err.message });
@@ -20,7 +24,12 @@ router.get('/', async (req, res) => {
 // 2. ROTA POST: Criar novo procedimento (NÃO MUDOU)
 router.post('/', async (req, res) => {
     try {
-        const novoProcedimento = new Procedimento(req.body);
+        // 💡 ATUALIZAÇÃO: Associa o procedimento à clínica selecionada.
+        const clinicaId = req.headers['x-clinic-id'];
+        const novoProcedimento = new Procedimento({
+            ...req.body,
+            clinica: clinicaId
+        });
         await novoProcedimento.save();
 
         // 💡 LÓGICA ADICIONADA: Criar registro financeiro correspondente

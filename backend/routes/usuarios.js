@@ -200,19 +200,11 @@ router.post("/redefinir-senha/:token", async (req, res) => {
 // ----------------------------------------------------
 router.get("/", verifyToken, verifyPatrao, async (req, res) => {
   try {
-    // 💡 CORREÇÃO: Lógica de filtro por clínica consolidada aqui.
+    // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
     const clinicaId = req.headers['x-clinic-id'];
     const filtro = {};
-
-    // Se uma clínica for selecionada, mostra os usuários daquela clínica
-    // E também os usuários que ainda não têm uma clínica definida (os antigos).
-    if (clinicaId) {
-      filtro.$or = [
-        { clinica: clinicaId },
-        { clinica: { $exists: false } },
-        { clinica: null }
-      ];
-    }
+    // Se um ID de clínica for enviado, apenas os usuários daquela clínica serão retornados.
+    if (clinicaId) filtro.clinica = clinicaId;
     
     // Usa o filtro na busca do Mongoose
     // Se o filtro for vazio ({}), ele busca todos. Se tiver perfil, filtra.
