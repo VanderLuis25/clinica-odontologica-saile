@@ -17,6 +17,7 @@ import prontuariosRouter from './routes/prontuarios.js';
 import profissionaisRouter from './routes/profissional.js'; // 💡 Adicionado
 import lembretesRouter from './routes/lembretes.js';       // 💡 Adicionado
 import relatoriosRouter from './routes/relatorios.js';     // 💡 Adicionado
+import { auth } from './middleware/auth.js';               // 💡 NOVO: Importar middleware de autenticação
 import clinicasRouter from './routes/clinicas.js';         // 💡 NOVO: Importar rotas da clínica
 
 dotenv.config();
@@ -63,7 +64,7 @@ app.use('/prontuarios', prontuariosRouter);
 app.use('/profissionais', profissionaisRouter); // 💡 Adicionado
 app.use('/lembretes', lembretesRouter);         // 💡 Adicionado
 app.use('/relatorios', relatoriosRouter);       // 💡 Adicionado
-app.use('/api/clinicas', clinicasRouter);       // 💡 NOVO: Usar as rotas da clínica com o prefixo /api
+app.use('/api/clinicas', auth, clinicasRouter); // 💡 NOVO: Aplicar middleware de autenticação na rota de clínicas
 
 // Conexão com o DB e inicialização do servidor (seu código de conexão aqui)
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
