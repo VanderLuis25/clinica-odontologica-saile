@@ -27,18 +27,21 @@ mongoose.connect(MONGO_URI)
   .catch(err => console.log(err));
 
 // Criar primeiro Patrão automaticamente
-app.post("/login", async (req, res) => {
-  const { nomeEmpresa, senha } = req.body;
+app.post("/usuarios/login", async (req, res) => {
+  const { username, password, nomeEmpresa } = req.body;
 
-  let usuario = await Usuario.findOne({ nomeEmpresa });
+  // Procura pelo username (padrão) ou pelo nomeEmpresa (primeiro login do patrão)
+  const query = username ? { username } : { nomeEmpresa };
+  let usuario = await Usuario.findOne(query);
 
-  // Se não existe usuário, cria o primeiro Patrão
-  if (!usuario) {
+  // Se não existe usuário E foi passado nomeEmpresa, cria o primeiro Patrão
+  if (!usuario && nomeEmpresa) {
     // Hashear a senha antes de salvar
-    const senhaHash = await bcrypt.hash(senha, 10);
+    const senhaHash = await bcrypt.hash(password, 10);
     usuario = new Usuario({
       nomeEmpresa,
       nome: "Patrão",
+      username: nomeEmpresa, // Garante que o patrão também tenha um username para login futuro
       senha: senhaHash,
       perfil: "patrao"
     });
@@ -47,7 +50,11 @@ app.post("/login", async (req, res) => {
   }
 
   // Compara a senha com o hash armazenado
-  const senhaValida = await bcrypt.compare(senha, usuario.senha);
+  if (!usuario) {
+    return res.status(401).json({ error: "Credenciais inválidas" });
+  }
+
+  const senhaValida = await bcrypt.compare(password, usuario.senha);
   if (!senhaValida) {
     return res.status(401).json({ error: "Credenciais inválidas" });
   }
