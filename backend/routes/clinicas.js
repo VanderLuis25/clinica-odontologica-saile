@@ -1,6 +1,6 @@
 import express from 'express';
 import Clinica from '../models/Clinica.js';
-import Usuario from '../models/Usuario.js';
+import Usuario from '../models/User.js';
 
 const router = express.Router();
 
