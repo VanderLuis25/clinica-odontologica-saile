@@ -33,6 +33,7 @@ export default function Login() {
         localStorage.setItem("userId", res.user.id);
         localStorage.setItem("tipoProfissional", res.user.profissional); // ✅ SALVAR O TIPO DE PROFISSIONAL
         localStorage.setItem("nomeClinica", res.user.clinica?.nome || ''); // ✅ SALVAR O NOME DA CLÍNICA
+        localStorage.setItem("clinicaId", res.user.clinica?._id || ''); // ✅ NOVO: SALVAR O ID DA CLÍNICA
 
         // Salva foto com URL completa do backend
         const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';

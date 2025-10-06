@@ -1,6 +1,6 @@
-# Sistema de Gestão para Clínica Odontológica
+﻿# Sistema de Gestão para Clínica Odontológica (Saile)
 
-Sistema completo de gestão para clínica odontológica com frontend em React/Vite e backend em Node.js/Express.
+Sistema completo de gestão para clínicas odontológicas com frontend em React/Vite e backend em Node.js/Express.
 
 ## 🚀 Funcionalidades
 
