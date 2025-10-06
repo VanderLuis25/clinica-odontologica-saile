@@ -1,5 +1,6 @@
 // models/Paciente.js
 import mongoose from 'mongoose';
+import Clinica from './Clinica.js'; // Importar para referência
 
 const { Schema, model } = mongoose;
 
@@ -32,7 +33,7 @@ const pacienteSchema = new Schema({
   cpf: {
     type: String,
     required: true,
-    unique: true,
+    // A unicidade será garantida pelo índice composto com 'clinica'
     trim: true,
   },
   telefone: {
@@ -42,16 +43,25 @@ const pacienteSchema = new Schema({
   email: {
     type: String,
     required: false,
-    unique: true,
+    // A unicidade será garantida pelo índice composto com 'clinica'
     sparse: true,
     trim: true,
     lowercase: true,
   },
-  medicalHistory: medicalHistorySchema
+  medicalHistory: medicalHistorySchema,
+
+  // ✅ NOVO: Adiciona a referência à clínica
+  clinica: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Clinica',
+    required: true,
+    index: true // Otimiza consultas por clínica
+  }
 }, { timestamps: true });
 
-pacienteSchema.index({ nome: 1 });
-pacienteSchema.index({ cpf: 1 }, { unique: true });
+// ✅ CORREÇÃO: Cria um índice composto que garante que o CPF seja único POR CLÍNICA.
+// Isso permite que o mesmo CPF seja cadastrado em clínicas diferentes.
+pacienteSchema.index({ clinica: 1, cpf: 1 }, { unique: true });
 
 const Paciente = model('Paciente', pacienteSchema);
 export default Paciente;
