@@ -35,6 +35,12 @@ export default function Login() {
         localStorage.setItem("nomeClinica", res.user.clinica?.nome || ''); // ✅ SALVAR O NOME DA CLÍNICA
         localStorage.setItem("clinicaId", res.user.clinica?._id || ''); // ✅ NOVO: SALVAR O ID DA CLÍNICA
 
+        // ✅ NOVO: Garante que o patrão comece na visão geral.
+        // Limpa a seleção de clínica anterior ao fazer login.
+        if (res.user.perfil === 'patrao') {
+            localStorage.removeItem('selectedClinicId');
+        }
+
         // Salva foto com URL completa do backend
         const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
         const fotoUrl = res.user.foto

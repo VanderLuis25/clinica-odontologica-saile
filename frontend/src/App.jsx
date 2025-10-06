@@ -78,12 +78,10 @@ export default function App() {
       apiService.getClinicas()
         .then(response => {
           setClinicas(response.data);
-          // Se nenhuma clínica estiver selecionada, seleciona a primeira da lista
-          if (!localStorage.getItem('selectedClinicId') && response.data.length > 0) {
-            const firstClinicId = response.data[0]._id;
-            localStorage.setItem('selectedClinicId', firstClinicId);
-            setSelectedClinicId(firstClinicId);
-          }
+          // ✅ CORREÇÃO: Garante que o valor inicial do seletor corresponda ao que está no localStorage.
+          // Se não houver nada (padrão para Visão Geral), o valor será ''.
+          const storedClinicId = localStorage.getItem('selectedClinicId');
+          if (storedClinicId) setSelectedClinicId(storedClinicId);
         })
         .catch(err => console.error("Erro ao buscar clínicas:", err));
     }
@@ -115,6 +113,10 @@ export default function App() {
             <div className="clinic-selector">
               <label htmlFor="clinic-select">Visualizando Clínica:</label>
               <select id="clinic-select" value={selectedClinicId} onChange={handleClinicChange}>
+                {/* ✅ NOVO: Opção para a visão geral de todas as clínicas */}
+                <option value="">
+                  Visão Geral (Todas as Clínicas)
+                </option>
                 {clinicas.map(c => (
                   <option key={c._id} value={c._id}>
                     {c.nome}
