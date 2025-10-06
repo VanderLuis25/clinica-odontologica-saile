@@ -14,16 +14,15 @@ router.get('/', async (req, res) => {
 
         if (req.usuario.perfil === 'patrao') {
             const clinicaId = req.headers['x-clinic-id'];
-            if (clinicaId) {
-                const matriz = await Clinica.findOne().sort({ createdAt: 1 });
-                if (matriz && matriz._id.toString() === clinicaId) {
-                    // Patrão na Matriz: vê dados da matriz e dados antigos sem clínica.
-                    filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
-                } else {
-                    // Patrão em outra clínica: vê apenas dados daquela clínica.
-                    filtro.clinica = clinicaId;
-                }
-            }
+            // Se uma clínica específica for selecionada, filtra por ela.
+            // Se não, o filtro fica vazio e busca de TODAS as clínicas.
+            if (clinicaId) filtro.clinica = clinicaId;
+            
+            // Lógica para matriz (se necessário, pode ser descomentada)
+            // const matriz = await Clinica.findOne().sort({ createdAt: 1 });
+            // if (matriz && matriz._id.toString() === clinicaId) {
+            //     filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
+            // }
         } else if (req.usuario.perfil === 'funcionario') {
             const funcionarioLogado = await User.findById(req.usuario.id);
             if (funcionarioLogado && funcionarioLogado.clinica) {

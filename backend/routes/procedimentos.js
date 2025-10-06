@@ -14,16 +14,9 @@ router.get('/', async (req, res) => {
 
         if (req.usuario.perfil === 'patrao') {
             const clinicaId = req.headers['x-clinic-id'];
-            if (clinicaId) {
-                const matriz = await Clinica.findOne().sort({ createdAt: 1 });
-                if (matriz && matriz._id.toString() === clinicaId) {
-                    // Patrão na Matriz: vê dados da matriz e dados antigos sem clínica.
-                    filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
-                } else {
-                    // Patrão em outra clínica: vê apenas dados daquela clínica.
-                    filtro.clinica = clinicaId;
-                }
-            }
+            // Se uma clínica específica for selecionada, filtra por ela.
+            // Se não, o filtro fica vazio e busca de TODAS as clínicas.
+            if (clinicaId) filtro.clinica = clinicaId;
         } else if (req.usuario.perfil === 'funcionario') {
             const funcionarioLogado = await User.findById(req.usuario.id);
             if (funcionarioLogado && funcionarioLogado.clinica) {
@@ -35,8 +28,8 @@ router.get('/', async (req, res) => {
 
         // 💡 CORREÇÃO CRÍTICA: Uso de .populate('paciente')
         // Isso garante que o campo 'paciente' não retorne apenas o ID, mas o objeto completo do paciente,
-        // permitindo que o frontend acesse p.paciente.nome e p.paciente.cpf (ou seja, p.paciente)
-        const procedimentos = await Procedimento.find(filtro).populate('paciente');
+        // permitindo que o frontend acesse p.paciente.nome e p.paciente.cpf
+        const procedimentos = await Procedimento.find(filtro).populate('paciente').populate('clinica', 'nome');
         res.json(procedimentos);
     } catch (err) {
         res.status(500).json({ message: 'Erro ao buscar procedimentos', error: err.message });

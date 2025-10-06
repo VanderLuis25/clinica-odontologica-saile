@@ -283,6 +283,7 @@ export default function Financeiro() {
               <th>Tipo</th>
               <th>Data</th>
               <th>Status</th>
+              <th>Clínica</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -301,6 +302,8 @@ export default function Financeiro() {
                     <option value="pago">Pago</option>
                     <option value="cancelado">Cancelado</option>
                   </select>
+                </td>
+                <td>{registro.clinica?.nome || "N/A"}</td>
                 </td>
                 <td className="acoes-buttons">
                   <button onClick={() => handleEdit(registro)}><FaEdit /></button>

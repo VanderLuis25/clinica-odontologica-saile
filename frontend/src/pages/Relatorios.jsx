@@ -144,15 +144,21 @@ export default function Relatorios() {
             // 4. Lógica de Consultas por Profissional (Mantida)
             setAgendamentos(ag);
             const totalConsultasPorProfissional = ag.reduce((acc, agendamento) => {
-                const profissionalId = agendamento.profissional?._id || agendamento.profissional;
-                const profissionalNome = agendamento.profissional?.nome || agendamento.profissionalNome; 
-                
-                if (!profissionalId || !profissionalNome) return acc;
+                const profissional = agendamento.profissional;
+                const clinica = agendamento.clinica;
 
-                if (!acc[profissionalId]) {
-                    acc[profissionalId] = { nome: profissionalNome, quantidade: 0 };
+                if (!profissional?._id || !clinica?._id) return acc;
+
+                // Agrupa primeiro por clínica
+                if (!acc[clinica._id]) {
+                    acc[clinica._id] = { nome: clinica.nome, profissionais: {} };
                 }
-                acc[profissionalId].quantidade += 1;
+
+                // Depois por profissional dentro da clínica
+                if (!acc[clinica._id].profissionais[profissional._id]) {
+                    acc[clinica._id].profissionais[profissional._id] = { nome: profissional.nome, quantidade: 0 };
+                }
+                acc[clinica._id].profissionais[profissional._id].quantidade += 1;
                 return acc;
             }, {});
             setConsultasPorProfissional(totalConsultasPorProfissional);
@@ -177,32 +183,6 @@ export default function Relatorios() {
     
     const kpisAnteriores = getPreviousMonthKpis();
 
-
-    // 💡 NOVO: Prepara os dados para o gráfico de pizza
-    const pieData = {
-        labels: Object.values(consultasPorProfissional).map(p => p.nome),
-        datasets: [
-            {
-                label: 'Consultas',
-                data: Object.values(consultasPorProfissional).map(p => p.quantidade),
-                backgroundColor: [
-                    'rgba(128, 5, 128, 0.8)', // Cor principal
-                    'rgba(93, 3, 93, 0.8)',  // Cor secundária
-                    'rgba(150, 50, 150, 0.8)', // Variação
-                    'rgba(180, 80, 180, 0.8)', // Variação
-                    'rgba(210, 110, 210, 0.8)', // Variação
-                ],
-                borderColor: [
-                    '#ffffff',
-                    '#ffffff',
-                    '#ffffff',
-                    '#ffffff',
-                    '#ffffff',
-                ],
-                borderWidth: 2,
-            },
-        ],
-    };
 
     const pieOptions = {
         responsive: true,
@@ -272,23 +252,21 @@ export default function Relatorios() {
                 <div className="chart-and-list-container">
                     
                     {/* 💡 NOVO: GRÁFICO DE PIZZA */}
-                    <div className="profissional-chart-box">
-                        {/* Garante que o gráfico só renderize se houver dados */}
-                        {Object.keys(consultasPorProfissional).length > 0 ? (
-                            <Pie data={pieData} options={pieOptions} />
-                        ) : (
-                            <p>Nenhuma consulta registrada para o gráfico.</p>
-                        )}
-                    </div>
-
-                    {/* LISTA DE CONSULTAS POR PROFISSIONAL (Mantido) */}
                     <div className="profissionais-grid">
-                        {Object.keys(consultasPorProfissional).map((profissionalId) => (
-                            <div key={profissionalId} className="profissional-card">
-                                <h4>{consultasPorProfissional[profissionalId].nome}</h4>
-                                <p>Consultas Agendadas: {consultasPorProfissional[profissionalId].quantidade}</p>
-                            </div>
-                        ))}
+                        {Object.keys(consultasPorProfissional).length > 0 ? (
+                            Object.values(consultasPorProfissional).map(clinica => (
+                                <div key={clinica.nome} className="clinica-relatorio-card">
+                                    <h4>{clinica.nome}</h4>
+                                    <ul>
+                                        {Object.values(clinica.profissionais).map(prof => (
+                                            <li key={prof.nome}>{prof.nome}: <strong>{prof.quantidade}</strong> consultas</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))
+                        ) : (
+                            <p>Nenhuma consulta encontrada para exibir.</p>
+                        )}
                     </div>
                 </div>
             </div>
