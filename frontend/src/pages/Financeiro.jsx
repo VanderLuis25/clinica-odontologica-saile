@@ -242,8 +242,8 @@ export default function Financeiro() {
   const filteredData = financeiro.filter(
     (item) =>
       (item.descricao?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (item.procedimento?.paciente?.nome.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (item.procedimento?.paciente?.cpf.toLowerCase() || "").includes(searchTerm.toLowerCase())
+      (item.procedimento?.paciente?.nome?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (item.procedimento?.paciente?.cpf?.toLowerCase() || "").includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -304,7 +304,6 @@ export default function Financeiro() {
                   </select>
                 </td>
                 <td>{registro.clinica?.nome || "N/A"}</td>
-                </td>
                 <td className="acoes-buttons">
                   <button onClick={() => handleEdit(registro)}><FaEdit /></button>
                   <button onClick={() => handleDelete(registro._id)}><FaTrash /></button>
