@@ -1,6 +1,7 @@
 import express from "express";
 import Prontuario from "../models/Prontuario.js";
 import Clinica from '../models/Clinica.js'; // Importar Clinica
+import User from '../models/User.js'; // Importar User para filtro de funcionário
 
 const router = express.Router();
 
@@ -8,18 +9,26 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     // 💡 ATUALIZAÇÃO: Filtro rigoroso por clínica.
-    const clinicaId = req.headers['x-clinic-id'];
     const filtro = {};
 
-    // Lógica para tratar dados antigos como pertencentes à clínica matriz.
-    if (clinicaId) {
-        const matriz = await Clinica.findOne().sort({ createdAt: 1 });
-        if (matriz && matriz._id.toString() === clinicaId) {
-            // Se a clínica selecionada é a matriz, mostra os dela E os sem clínica.
-            filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
+    if (req.usuario.perfil === 'patrao') {
+        const clinicaId = req.headers['x-clinic-id'];
+        if (clinicaId) {
+            const matriz = await Clinica.findOne().sort({ createdAt: 1 });
+            if (matriz && matriz._id.toString() === clinicaId) {
+                // Patrão na Matriz: vê dados da matriz e dados antigos sem clínica.
+                filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
+            } else {
+                // Patrão em outra clínica: vê apenas dados daquela clínica.
+                filtro.clinica = clinicaId;
+            }
+        }
+    } else if (req.usuario.perfil === 'funcionario') {
+        const funcionarioLogado = await User.findById(req.usuario.id);
+        if (funcionarioLogado && funcionarioLogado.clinica) {
+            filtro.clinica = funcionarioLogado.clinica;
         } else {
-            // Para outras clínicas, mostra apenas os dados exclusivos dela.
-            filtro.clinica = clinicaId;
+            return res.json([]);
         }
     }
 

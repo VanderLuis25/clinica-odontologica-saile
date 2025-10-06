@@ -23,13 +23,14 @@ router.get('/', async (req, res) => {
                 }
             }
         } else if (req.usuario.perfil === 'funcionario') {
-            // 💡 CORREÇÃO: Busca o usuário logado para garantir o ID da clínica correto.
+            // ✅ CORREÇÃO: Busca o usuário logado para garantir o ID da clínica correto.
             const funcionarioLogado = await User.findById(req.usuario.id);
             if (funcionarioLogado && funcionarioLogado.clinica) {
                 // Funcionário: vê apenas dados da sua própria clínica.
                 filtro.clinica = funcionarioLogado.clinica;
             } else {
-                // Se o funcionário não tem clínica, ele não pode ver nenhum paciente.
+                // Se o funcionário não tem clínica associada, ele não pode ver nenhum paciente.
+                // Retorna uma lista vazia para evitar erros.
                 return res.json([]);
             }
         }
@@ -48,18 +49,28 @@ router.get('/', async (req, res) => {
 // 2. ROTA DE BUSCA: GET /search
 router.get('/search', async (req, res) => {
     const { termo } = req.query;
-    const clinicaId = req.headers['x-clinic-id'];
 
     try {
         if (!termo) {
             return res.status(200).json([]);
         }
         const regex = new RegExp(termo, 'i');
+        const filtro = {};
 
-        // 💡 ATUALIZAÇÃO: A busca também respeita a clínica selecionada.
-        const filtro = {
-            clinica: clinicaId,
-            $or: [
+        // ✅ CORREÇÃO: Garante que a busca respeite a clínica do usuário.
+        if (req.usuario.perfil === 'patrao') {
+            const clinicaId = req.headers['x-clinic-id'];
+            if (clinicaId) filtro.clinica = clinicaId;
+        } else if (req.usuario.perfil === 'funcionario') {
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            if (funcionarioLogado && funcionarioLogado.clinica) {
+                filtro.clinica = funcionarioLogado.clinica;
+            } else {
+                return res.json([]); // Funcionário sem clínica não busca nada.
+            }
+        }
+
+        filtro.$or = [
                 { nome: { $regex: regex } },
                 { cpf: { $regex: regex } }
             ]
