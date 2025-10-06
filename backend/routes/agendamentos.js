@@ -100,6 +100,21 @@ router.post('/', async (req, res) => {
 // PUT: Atualizar agendamento existente
 router.put('/:id', async (req, res) => {
     try {
+        // ✅ INÍCIO DA VERIFICAÇÃO DE SEGURANÇA
+        if (req.usuario.perfil === 'funcionario') {
+            const agendamento = await Agendamento.findById(req.params.id);
+            if (!agendamento) {
+                return res.status(404).json({ message: 'Agendamento não encontrado.' });
+            }
+
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            // Verifica se o agendamento pertence à clínica do funcionário
+            if (agendamento.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+                return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para alterar este agendamento.' });
+            }
+        }
+        // ✅ FIM DA VERIFICAÇÃO DE SEGURANÇA
+
         const payload = req.body;
 
         // Converte a data para o formato correto
@@ -132,6 +147,21 @@ router.put('/:id', async (req, res) => {
 // DELETE: Excluir agendamento
 router.delete('/:id', async (req, res) => {
     try {
+        // ✅ INÍCIO DA VERIFICAÇÃO DE SEGURANÇA
+        if (req.usuario.perfil === 'funcionario') {
+            const agendamento = await Agendamento.findById(req.params.id);
+            if (!agendamento) {
+                return res.status(404).json({ message: 'Agendamento não encontrado.' });
+            }
+
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            // Verifica se o agendamento pertence à clínica do funcionário
+            if (agendamento.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+                return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para excluir este agendamento.' });
+            }
+        }
+        // ✅ FIM DA VERIFICAÇÃO DE SEGURANÇA
+
         const deletedAgendamento = await Agendamento.findByIdAndDelete(req.params.id);
         if (!deletedAgendamento) {
             return res.status(404).json({ message: 'Agendamento não encontrado' });

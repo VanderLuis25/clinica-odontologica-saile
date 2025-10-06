@@ -103,6 +103,21 @@ router.post('/', async (req, res) => {
 // 3. ROTA PUT: Atualizar procedimento por ID
 router.put('/:id', async (req, res) => {
     try {
+        // ✅ INÍCIO DA VERIFICAÇÃO DE SEGURANÇA
+        if (req.usuario.perfil === 'funcionario') {
+            const procedimento = await Procedimento.findById(req.params.id);
+            if (!procedimento) {
+                return res.status(404).json({ message: 'Procedimento não encontrado.' });
+            }
+
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            // Verifica se o procedimento pertence à clínica do funcionário
+            if (procedimento.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+                return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para alterar este procedimento.' });
+            }
+        }
+        // ✅ FIM DA VERIFICAÇÃO DE SEGURANÇA
+
         // Popula o campo 'paciente' após a atualização
         const procedimentoAtualizado = await Procedimento.findByIdAndUpdate(
             req.params.id, 
@@ -120,6 +135,21 @@ router.put('/:id', async (req, res) => {
 // 4. ROTA DELETE: Excluir procedimento por ID (NÃO MUDOU)
 router.delete('/:id', async (req, res) => {
     try {
+        // ✅ INÍCIO DA VERIFICAÇÃO DE SEGURANÇA
+        if (req.usuario.perfil === 'funcionario') {
+            const procedimento = await Procedimento.findById(req.params.id);
+            if (!procedimento) {
+                return res.status(404).json({ message: 'Procedimento não encontrado.' });
+            }
+
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            // Verifica se o procedimento pertence à clínica do funcionário
+            if (procedimento.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+                return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para excluir este procedimento.' });
+            }
+        }
+        // ✅ FIM DA VERIFICAÇÃO DE SEGURANÇA
+
         const procedimentoDeletado = await Procedimento.findByIdAndDelete(req.params.id);
         if (!procedimentoDeletado) return res.status(404).json({ message: 'Procedimento não encontrado.' });
         res.status(200).json({ message: 'Procedimento excluído com sucesso.' });

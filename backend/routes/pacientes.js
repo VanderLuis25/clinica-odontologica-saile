@@ -135,6 +135,21 @@ router.post('/', async (req, res) => {
 // 4. ROTA PUT: Atualizar paciente por ID (AGORA COM TRATAMENTO DE ERRO COMPLETO)
 router.put('/:id', async (req, res) => {
     try {
+        // ✅ INÍCIO DA VERIFICAÇÃO DE SEGURANÇA
+        if (req.usuario.perfil === 'funcionario') {
+            const paciente = await Paciente.findById(req.params.id);
+            if (!paciente) {
+                return res.status(404).json({ message: 'Paciente não encontrado.' });
+            }
+
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            // Verifica se o paciente pertence à clínica do funcionário
+            if (paciente.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+                return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para alterar este paciente.' });
+            }
+        }
+        // ✅ FIM DA VERIFICAÇÃO DE SEGURANÇA
+
         const pacienteAtualizado = await Paciente.findByIdAndUpdate(
             req.params.id,
             req.body,
@@ -172,6 +187,21 @@ router.put('/:id', async (req, res) => {
 // 5. ROTA DELETE: Excluir paciente por ID
 router.delete('/:id', async (req, res) => {
     try {
+        // ✅ INÍCIO DA VERIFICAÇÃO DE SEGURANÇA
+        if (req.usuario.perfil === 'funcionario') {
+            const paciente = await Paciente.findById(req.params.id);
+            if (!paciente) {
+                return res.status(404).json({ message: 'Paciente não encontrado.' });
+            }
+
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            // Verifica se o paciente pertence à clínica do funcionário
+            if (paciente.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+                return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para excluir este paciente.' });
+            }
+        }
+        // ✅ FIM DA VERIFICAÇÃO DE SEGURANÇA
+
         const pacienteDeletado = await Paciente.findByIdAndDelete(req.params.id);
         if (!pacienteDeletado) return res.status(404).json({ message: 'Paciente não encontrado.' });
         res.status(200).json({ message: 'Paciente excluído com sucesso.' });
