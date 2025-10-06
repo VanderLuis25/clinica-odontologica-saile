@@ -73,8 +73,7 @@ router.get('/search', async (req, res) => {
         filtro.$or = [
                 { nome: { $regex: regex } },
                 { cpf: { $regex: regex } }
-            ]
-        };
+            ];
 
         const pacientes = await Paciente.find(filtro)
             .select('_id nome cpf telefone dataNascimento')
