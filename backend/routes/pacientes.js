@@ -89,11 +89,22 @@ router.get('/search', async (req, res) => {
 // 3. ROTA POST: Criar novo paciente
 router.post('/', async (req, res) => {
     try {
-        // 💡 ATUALIZAÇÃO: Associa o novo paciente à clínica selecionada.
-        const clinicaId = req.headers['x-clinic-id'];
+        let clinicaId;
+
+        // ✅ CORREÇÃO: Garante que a clínica seja a do funcionário logado.
+        if (req.usuario.perfil === 'funcionario') {
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            clinicaId = funcionarioLogado?.clinica;
+        } else {
+            // Para o patrão, continua usando o cabeçalho.
+            clinicaId = req.headers['x-clinic-id'];
+        }
+
+        if (!clinicaId) return res.status(400).json({ message: "O usuário não está associado a nenhuma clínica." });
+
         const novoPaciente = new Paciente({
             ...req.body,
-            clinica: clinicaId
+            clinica: clinicaId // Associa à clínica correta.
         });
         await novoPaciente.save();
         res.status(201).json(novoPaciente);
