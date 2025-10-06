@@ -169,7 +169,6 @@ const Agendamentos = () => {
 
         const payload = {
             paciente: formData.paciente,
-            procedimento: formData.procedimento,
             profissional: formData.profissional,
             data: formData.data, 
             hora: formData.hora,
