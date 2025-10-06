@@ -42,11 +42,22 @@ router.get("/", async (req, res) => {
 // POST: Criar novo prontuário
 router.post("/", async (req, res) => {
   try {
-    // 💡 ATUALIZAÇÃO: Associa o prontuário à clínica selecionada.
-    const clinicaId = req.headers['x-clinic-id'];
+    let clinicaId;
+
+    // ✅ CORREÇÃO: Garante que a clínica seja a do funcionário logado.
+    if (req.usuario.perfil === 'funcionario') {
+        const funcionarioLogado = await User.findById(req.usuario.id);
+        clinicaId = funcionarioLogado?.clinica;
+    } else {
+        // Para o patrão, continua usando o cabeçalho.
+        clinicaId = req.headers['x-clinic-id'];
+    }
+
+    if (!clinicaId) return res.status(400).json({ message: "O usuário não está associado a nenhuma clínica." });
+
     const novoProntuario = new Prontuario({
       ...req.body,
-      clinica: clinicaId
+      clinica: clinicaId // Associa à clínica correta.
     });
     await novoProntuario.save();
     res.status(201).json(novoProntuario);

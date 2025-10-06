@@ -60,7 +60,19 @@ router.get('/', async (req, res) => {
 // POST: Criar novo agendamento
 router.post('/', async (req, res) => {
     try {
-        const clinicaId = req.headers['x-clinic-id'];
+        let clinicaId;
+
+        // ✅ CORREÇÃO: Garante que a clínica seja a do funcionário logado.
+        if (req.usuario.perfil === 'funcionario') {
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            clinicaId = funcionarioLogado?.clinica;
+        } else {
+            // Para o patrão, continua usando o cabeçalho.
+            clinicaId = req.headers['x-clinic-id'];
+        }
+
+        if (!clinicaId) return res.status(400).json({ message: "O usuário não está associado a nenhuma clínica para criar um agendamento." });
+
         const { paciente, data, hora, profissional } = req.body;
 
         // Validação dos campos obrigatórios
@@ -72,7 +84,7 @@ router.post('/', async (req, res) => {
         // Converte a data para o formato correto
         const newAgendamento = new Agendamento({
             ...req.body,
-            clinica: clinicaId, // 💡 ATUALIZAÇÃO: Associa o agendamento à clínica.
+            clinica: clinicaId, // Associa o agendamento à clínica correta.
             data: new Date(data) // Converte a data se necessário
         });
 
