@@ -41,6 +41,14 @@ const agendamentoSchema = new mongoose.Schema({
     enum: ['Confirmado', 'Cancelado', 'Falta'],
     default: 'Confirmado',
   },
+
+  // ✅ NOVO: Adiciona a referência à clínica para isolamento de dados.
+  clinica: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Clinica',
+    required: true,
+    index: true // Otimiza as buscas por clínica
+  }
 }, { timestamps: true });
 
 const Agendamento = mongoose.model('Agendamento', agendamentoSchema);
