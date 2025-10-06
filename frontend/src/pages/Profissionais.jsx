@@ -306,13 +306,15 @@ export default function Profissionais() {
             try {
                 setLoading(true);
                 // Busca todos os dados em paralelo
-                const [{ data: profRes }, { data: agendRes }, { data: pacRes }] = await Promise.all([
-                    apiService.getProfissionais(),
+                const [{ data: userRes }, { data: agendRes }, { data: pacRes }] = await Promise.all([
+                    apiService.getUsuarios(), // ✅ CORREÇÃO: Busca todos os usuários
                     apiService.getAgendamentos(), 
                     apiService.getPacientes(), 
                 ]);
                     
-                setProfissionais(profRes || []);
+                // Filtra para exibir apenas Doutores e Atendentes
+                const staff = userRes.filter(u => u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
+                setProfissionais(staff || []);
                 setAgendamentos(agendRes || []); 
                 setPacientes(pacRes || []);
             } catch (err) {
@@ -343,7 +345,7 @@ export default function Profissionais() {
 
     if (loading) return <p className="loading-msg">Carregando dados...</p>;
     
-    if (profissionais.length === 0) return <p className="empty-msg">Nenhum profissional Dr(a) encontrado.</p>;
+    if (profissionais.length === 0) return <p className="empty-msg">Nenhum profissional ou atendente encontrado.</p>;
 
     return (
         <div className="profissionais-page">
