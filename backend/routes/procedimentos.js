@@ -46,11 +46,22 @@ router.get('/', async (req, res) => {
 // 2. ROTA POST: Criar novo procedimento (NÃO MUDOU)
 router.post('/', async (req, res) => {
     try {
-        // 💡 ATUALIZAÇÃO: Associa o procedimento à clínica selecionada.
-        const clinicaId = req.headers['x-clinic-id'];
+        let clinicaId;
+
+        // ✅ CORREÇÃO: Garante que a clínica seja a do funcionário logado.
+        if (req.usuario.perfil === 'funcionario') {
+            const funcionarioLogado = await User.findById(req.usuario.id);
+            clinicaId = funcionarioLogado?.clinica;
+        } else {
+            // Para o patrão, continua usando o cabeçalho.
+            clinicaId = req.headers['x-clinic-id'];
+        }
+
+        if (!clinicaId) return res.status(400).json({ message: "O usuário não está associado a nenhuma clínica." });
+
         const novoProcedimento = new Procedimento({
             ...req.body,
-            clinica: clinicaId
+            clinica: clinicaId // Associa à clínica correta.
         });
         await novoProcedimento.save();
 
@@ -62,6 +73,7 @@ router.post('/', async (req, res) => {
                 tipo: 'receita',
                 data: new Date().toISOString().split('T')[0], // Usa a data atual
                 statusPagamento: 'pendente',
+                clinica: clinicaId, // ✅ Adiciona a clínica ao registro financeiro
                 procedimento: novoProcedimento._id, // Vincula ao procedimento
                 nomePaciente: novoProcedimento.paciente?.nome, // Se houver paciente populado
             });
