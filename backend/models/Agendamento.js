@@ -10,7 +10,7 @@ const agendamentoSchema = new mongoose.Schema({
   procedimento: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Procedimento',
-    required: true,
+    required: false, // ✅ CORREÇÃO: Procedimento agora é opcional
   },
   data: {
     type: Date,

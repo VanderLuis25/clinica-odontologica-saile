@@ -61,11 +61,12 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const clinicaId = req.headers['x-clinic-id'];
-        const { paciente, procedimento, data, hora, profissional } = req.body;
+        const { paciente, data, hora, profissional } = req.body;
 
         // Validação dos campos obrigatórios
-        if (!paciente || !procedimento || !data || !hora || !profissional) {
-            return res.status(400).json({ message: 'Todos os campos obrigatórios devem ser preenchidos.' });
+        // ✅ CORREÇÃO: O campo 'procedimento' foi removido da validação principal.
+        if (!paciente || !data || !hora || !profissional) {
+            return res.status(400).json({ message: 'Os campos Paciente, Data, Hora e Profissional são obrigatórios.' });
         }
 
         // Converte a data para o formato correto

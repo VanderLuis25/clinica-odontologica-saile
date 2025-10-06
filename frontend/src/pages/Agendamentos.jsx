@@ -95,18 +95,27 @@ const Agendamentos = () => {
     };
 
     const handlePatientSelect = (paciente) => {
+        // ✅ LÓGICA DE RETORNO: Encontra o procedimento mais recente do paciente.
+        const procedimentosDoPaciente = procedimentos
+            .filter(p => p.paciente?._id === paciente._id)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Ordena do mais novo para o mais antigo
+
+        const ultimoProcedimento = procedimentosDoPaciente.length > 0 ? procedimentosDoPaciente[0] : null;
+
         setSelectedPatient(paciente);
         setSearchTerm(paciente.nome);
         setSearchResults([]);
 
+        // Preenche o formulário com os dados do paciente e o último procedimento (se houver)
         setFormData(prev => ({
             ...prev,
             paciente: paciente._id,
             nomePaciente: paciente.nome,
             cpf: paciente.cpf,
             telefone: paciente.telefone,
-            procedimento: '',
-            valorProcedimento: '',
+            // Preenche automaticamente o procedimento e o valor para agilizar retornos
+            procedimento: ultimoProcedimento?._id || '',
+            valorProcedimento: ultimoProcedimento?.valor ? parseFloat(ultimoProcedimento.valor).toFixed(2) : '',
             tipoPaciente: calcularTipoPaciente(paciente.dataNascimento),
         }));
     };
@@ -165,6 +174,8 @@ const Agendamentos = () => {
             data: formData.data, 
             hora: formData.hora,
             observacoes: formData.observacoes,
+            // Só envia o procedimento se ele for selecionado
+            procedimento: formData.procedimento || null,
             tipoPaciente: formData.tipoPaciente,
             assinaturaResponsavel: formData.tipoPaciente === 'infantil' ? formData.assinaturaResponsavel : undefined,
             status: formData.status, 
@@ -357,7 +368,7 @@ const Agendamentos = () => {
                                 {/* Procedimento */}
                                 <div>
                                     <label>Procedimento *:</label>
-                                    <select name="procedimento" value={formData.procedimento} onChange={handleChange} required>
+                                    <select name="procedimento" value={formData.procedimento} onChange={handleChange}>
                                         <option value="">Selecione...</option>
                                         {procedimentos.map(p => <option key={p._id} value={p._id}>{p.nome}</option>)}
                                     </select>
