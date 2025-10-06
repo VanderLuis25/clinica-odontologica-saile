@@ -224,19 +224,16 @@ export const SystemDataProvider = ({ children }) => {
   const createPaciente = useCallback(
     async (novoPaciente) => {
       try {
-        // 1. Pega o ID da clínica do usuário logado
-        const clinicaId = localStorage.getItem("clinicaId");
-        // 2. Adiciona o ID da clínica aos dados do novo paciente
-        const dadosCompletos = { ...novoPaciente, clinica: clinicaId };
-
-        const { data: pacienteSalvo } = await apiService.createPaciente(dadosCompletos);
+        // ✅ CORREÇÃO: Remove a adição manual do 'clinicaId'.
+        // O cabeçalho 'x-clinic-id' já é enviado automaticamente pelo api.js.
+        const { data: pacienteSalvo } = await apiService.createPaciente(novoPaciente);
         setPacientes((prev) => [...prev, pacienteSalvo]); // Atualiza o estado local
         return pacienteSalvo; // Retorna o paciente salvo
       } catch (err) {
         console.error("Erro ao cadastrar paciente:", err);
         throw err;
       }
-    }, []
+    }, [fetchPacientes] // Adicionado fetchPacientes para consistência e recarga da lista
   );
 
   const updatePaciente = useCallback(

@@ -13,11 +13,15 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Adiciona o token de autenticação
       config.headers['Authorization'] = `Bearer ${token}`;
-      // 💡 NOVO: Adiciona o ID da clínica selecionada em todas as requisições
-      const clinicaId = localStorage.getItem('selectedClinicId');
-      if (clinicaId) config.headers['x-clinic-id'] = clinicaId;
+
+      // ✅ CORREÇÃO: Prioriza a clínica selecionada pelo patrão, 
+      // mas usa a clínica do próprio usuário (salva no login) como padrão.
+      const selectedClinicId = localStorage.getItem('selectedClinicId'); // Usado pelo Patrão
+      const userClinicId = localStorage.getItem('clinicaId'); // Salvo no login
+      const clinicIdToSend = selectedClinicId || userClinicId;
+
+      if (clinicIdToSend) config.headers['x-clinic-id'] = clinicIdToSend;
     }
     return config;
   },
