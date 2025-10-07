@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../services/api.js";
-import { FaCalendarAlt, FaTimes, FaClock, FaArrowLeft, FaArrowRight, FaInfoCircle, FaUser, FaPhone, FaEnvelope, FaIdCard } from "react-icons/fa"; 
+import { FaCalendarAlt, FaTimes, FaClock, FaArrowLeft, FaArrowRight, FaInfoCircle, FaUser, FaPhone, FaEnvelope, FaIdCard, FaUserCog } from "react-icons/fa"; 
 import "./Profissionais.css";
 
 // URL base para as fotos
