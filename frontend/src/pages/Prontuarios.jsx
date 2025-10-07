@@ -419,7 +419,7 @@ export default function Prontuario() {
           {editId ? "Atualizar Prontuário" : "Salvar Prontuário"}
         </button>
         {editId && (
-          <button type="button" onClick={limparFormulario} style={{ background: '#6c757d' }}>
+          <button type="button" onClick={limparFormulario} className="btn-cancelar-edicao">
             <FaTimes /> Cancelar Edição
           </button>
         )}
