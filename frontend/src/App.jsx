@@ -139,8 +139,8 @@ export default function App() {
             )}
             <span className="user-name">{nome || "Usuário"}</span>
             <span className="user-perfil">
-              {/* ✅ 2. Exibir o perfil de forma mais detalhada */}
-              ({perfil === "patrao" ? "Patrão(a)" : tipoProfissional || "Funcionário(a)"})
+              {/* ✅ CORREÇÃO: Exibe "Saile" para o perfil de patrão */}
+              ({perfil === "patrao" ? "Saile" : tipoProfissional || "Funcionário(a)"})
             </span>
             {/* Exibe o nome da clínica se o usuário não for o patrão e tiver uma clínica associada */}
             {perfil !== 'patrao' && nomeClinica && ( // Correctly wrapped conditional rendering

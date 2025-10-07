@@ -357,7 +357,10 @@ export default function Profissionais() {
                     <div key={prof._id} className="profissional-card">
                         <img src={prof.foto ? `${baseURL}${prof.foto}` : '/placeholder-foto.png'} alt={`Foto de ${prof.nome}`} className="profissional-foto"/>
                         <div className="card-info">
-                            <h3>{prof.nome} <span className="tipo-profissional">({prof.profissional})</span></h3>
+                            {/* ✅ CORREÇÃO: Exibe "Saile" para o perfil de patrão */}
+                            <h3>{prof.nome} <span className="tipo-profissional">
+                                ({prof.perfil === 'patrao' ? 'Saile' : prof.profissional})
+                            </span></h3>
                             <p className="especialidade">Especialidade: {prof.funcao || "Clínico Geral"}</p>
                             {/* Exibe a clínica do profissional */}
                             <p className="clinica-info">{prof.clinica?.nome || 'Sem clínica'}</p>
