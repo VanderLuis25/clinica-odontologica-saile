@@ -64,7 +64,7 @@ app.use('/financeiro', auth, financeiroRouter);
 app.use('/prontuarios', auth, prontuariosRouter);
 app.use('/profissionais', auth, profissionaisRouter); // 💡 Adicionado
 app.use('/lembretes', auth, lembretesRouter);         // 💡 Adicionado
-app.use('/relatorios', relatoriosRouter);       // 💡 Adicionado
+app.use('/relatorios', auth, relatoriosRouter);       // 💡 Adicionado
 app.use('/api/clinicas', auth, clinicasRouter); // 💡 NOVO: Aplicar middleware de autenticação na rota de clínicas
 
 // Conexão com o DB e inicialização do servidor (seu código de conexão aqui)
