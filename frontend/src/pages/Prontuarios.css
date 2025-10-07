@@ -260,11 +260,25 @@
   box-shadow: 0 4px 10px rgba(128, 5, 128, 0.3);
 }
 
-.prontuario-form .form-actions button[style*="background: rgb(108, 117, 125)"] { /* Botão Cancelar Edição */
+.prontuario-form .form-actions button[style*="background:  #800580"] { /* Botão Cancelar Edição */
   background-color: var(--cor-texto-secundario);
 }
-.prontuario-form .form-actions button[style*="background: rgb(108, 117, 125)"]:hover {
+.prontuario-form .form-actions button[style*="background:  #800580"]:hover {
   background-color: var(--cor-texto);
+}
+.btn-salvar-prontuario{
+  background-color: #800580;
+    color: #fff;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+    margin-bottom: 20px;
+}
+.btn-salvar-prontuario:hover {
+    background-color: #500350;
 }
 
 /* ====== Tabela de Prontuários Salvos ====== */
