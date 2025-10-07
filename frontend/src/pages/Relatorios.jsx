@@ -3,11 +3,11 @@ import { apiService } from "../services/api.js";
 import "./Relatorios.css";
 
 // 💡 NOVO: Importar componentes do Chart.js
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 // Registrar os elementos necessários para o gráfico de pizza
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 // ⚠️ SIMULAÇÃO: No ambiente real, você buscará e salvará este histórico
 const STORAGE_KEY = 'financial_kpis_history';
@@ -184,23 +184,39 @@ export default function Relatorios() {
     const kpisAnteriores = getPreviousMonthKpis();
 
 
-    const pieOptions = {
+    // ✅ NOVO: Prepara os dados para o gráfico de barras
+    const barChartData = {
+        labels: Object.values(consultasPorProfissional).map(c => c.nome),
+        datasets: [
+            {
+                label: 'Total de Consultas por Clínica',
+                data: Object.values(consultasPorProfissional).map(c => 
+                    Object.values(c.profissionais).reduce((sum, prof) => sum + prof.quantidade, 0)
+                ),
+                backgroundColor: 'rgba(128, 5, 128, 0.7)',
+                borderColor: 'rgba(128, 5, 128, 1)',
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const barChartOptions = {
         responsive: true,
         plugins: {
             legend: {
-                position: 'right', // Coloca a legenda à direita
+                display: false, // Legenda já está no título do dataset
             },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        const label = context.label || '';
-                        const value = context.parsed;
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = ((value / total) * 100).toFixed(1) + '%';
-                        return `${label}: ${value} (${percentage})`;
-                    }
-                }
-            }
+            title: {
+                display: true,
+                text: 'Comparativo de Consultas por Clínica',
+                font: { size: 16 }
+            },
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1 }
+            },
         },
     };
 
@@ -249,9 +265,17 @@ export default function Relatorios() {
             <div className="consultas-profissionais">
                 <h3>Distribuição de Consultas por Profissional</h3>
                 
-                <div className="chart-and-list-container">
-                    
-                    {/* 💡 NOVO: GRÁFICO DE PIZZA */}
+                <div className="chart-and-list-container">                    
+                    {/* ✅ NOVO: GRÁFICO DE BARRAS */}
+                    <div className="bar-chart-container">
+                        {Object.keys(consultasPorProfissional).length > 0 ? (
+                            <Bar options={barChartOptions} data={barChartData} />
+                        ) : (
+                            <p>Nenhuma consulta encontrada para exibir.</p>
+                        )}
+                    </div>
+
+                    {/* LISTA DE DETALHES POR PROFISSIONAL */}
                     <div className="profissionais-grid">
                         {Object.keys(consultasPorProfissional).length > 0 ? (
                             Object.values(consultasPorProfissional).map(clinica => (
