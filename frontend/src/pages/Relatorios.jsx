@@ -58,11 +58,12 @@ const ComparisonCard = ({ title, current, previous, isCurrency = true }) => {
 export default function Relatorios() {
     const [agendamentos, setAgendamentos] = useState([]);
     const [consultasPorProfissional, setConsultasPorProfissional] = useState({});
-    
-    const [kpis, setKpis] = useState({
+    // ✅ ALTERADO: Agora teremos um estado para KPIs por clínica e um para o total
+    const [kpisByClinic, setKpisByClinic] = useState({});
+    const [totalKpis, setTotalKpis] = useState({
         totalReceita: 0,
         totalDespesa: 0,
-        saldo: 0, 
+        saldo: 0,
         totalConsultas: 0,
         totalPacientes: 0
     });
@@ -120,23 +121,47 @@ export default function Relatorios() {
 
             // ... (Cálculo de KPIs e agendamentos mantido) ...
             
-            // 1. Filtrar registros financeiros pelo status "pago" (usando o campo correto 'statusPagamento')
-            const paidFinancialRecords = fin.filter(item => item.statusPagamento && item.statusPagamento.toLowerCase() === 'pago');
+            // ✅ NOVO: Lógica para calcular KPIs por clínica
+            const kpisCalculados = fin.reduce((acc, item) => {
+                const clinicaId = item.clinica?._id;
+                const clinicaNome = item.clinica?.nome || "Sem Clínica";
+                if (!clinicaId) return acc;
 
-            // 2. Calcule os KPIs ATUAIS, garantindo que o valor seja numérico
-            const totalReceita = paidFinancialRecords.reduce((acc, item) =>
-                item.tipo === "receita" ? acc + (parseFloat(item.valor) || 0) : acc, 0
-            );
-            const totalDespesa = paidFinancialRecords.reduce((acc, item) =>
-                item.tipo === "despesa" ? acc + (parseFloat(item.valor) || 0) : acc, 0
-            );
+                if (!acc[clinicaId]) {
+                    acc[clinicaId] = { nome: clinicaNome, totalReceita: 0, totalDespesa: 0 };
+                }
 
-            const saldo = totalReceita - totalDespesa; 
-            const totalConsultas = ag.length;
-            const totalPacientes = pac.length;
+                if (item.statusPagamento && item.statusPagamento.toLowerCase() === 'pago') {
+                    if (item.tipo === 'receita') {
+                        acc[clinicaId].totalReceita += parseFloat(item.valor) || 0;
+                    } else if (item.tipo === 'despesa') {
+                        acc[clinicaId].totalDespesa += parseFloat(item.valor) || 0;
+                    }
+                }
+                return acc;
+            }, {});
 
-            const currentKpis = { totalReceita, totalDespesa, saldo, totalConsultas, totalPacientes };
-            setKpis(currentKpis);
+            // Adiciona contagem de pacientes e agendamentos por clínica
+            ag.forEach(agendamento => {
+                const clinicaId = agendamento.clinica?._id;
+                if (clinicaId && kpisCalculados[clinicaId]) {
+                    kpisCalculados[clinicaId].totalConsultas = (kpisCalculados[clinicaId].totalConsultas || 0) + 1;
+                }
+            });
+            pac.forEach(paciente => {
+                const clinicaId = paciente.clinica?._id;
+                if (clinicaId && kpisCalculados[clinicaId]) {
+                    kpisCalculados[clinicaId].totalPacientes = (kpisCalculados[clinicaId].totalPacientes || 0) + 1;
+                }
+            });
+
+            // Calcula o saldo para cada clínica
+            Object.values(kpisCalculados).forEach(c => { c.saldo = c.totalReceita - c.totalDespesa; });
+            setKpisByClinic(kpisCalculados);
+
+            // Calcula e salva os KPIs TOTAIS para o card de resumo
+            const currentKpis = { totalReceita: fin.reduce((acc, item) => item.tipo === "receita" && item.statusPagamento === 'pago' ? acc + (parseFloat(item.valor) || 0) : acc, 0), totalDespesa: fin.reduce((acc, item) => item.tipo === "despesa" && item.statusPagamento === 'pago' ? acc + (parseFloat(item.valor) || 0) : acc, 0), saldo: fin.reduce((acc, item) => item.statusPagamento === 'pago' ? (item.tipo === 'receita' ? acc + parseFloat(item.valor) : acc - parseFloat(item.valor)) : acc, 0), totalConsultas: ag.length, totalPacientes: pac.length };
+            setTotalKpis(currentKpis);
             
             // 3. Salva os KPIs para comparação futura (Simulação)
             saveKpisForComparison(currentKpis); 
@@ -227,39 +252,51 @@ export default function Relatorios() {
 
             {/* ---------------- KPIs com Comparação ---------------- */}
             <div className="relatorios-kpis">
+                {/* Card de Resumo Geral */}
                 <ComparisonCard 
                     title="Receita Total" 
-                    current={kpis.totalReceita} 
+                    current={totalKpis.totalReceita} 
                     previous={kpisAnteriores?.totalReceita}
                 />
-                
                 <ComparisonCard 
                     title="Despesa Total" 
-                    current={kpis.totalDespesa} 
+                    current={totalKpis.totalDespesa} 
                     previous={kpisAnteriores?.totalDespesa}
                 />
-                
                 <ComparisonCard 
                     title="Saldo Financeiro" 
-                    current={kpis.saldo} 
+                    current={totalKpis.saldo} 
                     previous={kpisAnteriores?.saldo}
                 />
-
                 <ComparisonCard 
                     title="Total de Consultas" 
-                    current={kpis.totalConsultas} 
+                    current={totalKpis.totalConsultas} 
                     previous={kpisAnteriores?.totalConsultas}
                     isCurrency={false}
                 />
                 <ComparisonCard 
                     title="Total de Pacientes" 
-                    current={kpis.totalPacientes} 
+                    current={totalKpis.totalPacientes} 
                     previous={kpisAnteriores?.totalPacientes}
                     isCurrency={false}
                 />
             </div>
 
             <hr />
+
+            {/* ✅ NOVO: Container para os KPIs de cada clínica */}
+            <div className="clinicas-kpis-container">
+                {Object.values(kpisByClinic).map(clinica => (
+                    <div key={clinica.nome} className="clinica-kpi-card">
+                        <h4>{clinica.nome}</h4>
+                        <p><strong>Receita:</strong> {formatCurrency(clinica.totalReceita || 0)}</p>
+                        <p><strong>Despesa:</strong> {formatCurrency(clinica.totalDespesa || 0)}</p>
+                        <p className={getSaldoClass(clinica.saldo || 0)}><strong>Saldo:</strong> {formatCurrency(clinica.saldo || 0)}</p>
+                        <p><strong>Consultas:</strong> {clinica.totalConsultas || 0}</p>
+                        <p><strong>Pacientes:</strong> {clinica.totalPacientes || 0}</p>
+                    </div>
+                ))}
+            </div>
             
             {/* ---------------- GRÁFICOS E TABELA ---------------- */}
             <div className="consultas-profissionais">
