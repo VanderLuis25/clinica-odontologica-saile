@@ -314,18 +314,31 @@ export default function Profissionais() {
                     apiService.getPacientes(), 
                 ]);
                     
-                // Filtra para exibir apenas Doutores e Atendentes
-                const staff = userRes.filter(u => u.perfil === 'patrao' || u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
-                
-                // ✅ LÓGICA DE FILTRO: Se uma clínica está selecionada, esconde o card do patrão.
-                const selectedClinicId = localStorage.getItem('selectedClinicId');
-                if (selectedClinicId) {
-                    // Filtra os funcionários pela clínica selecionada. O card do patrão não tem clínica, então é omitido.
-                    const clinicStaff = staff.filter(u => u.clinica?._id === selectedClinicId);
-                    setProfissionais(clinicStaff);
+                // ✅ NOVA LÓGICA DE FILTRAGEM POR PERFIL
+                const perfilLogado = localStorage.getItem('perfil');
+                const tipoProfissionalLogado = localStorage.getItem('tipoProfissional');
+                const userIdLogado = localStorage.getItem('userId');
+                const clinicaIdLogado = localStorage.getItem('clinicaId');
+
+                if (perfilLogado === 'patrao') {
+                    const staff = userRes.filter(u => u.perfil === 'patrao' || u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
+                    const selectedClinicId = localStorage.getItem('selectedClinicId');
+                    if (selectedClinicId) {
+                        const clinicStaff = staff.filter(u => u.clinica?._id === selectedClinicId);
+                        setProfissionais(clinicStaff);
+                    } else {
+                        setProfissionais(staff || []);
+                    }
+                } else if (tipoProfissionalLogado === 'Dr(a)') {
+                    // Profissional logado: mostra apenas o seu próprio card.
+                    const meuPerfil = userRes.filter(u => u._id === userIdLogado);
+                    setProfissionais(meuPerfil);
+                } else if (tipoProfissionalLogado === 'Atendente') {
+                    // Atendente logado: mostra todos os Doutores da sua clínica.
+                    const drsDaMinhaClinica = userRes.filter(u => u.profissional === 'Dr(a)' && u.clinica?._id === clinicaIdLogado);
+                    setProfissionais(drsDaMinhaClinica);
                 } else {
-                    // Na "Visão Geral", mostra todos, incluindo o patrão.
-                    setProfissionais(staff || []);
+                    setProfissionais([]); // Nenhum perfil correspondente, lista vazia.
                 }
                 setAgendamentos(agendRes || []); 
                 setPacientes(pacRes || []);

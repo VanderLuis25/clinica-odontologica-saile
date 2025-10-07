@@ -41,6 +41,11 @@
   gap: 30px;
 }
 
+/* Centraliza o card quando há apenas um */
+.cards-container:has(.profissional-card:only-child) {
+    justify-content: center;
+}
+
 /* --- Card Individual --- */
 .profissional-card {
   background: var(--card-background);
