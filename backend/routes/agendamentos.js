@@ -1,4 +1,4 @@
-no// routes/agendamentos.js
+// routes/agendamentos.js
 import express from 'express';
 import { emitirAtualizacao } from '../server.js';
 import Agendamento from '../models/Agendamento.js';
