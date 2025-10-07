@@ -3,11 +3,11 @@ import { apiService } from "../services/api.js";
 import "./Relatorios.css";
 
 // 💡 NOVO: Importar componentes do Chart.js
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 // Registrar os elementos necessários para o gráfico de pizza
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 // ⚠️ SIMULAÇÃO: No ambiente real, você buscará e salvará este histórico
 const STORAGE_KEY = 'financial_kpis_history';

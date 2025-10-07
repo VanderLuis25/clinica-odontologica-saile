@@ -39,9 +39,7 @@ router.get('/agendamentos', async (req, res) => {
         const filtro = {};
         if (req.usuario.perfil === 'patrao') {
             const clinicaId = req.headers['x-clinic-id'];
-            // Se uma clínica específica for selecionada, filtra por ela.
-            // Se não, o filtro fica vazio e busca de TODAS as clínicas.
-            if (clinicaId) filtro.clinica = clinicaId; 
+            if (clinicaId) filtro.clinica = clinicaId;
         } else if (req.usuario.perfil === 'funcionario') {
             const funcionarioLogado = await User.findById(req.usuario.id);
             if (funcionarioLogado && funcionarioLogado.clinica) {
@@ -81,9 +79,7 @@ router.get('/procedimentos', async (req, res) => {
         const filtro = {};
         if (req.usuario.perfil === 'patrao') {
             const clinicaId = req.headers['x-clinic-id'];
-            // Se uma clínica específica for selecionada, filtra por ela.
-            // Se não, o filtro fica vazio e busca de TODAS as clínicas.
-            if (clinicaId) filtro.clinica = clinicaId; 
+            if (clinicaId) filtro.clinica = clinicaId;
         } else if (req.usuario.perfil === 'funcionario') {
             const funcionarioLogado = await User.findById(req.usuario.id);
             if (funcionarioLogado && funcionarioLogado.clinica) {

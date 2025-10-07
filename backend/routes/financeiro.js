@@ -38,24 +38,28 @@ router.get('/', async (req, res) => {
 });
 router.get('/:id', async (req, res) => { const item = await Financeiro.findById(req.params.id); res.json(item); });
 router.post('/', async (req, res) => { 
-  let clinicaId;
-
-  // ✅ CORREÇÃO: Garante que a clínica seja a do funcionário logado.
-  if (req.usuario.perfil === 'funcionario') {
-      const funcionarioLogado = await User.findById(req.usuario.id);
-      clinicaId = funcionarioLogado?.clinica;
-  } else {
-      // Para o patrão, continua usando o cabeçalho.
-      clinicaId = req.headers['x-clinic-id'];
+  try {
+    let clinicaId;
+  
+    // ✅ CORREÇÃO: Garante que a clínica seja a do funcionário logado.
+    if (req.usuario.perfil === 'funcionario') {
+        const funcionarioLogado = await User.findById(req.usuario.id);
+        clinicaId = funcionarioLogado?.clinica;
+    } else {
+        // Para o patrão, continua usando o cabeçalho.
+        clinicaId = req.headers['x-clinic-id'];
+    }
+  
+    if (!clinicaId) return res.status(400).json({ message: "O usuário não está associado a nenhuma clínica." });
+  
+    const newItem = await Financeiro.create({
+      ...req.body,
+      clinica: clinicaId // Associa à clínica correta.
+    }); 
+    res.json(newItem); 
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao criar registro financeiro.', error });
   }
-
-  if (!clinicaId) return res.status(400).json({ message: "O usuário não está associado a nenhuma clínica." });
-
-  const newItem = await Financeiro.create({
-    ...req.body,
-    clinica: clinicaId // Associa à clínica correta.
-  }); 
-  res.json(newItem); 
 });
 router.put('/:id', async (req, res) => { const updated = await Financeiro.findByIdAndUpdate(req.params.id, req.body, { new: true }); res.json(updated); });
 router.delete('/:id', async (req, res) => { await Financeiro.findByIdAndDelete(req.params.id); res.json({ message: 'Deletado com sucesso' }); });
