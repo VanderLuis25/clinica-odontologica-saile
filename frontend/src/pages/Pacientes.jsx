@@ -1,4 +1,4 @@
-ssaimport React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import './Pacientes.css';
 import { SystemDataContext } from "../context/SystemDataContext.jsx"; 
 
@@ -231,7 +231,6 @@ export default function Pacientes() {
                 <table>
                     <thead>
                         <tr><th>Nome</th><th>Idade</th><th>CPF</th><th>Telefone</th><th>Ações</th></tr>
-                        <tr><th>Nome</th><th>Idade</th><th>CPF</th><th>Telefone</th><th>Clínica</th><th>Ações</th></tr>
                     </thead>
                     <tbody>
                         {pacientes.map(p => (
