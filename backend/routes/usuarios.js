@@ -219,6 +219,21 @@ router.get("/", verifyToken, verifyPatrao, async (req, res) => {
   }
 });
 
+// ✅ NOVA ROTA: Buscar um usuário específico por ID
+// Permite que um usuário logado busque seus próprios dados.
+router.get("/:id", verifyToken, async (req, res) => {
+  try {
+    // Garante que um usuário só possa ver seu próprio perfil, a menos que seja o patrão.
+    if (req.userPerfil !== 'patrao' && req.userId !== req.params.id) {
+      return res.status(403).send("Acesso negado.");
+    }
+    const user = await User.findById(req.params.id, { password: 0 }).populate('clinica');
+    if (!user) return res.status(404).send("Usuário não encontrado.");
+    res.json(user);
+  } catch (err) {
+    res.status(500).send("Erro ao buscar usuário: " + err.message);
+  }
+});
 
 router.post("/", verifyToken, verifyPatrao, upload.single("foto"), async (req, res) => {
   try {

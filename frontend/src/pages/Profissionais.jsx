@@ -320,26 +320,28 @@ export default function Profissionais() {
 
                 let userRes = [];
 
-                // ✅ LÓGICA DE BUSCA DE DADOS POR PERFIL
+                // ✅ LÓGICA DE BUSCA DE DADOS CORRIGIDA
                 if (perfilLogado === 'patrao') {
                     // Patrão busca todos os usuários
                     const { data: allUsers } = await apiService.getUsuarios();
                     const staff = allUsers.filter(u => u.perfil === 'patrao' || u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
                     const selectedClinicId = localStorage.getItem('selectedClinicId');
                     if (selectedClinicId) {
+                        // Filtra os funcionários pela clínica selecionada (exceto o patrão que não tem clínica)
                         userRes = staff.filter(u => u.clinica?._id === selectedClinicId);
                     } else {
                         userRes = staff || [];
                     }
                 } else if (tipoProfissionalLogado === 'Dr(a)') {
                     // Profissional logado: busca apenas o seu próprio perfil.
-                    const { data: meuPerfil } = await apiService.getUsuarioById(userIdLogado); // Supondo que exista essa rota
-                    userRes = [meuPerfil];
+                    const { data: meuPerfil } = await apiService.getUsuarioById(userIdLogado);
+                    userRes = meuPerfil ? [meuPerfil] : [];
                 } else if (tipoProfissionalLogado === 'Atendente') {
                     // Atendente logado: busca todos os Doutores da sua clínica.
-                    const { data: allUsers } = await apiService.getUsuarios(); // Atendente pode precisar ver a lista
-                    const staff = userRes.filter(u => u.perfil === 'patrao' || u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
-                    userRes = staff.filter(u => u.profissional === 'Dr(a)' && u.clinica?._id === clinicaIdLogado);
+                    // O atendente não tem permissão para /usuarios, então buscamos os profissionais da clínica dele.
+                    // A rota /profissionais já filtra pela clínica do funcionário logado.
+                    const { data: drsDaClinica } = await apiService.getProfissionais();
+                    userRes = drsDaClinica || [];
                 } else {
                     userRes = []; // Nenhum perfil correspondente, lista vazia.
                 }
