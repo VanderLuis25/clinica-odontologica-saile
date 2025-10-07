@@ -126,6 +126,13 @@
   transform: scale(0.98);
 }
 
+/* ✅ NOVO: Estilo para os dois botões do admin */
+.admin-buttons {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
 /* --- Estilos do Modal (Agenda) --- */
 .modal-overlay {
   position: fixed;
