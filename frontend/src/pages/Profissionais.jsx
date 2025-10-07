@@ -319,9 +319,12 @@ export default function Profissionais() {
                 
                 // ✅ LÓGICA DE FILTRO: Se uma clínica está selecionada, esconde o card do patrão.
                 const selectedClinicId = localStorage.getItem('selectedClinicId');
-                if (selectedClinicId && selectedClinicId !== '') {
-                    setProfissionais(staff.filter(u => u.perfil !== 'patrao'));
+                if (selectedClinicId) {
+                    // Filtra os funcionários pela clínica selecionada. O card do patrão não tem clínica, então é omitido.
+                    const clinicStaff = staff.filter(u => u.clinica?._id === selectedClinicId);
+                    setProfissionais(clinicStaff);
                 } else {
+                    // Na "Visão Geral", mostra todos, incluindo o patrão.
                     setProfissionais(staff || []);
                 }
                 setAgendamentos(agendRes || []); 
