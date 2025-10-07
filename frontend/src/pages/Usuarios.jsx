@@ -103,15 +103,20 @@ export default function Usuarios() {
         return;
       }
 
+        // ✅ LÓGICA DE PERFIL: Define o perfil com base na seleção da clínica.
+        // Se 'admin' for selecionado no campo clínica, o perfil é 'patrao'.
+        // Caso contrário, é 'funcionario'.
+        const perfilUsuario = novoFuncionario.clinica === 'admin' ? 'patrao' : 'funcionario';
+
       const formData = new FormData();
       Object.keys(novoFuncionario).forEach((key) => {
         const value = novoFuncionario[key];
-        if (
-          value !== null &&
-          value !== "" &&
-          !(editando && key === "password" && value === "")
-        ) {
-          formData.append(key, value);
+          // Não anexa a clínica se for 'admin'
+          if (key === 'clinica' && value === 'admin') {
+            return;
+          }
+          if (value !== null && value !== "" && !(editando && key === "password" && value === "")) {
+              formData.append(key, value);
         }
       });
 
@@ -120,7 +125,7 @@ export default function Usuarios() {
           setMsg("Senha é obrigatória para novo funcionário.");
           return;
         }
-        formData.append("perfil", "funcionario");
+        formData.append("perfil", perfilUsuario);
         await apiService.createUsuario(formData);
         setMsg("Funcionário criado com sucesso!");
       } else {
@@ -259,9 +264,10 @@ export default function Usuarios() {
             name="clinica"
             value={novoFuncionario.clinica}
             onChange={handleChange}
-            required
           >
             <option value="">Selecione a Clínica</option>
+            {/* ✅ NOVO: Opção para cadastrar um administrador/patrão */}
+            <option value="admin">Admin (Patrão/Dona)</option>
             {clinicas.map(c => (
               <option key={c._id} value={c._id}>{c.nome}</option>
             ))}
