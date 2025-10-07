@@ -315,8 +315,15 @@ export default function Profissionais() {
                 ]);
                     
                 // Filtra para exibir apenas Doutores e Atendentes
-                const staff = userRes.filter(u => u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
-                setProfissionais(staff || []);
+                const staff = userRes.filter(u => u.perfil === 'patrao' || u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
+                
+                // ✅ LÓGICA DE FILTRO: Se uma clínica está selecionada, esconde o card do patrão.
+                const selectedClinicId = localStorage.getItem('selectedClinicId');
+                if (selectedClinicId && selectedClinicId !== '') {
+                    setProfissionais(staff.filter(u => u.perfil !== 'patrao'));
+                } else {
+                    setProfissionais(staff || []);
+                }
                 setAgendamentos(agendRes || []); 
                 setPacientes(pacRes || []);
             } catch (err) {
@@ -371,9 +378,14 @@ export default function Profissionais() {
                             </div>
                             {/* ✅ LÓGICA CONDICIONAL DOS BOTÕES */}
                             {prof.perfil === 'patrao' ? (
-                                <button className="agenda-btn" onClick={() => navigate('/usuarios')}>
-                                    <FaUserCog /> Gerenciar Usuários
-                                </button>
+                                <div className="admin-buttons">
+                                    <button className="agenda-btn" onClick={() => abrirAgenda(prof)}>
+                                        <FaCalendarAlt /> Ver Agenda
+                                    </button>
+                                    <button className="agenda-btn" onClick={() => navigate('/usuarios')}>
+                                        <FaUserCog /> Gerenciar Usuários
+                                    </button>
+                                </div>
                             ) : prof.profissional === 'Dr(a)' ? (
                                 <button className="agenda-btn" onClick={() => abrirAgenda(prof)}>
                                     <FaCalendarAlt /> Acessar Agenda
