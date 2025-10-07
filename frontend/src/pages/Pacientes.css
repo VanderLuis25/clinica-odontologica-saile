@@ -33,6 +33,29 @@ h2 {
     background-color: #500350;
 }
 
+/* ✅ NOVO: Estilo da Barra de Pesquisa */
+.search-bar-pacientes {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.search-bar-pacientes .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.search-bar-pacientes input {
+    width: 100%;
+    padding: 12px 15px 12px 45px; /* Espaço para o ícone */
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
 /* =====================
    Tabela de Pacientes
 ===================== */

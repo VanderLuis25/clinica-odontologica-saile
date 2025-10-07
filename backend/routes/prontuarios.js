@@ -32,7 +32,9 @@ router.get("/", async (req, res) => {
         }
     }
 
-    const prontuarios = await Prontuario.find(filtro).sort({ createdAt: -1 });
+    const prontuarios = await Prontuario.find(filtro)
+        .populate('profissional', 'nome') // ✅ Popula o nome do profissional
+        .sort({ createdAt: -1 });
     res.json(prontuarios);
   } catch (err) {
     res.status(500).json({ message: "Erro ao buscar prontuários", error: err.message });
@@ -57,7 +59,8 @@ router.post("/", async (req, res) => {
 
     const novoProntuario = new Prontuario({
       ...req.body,
-      clinica: clinicaId // Associa à clínica correta.
+      clinica: clinicaId, // Associa à clínica correta.
+      profissional: req.usuario.id // ✅ Salva o ID do profissional que criou
     });
     await novoProntuario.save();
     res.status(201).json(novoProntuario);

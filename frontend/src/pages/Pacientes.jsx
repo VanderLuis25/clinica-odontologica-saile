@@ -177,12 +177,23 @@ export default function Pacientes() {
     const { pacientes, fetchPacientes, createPaciente, updatePaciente, deletePaciente, loading } = useContext(SystemDataContext);
 
     const [selectedPatient, setSelectedPatient] = useState(null);
+    const [searchTerm, setSearchTerm] = useState(""); // ✅ NOVO: Estado para a busca
     const [showForm, setShowForm] = useState(false);
 
     // Garante que o fetch ocorra SÓ na montagem
     useEffect(() => {
         fetchPacientes();
     }, []); // ⬅️ ARRAY DE DEPENDÊNCIAS VAZIO!
+
+    // ✅ NOVO: Filtra os pacientes com base no termo de busca
+    const filteredPacientes = useMemo(() => {
+        if (!searchTerm) return pacientes;
+        const lowerCaseSearchTerm = searchTerm.toLowerCase();
+        return pacientes.filter(p => 
+            (p.nome?.toLowerCase() || "").includes(lowerCaseSearchTerm) ||
+            (p.cpf?.toLowerCase() || "").includes(lowerCaseSearchTerm)
+        );
+    }, [pacientes, searchTerm]);
 
     const handleSavePatient = async (patientData) => {
         try {
@@ -227,13 +238,24 @@ export default function Pacientes() {
                 + Cadastrar Novo Paciente
             </button>
 
-            {(pacientes.length === 0) ? <p>Nenhum paciente cadastrado.</p> : (
+            {/* ✅ NOVO: Barra de pesquisa */}
+            <div className="search-bar-pacientes">
+                <FaSearch className="search-icon" />
+                <input 
+                    type="text"
+                    placeholder="Pesquisar por nome ou CPF..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+
+            {(filteredPacientes.length === 0) ? <p>Nenhum paciente encontrado.</p> : (
                 <table>
                     <thead>
-                        <tr><th>Nome</th><th>Idade</th><th>CPF</th><th>Telefone</th><th>Ações</th></tr>
+                        <tr><th>Nome</th><th>Idade</th><th>CPF</th><th>Telefone</th><th>Clínica</th><th>Ações</th></tr>
                     </thead>
                     <tbody>
-                        {pacientes.map(p => (
+                        {filteredPacientes.map(p => (
                             <tr key={p._id}>
                                 <td>{p.nome}</td>
                                 {/* 💡 A IDADE É CALCULADA AQUI */}

@@ -9,7 +9,7 @@ import logo from "../assets/odontologia-logo.png"; // Logo da empresa
 // Componente simples para a mensagem Toast
 const Toast = ({ message, type, onClose }) => {
   if (!message) return null;
-  
+
   const baseClasses = "fixed bottom-5 right-5 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300";
   const typeClasses = type === 'error' ? "bg-red-600" : "bg-green-600";
 
@@ -147,7 +147,7 @@ export default function Prontuario() {
   const handleLimparAssinatura = () => {
     sigPadRef.current.clear();
   };
-  
+
   const handleLimparAssinaturaPaciente = () => {
     sigPadPacienteRef.current.clear();
   };
@@ -246,11 +246,11 @@ export default function Prontuario() {
         const lines = doc.splitTextToSize(textContent, 180); // 180mm de largura
         doc.text(lines, 10, y);
         y += (lines.length * 5) + 5; // Aumenta o y com base no número de linhas
-        
+
         // Adiciona nova página se estiver muito perto do fim
         if (y > 270) {
-            doc.addPage();
-            y = 20;
+          doc.addPage();
+          y = 20;
         }
       }
     }
@@ -258,18 +258,18 @@ export default function Prontuario() {
     if (prontuario.assinaturaProfissional) {
       // Verifica se precisa de nova página para a assinatura
       if (y > 220) {
-          doc.addPage();
-          y = 20;
+        doc.addPage();
+        y = 20;
       }
       doc.text("Assinatura do Profissional:", 10, y);
       doc.addImage(prontuario.assinaturaProfissional, "PNG", 10, y + 5, 80, 40);
       y += 50;
     }
-    
+
     if (prontuario.assinaturaPaciente) {
       if (y > 220) {
-          doc.addPage();
-          y = 20;
+        doc.addPage();
+        y = 20;
       }
       doc.text("Assinatura do Paciente:", 10, y);
       doc.addImage(prontuario.assinaturaPaciente, "PNG", 10, y + 5, 80, 40);
@@ -289,9 +289,9 @@ export default function Prontuario() {
       // Limpa o canvas. A assinatura antiga já está no `formData`.
       if (sigPadRef.current) sigPadRef.current.clear();
       if (sigPadPacienteRef.current) sigPadPacienteRef.current.clear();
-      
+
       const pacienteOriginal = pacientes.find(p => p.cpf === prontuarioParaEditar.cpf);
-      if(pacienteOriginal) setSelectedPaciente(pacienteOriginal);
+      if (pacienteOriginal) setSelectedPaciente(pacienteOriginal);
       setSearchTerm(prontuarioParaEditar.nome);
     }
   };
@@ -330,12 +330,12 @@ export default function Prontuario() {
           {editId ? "Editando Prontuário" : selectedTab === "fichaAdulto"
             ? "Ficha de Avaliação Odontológica (Adulto)"
             : selectedTab === "fichaInfantil"
-            ? "Ficha Infantil"
-            : selectedTab === "evolucao"
-            ? "Evolução de Tratamento"
-            : selectedTab === "receituario"
-            ? "Receituário"
-            : "Procedimentos"}
+              ? "Ficha Infantil"
+              : selectedTab === "evolucao"
+                ? "Evolução de Tratamento"
+                : selectedTab === "receituario"
+                  ? "Receituário"
+                  : "Procedimentos"}
         </h2>
 
         <fieldset>
@@ -415,7 +415,9 @@ export default function Prontuario() {
           </div>
         </fieldset>
 
-        <button type="submit">{editId ? "Atualizar Prontuário" : "Salvar Prontuário"}</button>
+        <button type="submit" className="btn-salvar-prontuario">
+          {editId ? "Atualizar Prontuário" : "Salvar Prontuário"}
+        </button>
         {editId && (
           <button type="button" onClick={limparFormulario} style={{ background: '#6c757d' }}>
             <FaTimes /> Cancelar Edição
@@ -432,7 +434,7 @@ export default function Prontuario() {
 
       {/* Modal de Confirmação */}
       {isConfirming && (
-        <ConfirmationModal 
+        <ConfirmationModal
           message="Deseja realmente excluir este prontuário? Esta ação não pode ser desfeita."
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
@@ -472,12 +474,12 @@ export default function Prontuario() {
             {tab === "fichaAdulto"
               ? "Ficha Adulto"
               : tab === "fichaInfantil"
-              ? "Ficha Infantil"
-              : tab === "evolucao"
-              ? "Evolução"
-              : tab === "receituario"
-              ? "Receituário"
-              : "Procedimentos"}
+                ? "Ficha Infantil"
+                : tab === "evolucao"
+                  ? "Evolução"
+                  : tab === "receituario"
+                    ? "Receituário"
+                    : "Procedimentos"}
           </button>
         ))}
       </div>
@@ -495,6 +497,7 @@ export default function Prontuario() {
                 <tr>
                   <th>Paciente</th>
                   <th>Data de Criação</th>
+                  <th>Profissional</th>
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -502,6 +505,7 @@ export default function Prontuario() {
                 {prontuarios.map((p) => (
                   <tr key={p._id}>
                     <td>{p.nome}</td>
+                    <td>{p.profissional?.nome || 'N/A'}</td>
                     <td>{new Date(p.createdAt).toLocaleDateString("pt-BR")}</td>
                     <td className="acoes">
                       <button onClick={() => handleBaixarPDF(p)} title="Baixar PDF"><FaDownload /></button>
@@ -520,6 +524,7 @@ export default function Prontuario() {
                   <div className="prontuario-item-info">
                     <strong>{p.nome}</strong>
                     <span>Criado em: {new Date(p.createdAt).toLocaleDateString("pt-BR")}</span>
+                    <small>Por: {p.profissional?.nome || 'N/A'}</small>
                   </div>
                   <div className="acoes">
                     <button onClick={() => handleBaixarPDF(p)} title="Baixar PDF"><FaDownload /></button>
