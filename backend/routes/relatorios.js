@@ -15,14 +15,8 @@ router.get('/financeiro', async (req, res) => {
         const filtro = {};
         if (req.usuario.perfil === 'patrao') {
             const clinicaId = req.headers['x-clinic-id'];
-            if (clinicaId) {
-                const matriz = await Clinica.findOne().sort({ createdAt: 1 });
-                if (matriz && matriz._id.toString() === clinicaId) {
-                    filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
-                } else {
-                    filtro.clinica = clinicaId;
-                }
-            }
+            // Se uma clínica específica for selecionada, filtra por ela. Senão, busca de todas.
+            if (clinicaId) filtro.clinica = clinicaId;
         } else if (req.usuario.perfil === 'funcionario') {
             const funcionarioLogado = await User.findById(req.usuario.id);
             if (funcionarioLogado && funcionarioLogado.clinica) {
