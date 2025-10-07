@@ -377,6 +377,7 @@ export default function Procedimentos() {
                                         <th>Telefone</th>
                                         <th>CPF</th>
                                         <th>Valor</th>
+                                        <th>Clínica</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
@@ -388,6 +389,7 @@ export default function Procedimentos() {
                                             <td>{p.paciente?.telefone || "Não informado"}</td>
                                             <td>{p.paciente?.cpf || "Não informado"}</td>
                                             <td>{formatCurrency(p.valor)}</td>
+                                            <td>{p.clinica?.nome || "N/A"}</td>
                                             <td className="proc-table-actions">
                                                 <button className="proc-btn-edit" onClick={() => handleEdit(p)} title="Editar Procedimento"><FaEdit /></button>
                                                 <button className="proc-btn-delete" onClick={() => handleDelete(p._id)} title="Deletar Procedimento"><FaTrashAlt /></button>

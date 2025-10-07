@@ -30,7 +30,8 @@ router.get('/', async (req, res) => {
 
         const pacientes = await Paciente.find(filtro)
             // Retornando a dataNascimento para cálculo de idade no frontend
-            .select('nome cpf telefone dataNascimento') 
+            .select('nome cpf telefone dataNascimento clinica') 
+            .populate('clinica', 'nome') // ✅ Adicionado para incluir o nome da clínica
             .sort({ nome: 1 });
         res.status(200).json(pacientes);
     } catch (error) {

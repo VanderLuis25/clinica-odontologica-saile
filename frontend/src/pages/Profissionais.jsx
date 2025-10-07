@@ -271,6 +271,7 @@ const AgendaModal = ({ profissional, onClose, agendamentosPorProfissional, pacie
 // ------------------------------------------
 export default function Profissionais() {
     const [profissionais, setProfissionais] = useState([]);
+    const navigate = useNavigate(); // ✅ Adicionado para navegação
     const [agendamentos, setAgendamentos] = useState([]); 
     const [pacientes, setPacientes] = useState([]);       
     const [modalAberto, setModalAberto] = useState(false);
@@ -364,9 +365,18 @@ export default function Profissionais() {
                                 {prof.tel && <p><FaPhone /> Telefone: {prof.tel}</p>}
                                 {prof.email && <p><FaEnvelope /> Email: {prof.email}</p>}
                             </div>
-                            <button className="agenda-btn" onClick={() => abrirAgenda(prof)}>
-                                <FaCalendarAlt /> Acessar Agenda
-                            </button>
+                            {/* ✅ LÓGICA CONDICIONAL DOS BOTÕES */}
+                            {prof.perfil === 'patrao' ? (
+                                <button className="agenda-btn" onClick={() => navigate('/usuarios')}>
+                                    <FaUserCog /> Gerenciar Usuários
+                                </button>
+                            ) : prof.profissional === 'Dr(a)' ? (
+                                <button className="agenda-btn" onClick={() => abrirAgenda(prof)}>
+                                    <FaCalendarAlt /> Acessar Agenda
+                                </button>
+                            ) : (
+                                <div className="no-agenda-placeholder"></div> // Espaço reservado para atendentes
+                            )}
                         </div>
                     </div>
                 ))}

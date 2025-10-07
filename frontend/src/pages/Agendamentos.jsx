@@ -470,11 +470,11 @@ const Agendamentos = () => {
 
                 <table className="agendamentos-table">
                     <thead>
-                        <tr><th>PACIENTE</th><th>CPF</th><th>TELEFONE</th><th>PROCEDIMENTO</th><th>PROFISSIONAL</th><th>DATA</th><th>HORA</th><th>STATUS</th><th>AÇÕES</th></tr>
+                        <tr><th>PACIENTE</th><th>CPF</th><th>TELEFONE</th><th>PROCEDIMENTO</th><th>PROFISSIONAL</th><th>CLÍNICA</th><th>DATA</th><th>HORA</th><th>STATUS</th><th>AÇÕES</th></tr>
                     </thead>
                     <tbody>
                         {sortedAndFilteredAgendamentos.length === 0 ? (
-                            <tr><td colSpan="9" style={{ textAlign: 'center' }}>Nenhum agendamento encontrado.</td></tr>
+                            <tr><td colSpan="10" style={{ textAlign: 'center' }}>Nenhum agendamento encontrado.</td></tr>
                         ) : (
                             sortedAndFilteredAgendamentos.map(ag => (
                                 <tr key={ag._id}>
@@ -483,6 +483,7 @@ const Agendamentos = () => {
                                     <td>{ag.paciente?.telefone ?? 'N/A'}</td>
                                     <td>{ag.procedimento?.nome ?? 'N/A'}</td>
                                     <td>{ag.profissional?.nome ?? 'N/A'}</td>
+                                    <td>{ag.clinica?.nome ?? 'N/A'}</td>
                                     <td>{new Date(ag.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
                                     <td>{ag.hora}</td>
                                     <td>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+ssaimport React, { useState, useEffect, useContext } from "react";
 import './Pacientes.css';
 import { SystemDataContext } from "../context/SystemDataContext.jsx"; 
 
@@ -231,6 +231,7 @@ export default function Pacientes() {
                 <table>
                     <thead>
                         <tr><th>Nome</th><th>Idade</th><th>CPF</th><th>Telefone</th><th>Ações</th></tr>
+                        <tr><th>Nome</th><th>Idade</th><th>CPF</th><th>Telefone</th><th>Clínica</th><th>Ações</th></tr>
                     </thead>
                     <tbody>
                         {pacientes.map(p => (
@@ -240,6 +241,7 @@ export default function Pacientes() {
                                 <td>{calculateAge(p.dataNascimento)}</td> 
                                 <td>{p.cpf}</td>
                                 <td>{p.telefone}</td>
+                                <td>{p.clinica?.nome || 'N/A'}</td>
                                 <td className="actions-cell">
                                     <button className="edit-button" onClick={() => { setSelectedPatient(p); setShowForm(true); }}>
                                         Editar

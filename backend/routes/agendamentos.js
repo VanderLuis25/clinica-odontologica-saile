@@ -1,4 +1,4 @@
-// routes/agendamentos.js
+no// routes/agendamentos.js
 import express from 'express';
 import { emitirAtualizacao } from '../server.js';
 import Agendamento from '../models/Agendamento.js';
@@ -47,7 +47,8 @@ router.get('/', async (req, res) => {
             .populate({
                 path: 'profissional',
                 select: 'nome funcao perfil' 
-            });
+            })
+            .populate('clinica', 'nome'); // ✅ Adicionado para incluir o nome da clínica
 
         res.json(agendamentos);
     } catch (err) {
