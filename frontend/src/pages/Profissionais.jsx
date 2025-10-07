@@ -307,39 +307,43 @@ export default function Profissionais() {
         const carregarDados = async () => {
             try {
                 setLoading(true);
-                // Busca todos os dados em paralelo
-                const [{ data: userRes }, { data: agendRes }, { data: pacRes }] = await Promise.all([
-                    apiService.getUsuarios(), // ✅ CORREÇÃO: Busca todos os usuários
-                    apiService.getAgendamentos(), 
-                    apiService.getPacientes(), 
-                ]);
-                    
-                // ✅ NOVA LÓGICA DE FILTRAGEM POR PERFIL
                 const perfilLogado = localStorage.getItem('perfil');
                 const tipoProfissionalLogado = localStorage.getItem('tipoProfissional');
                 const userIdLogado = localStorage.getItem('userId');
                 const clinicaIdLogado = localStorage.getItem('clinicaId');
 
+                // Busca agendamentos e pacientes em paralelo, pois são sempre necessários
+                const [{ data: agendRes }, { data: pacRes }] = await Promise.all([
+                    apiService.getAgendamentos(), 
+                    apiService.getPacientes(), 
+                ]);
+
+                let userRes = [];
+
+                // ✅ LÓGICA DE BUSCA DE DADOS POR PERFIL
                 if (perfilLogado === 'patrao') {
-                    const staff = userRes.filter(u => u.perfil === 'patrao' || u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
+                    // Patrão busca todos os usuários
+                    const { data: allUsers } = await apiService.getUsuarios();
+                    const staff = allUsers.filter(u => u.perfil === 'patrao' || u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
                     const selectedClinicId = localStorage.getItem('selectedClinicId');
                     if (selectedClinicId) {
-                        const clinicStaff = staff.filter(u => u.clinica?._id === selectedClinicId);
-                        setProfissionais(clinicStaff);
+                        userRes = staff.filter(u => u.clinica?._id === selectedClinicId);
                     } else {
-                        setProfissionais(staff || []);
+                        userRes = staff || [];
                     }
                 } else if (tipoProfissionalLogado === 'Dr(a)') {
-                    // Profissional logado: mostra apenas o seu próprio card.
-                    const meuPerfil = userRes.filter(u => u._id === userIdLogado);
-                    setProfissionais(meuPerfil);
+                    // Profissional logado: busca apenas o seu próprio perfil.
+                    const { data: meuPerfil } = await apiService.getUsuarioById(userIdLogado); // Supondo que exista essa rota
+                    userRes = [meuPerfil];
                 } else if (tipoProfissionalLogado === 'Atendente') {
-                    // Atendente logado: mostra todos os Doutores da sua clínica.
-                    const drsDaMinhaClinica = userRes.filter(u => u.profissional === 'Dr(a)' && u.clinica?._id === clinicaIdLogado);
-                    setProfissionais(drsDaMinhaClinica);
+                    // Atendente logado: busca todos os Doutores da sua clínica.
+                    const { data: allUsers } = await apiService.getUsuarios(); // Atendente pode precisar ver a lista
+                    const staff = userRes.filter(u => u.perfil === 'patrao' || u.profissional === 'Dr(a)' || u.profissional === 'Atendente');
+                    userRes = staff.filter(u => u.profissional === 'Dr(a)' && u.clinica?._id === clinicaIdLogado);
                 } else {
-                    setProfissionais([]); // Nenhum perfil correspondente, lista vazia.
+                    userRes = []; // Nenhum perfil correspondente, lista vazia.
                 }
+                setProfissionais(userRes);
                 setAgendamentos(agendRes || []); 
                 setPacientes(pacRes || []);
             } catch (err) {

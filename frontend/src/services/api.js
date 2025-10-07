@@ -59,6 +59,7 @@ export const apiService = {
   // ------------------ Usuários / Profissionais ------------------
   getUsuarios: (perfil = "") => api.get(perfil ? `/usuarios?perfil=${perfil}` : '/usuarios'),
   getProfissionais: () => api.get('/profissionais'),
+  getUsuarioById: (id) => api.get(`/usuarios/${id}`), // ✅ Rota para buscar um usuário específico
   createUsuario: (formData) => api.post('/usuarios', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
