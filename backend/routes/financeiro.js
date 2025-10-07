@@ -38,11 +38,22 @@ router.get('/', async (req, res) => {
 });
 router.get('/:id', async (req, res) => { const item = await Financeiro.findById(req.params.id); res.json(item); });
 router.post('/', async (req, res) => { 
-  // 💡 ATUALIZAÇÃO: Associa o lançamento à clínica selecionada.
-  const clinicaId = req.headers['x-clinic-id'];
+  let clinicaId;
+
+  // ✅ CORREÇÃO: Garante que a clínica seja a do funcionário logado.
+  if (req.usuario.perfil === 'funcionario') {
+      const funcionarioLogado = await User.findById(req.usuario.id);
+      clinicaId = funcionarioLogado?.clinica;
+  } else {
+      // Para o patrão, continua usando o cabeçalho.
+      clinicaId = req.headers['x-clinic-id'];
+  }
+
+  if (!clinicaId) return res.status(400).json({ message: "O usuário não está associado a nenhuma clínica." });
+
   const newItem = await Financeiro.create({
     ...req.body,
-    clinica: clinicaId
+    clinica: clinicaId // Associa à clínica correta.
   }); 
   res.json(newItem); 
 });
