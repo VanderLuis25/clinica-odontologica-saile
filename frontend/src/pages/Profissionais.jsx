@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiService } from "../services/api.js";
 import { FaCalendarAlt, FaTimes, FaClock, FaArrowLeft, FaArrowRight, FaInfoCircle, FaUser, FaPhone, FaEnvelope, FaIdCard } from "react-icons/fa"; 
 import "./Profissionais.css";
@@ -271,7 +272,7 @@ const AgendaModal = ({ profissional, onClose, agendamentosPorProfissional, pacie
 // ------------------------------------------
 export default function Profissionais() {
     const [profissionais, setProfissionais] = useState([]);
-    const navigate = useNavigate(); // ✅ Adicionado para navegação
+    const navigate = useNavigate();
     const [agendamentos, setAgendamentos] = useState([]); 
     const [pacientes, setPacientes] = useState([]);       
     const [modalAberto, setModalAberto] = useState(false);
