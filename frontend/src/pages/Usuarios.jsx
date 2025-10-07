@@ -33,9 +33,8 @@ export default function Usuarios() {
   const carregarFuncionarios = async () => {
     try {
       const { data: lista } = await apiService.getUsuarios();
-      // A API agora já filtra por clínica, mas mantemos o filtro de 'patrao' no frontend
-      const funcionariosFiltrados = lista.filter((u) => u.perfil !== "patrao" && u.username !== 'patrao');
-      setFuncionarios(funcionariosFiltrados);
+      // ✅ CORREÇÃO: Remove o filtro que ocultava o perfil "patrao".
+      setFuncionarios(lista || []);
     } catch (err) {
       console.error(err);
       if (err.message && err.message.includes("401")) {
@@ -317,7 +316,7 @@ export default function Usuarios() {
               <th>Email</th>
               <th>Função/Especialidade</th>
               <th>Clínica</th>
-              <th>Tipo</th>
+              <th>Perfil</th>
               <th>Usuário</th>
               <th>Ações</th>
             </tr>
@@ -331,7 +330,8 @@ export default function Usuarios() {
                 <td>{f.email}</td>
                 <td>{f.funcao}</td>
                 <td>{f.clinica?.nome || 'N/A'}</td>
-                <td>{f.profissional}</td>
+                {/* ✅ CORREÇÃO: Exibe "Saile" para o perfil de patrão */}
+                <td>{f.perfil === 'patrao' ? 'Saile' : f.profissional}</td>
                 <td>{f.username}</td>
                 <td>
                   <button className="btn-edit" onClick={() => handleEditar(f)}>
