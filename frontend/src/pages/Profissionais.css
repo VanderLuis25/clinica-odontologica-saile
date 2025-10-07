@@ -46,6 +46,12 @@
     justify-content: center;
 }
 
+/* Define um tamanho máximo para o card quando ele for o único na tela */
+.cards-container:has(.profissional-card:only-child) .profissional-card {
+    max-width: 480px;
+    width: 100%;
+}
+
 /* --- Card Individual --- */
 .profissional-card {
   background: var(--card-background);
