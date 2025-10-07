@@ -94,6 +94,10 @@ export const apiService = {
   updateFinanceiro: (id, item) => api.put(`/financeiro/${id}`, item),
   deleteFinanceiro: (id) => api.delete(`/financeiro/${id}`),
 
+  // ------------------ Relatórios (NOVO) ------------------
+  getRelatorioFinanceiro: () => api.get('/relatorios/financeiro'),
+
+
   // ------------------ Prontuários ------------------
   getProntuarios: () => api.get('/prontuarios'),
   createProntuario: (item) => api.post('/prontuarios', item),

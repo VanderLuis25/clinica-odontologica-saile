@@ -112,8 +112,8 @@ export default function Relatorios() {
     // Buscar dados em tempo real e calcular KPIs (Mantido)
     const fetchData = useCallback(async () => {
         try {
-            const [{ data: fin }, { data: ag }, { data: proc }, { data: pac }] = await Promise.all([
-                apiService.getFinanceiro(),
+            const [{ data: fin }, { data: ag }, { data: proc }, { data: pac }] = await Promise.all([ // ✅ CORREÇÃO: Usar a rota de relatórios
+                apiService.getRelatorioFinanceiro(),
                 apiService.getAgendamentos(),
                 apiService.getProcedimentos(),
                 apiService.getPacientes()
