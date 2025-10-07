@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
+import { FaSearch } from "react-icons/fa";
 import './Pacientes.css';
 import { SystemDataContext } from "../context/SystemDataContext.jsx"; 
 
