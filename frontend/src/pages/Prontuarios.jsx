@@ -63,7 +63,7 @@ export default function Prontuario() {
   const [formData, setFormData] = useState({
     nome: "",
     cpf: "",
-    data: "",
+    data: new Date().toISOString().split("T")[0], // ✅ CORREÇÃO: Inicializa com a data atual
     observacoes: "",
     anamnese: "",
     historicoMedico: "",
@@ -154,7 +154,7 @@ export default function Prontuario() {
 
   const limparFormulario = () => {
     setFormData({
-      nome: "", cpf: "", data: "", observacoes: "", anamnese: "", historicoMedico: "",
+      nome: "", cpf: "", data: new Date().toISOString().split("T")[0], observacoes: "", anamnese: "", historicoMedico: "",
       historicoFamiliar: "", evolucao: "", medicamento: "", dosagem: "", assinaturaProfissional: null,
       assinaturaPaciente: null, areaAplicacao: "", dose: "",
     });
