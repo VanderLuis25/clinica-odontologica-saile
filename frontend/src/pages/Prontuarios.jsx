@@ -421,62 +421,316 @@ export default function Prontuario() {
       fetchProntuarios(); // Recarrega a lista do servidor
     } catch (err) {
       const errorMessage = err.message || "Ocorreu um erro desconhecido.";
-      showMessage(`Erro ao salvar: ${errorMessage}`, "error");
+      showMessage(`Erro ao salvar prontuário: ${errorMessage}`, "error");
       console.error("Erro ao salvar prontuário:", err);
     }
   };
 
-  const handleBaixarPDF = (prontuario) => {
-    const doc = new jsPDF();
+  const handleBaixarPDF = async (prontuario) => { // ✅ FUNÇÃO AGORA É ASSÍNCRONA
+    // Define cores do CSS para uso no jsPDF
+    const PRIMARY_COLOR = '#800580';
+    const BORDER_COLOR = '#dee2e6';
+    const TEXT_COLOR = '#343a40';
+    const SECONDARY_TEXT_COLOR = '#6c757d';
 
+    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+    const margin = 15;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const contentWidth = pageWidth - (margin * 2);
+    let y = 20; // Posição vertical inicial
+
+    // ✅ NOVO: Busca os dados completos do paciente para o PDF
+    let fullPatientData = prontuario.paciente;
+    if (prontuario.paciente && !prontuario.paciente.endereco) { // Verifica se o objeto paciente está populado com endereço
+      try {
+        const { data: fetchedPatient } = await apiService.getPacienteById(prontuario.paciente._id);
+        fullPatientData = fetchedPatient;
+      } catch (error) {
+        console.error("Erro ao buscar detalhes completos do paciente para PDF:", error);
+        // Fallback para os dados parciais se a busca falhar
+        fullPatientData = prontuario.paciente;
+      }
+    }
+
+    // Função para adicionar nova página se necessário
+    const checkPageBreak = (spaceNeeded = 10) => {
+      if (y + spaceNeeded > doc.internal.pageSize.getHeight() - margin) {
+        doc.addPage();
+        y = margin;
+      }
+    };
+
+    // ✅ NOVO: Função para adicionar um título de seção estilizado
+    const addSectionTitle = (title) => {
+      checkPageBreak(15);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(PRIMARY_COLOR);
+      doc.text(title, margin, y);
+      doc.setDrawColor(BORDER_COLOR);
+      doc.setLineWidth(0.2);
+      doc.line(margin, y + 2, pageWidth - margin, y + 2);
+      y += 10;
+      doc.setTextColor(TEXT_COLOR);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+    };
+
+    // ✅ NOVO: Função para adicionar um par chave-valor
+    const addKeyValuePair = (label, value, xOffset = margin, width = contentWidth / 2) => {
+      if (!value) return;
+      checkPageBreak(8);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${label}:`, xOffset, y);
+      doc.setFont('helvetica', 'normal');
+      const textLines = doc.splitTextToSize(String(value), width - doc.getTextWidth(`${label}: `));
+      doc.text(textLines, xOffset + doc.getTextWidth(`${label}: `), y);
+      y += (textLines.length * 4) + 2; // Ajusta a altura da linha
+    };
+
+    // 1. Cabeçalho
     const logoImg = new Image();
     logoImg.src = logo;
-    doc.addImage(logoImg, "PNG", 10, 10, 50, 20);
+    doc.addImage(logoImg, "PNG", margin, margin, 40, 15);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(PRIMARY_COLOR);
+    doc.text('PRONTUÁRIO ODONTOLÓGICO', pageWidth / 2, margin + 10, { align: 'center' }); // Título centralizado
+    doc.setLineWidth(0.5);
+    doc.setDrawColor(PRIMARY_COLOR); // Linha do cabeçalho com cor primária
+    doc.line(margin, margin + 20, pageWidth - margin, margin + 20); // Linha abaixo do título
+    y = margin + 30;
+    doc.setTextColor(TEXT_COLOR); // Reset text color
 
-    doc.setFontSize(16);
-    doc.text(`Prontuário de: ${prontuario.nome}`, 10, 40);
-    doc.text(`CPF: ${prontuario.cpf}`, 10, 50);
-    doc.text(`Data: ${prontuario.data}`, 10, 60);
+    // 2. DADOS DO PACIENTE
+    addSectionTitle('DADOS DO PACIENTE');
 
-    let y = 70;
-    for (const key in prontuario) {
-      if (!["id", "nome", "cpf", "data", "assinaturaProfissional"].includes(key)) {
-        // Tratamento simples para garantir que o texto cabe (apenas para exibição)
-        let textContent = `${key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}: ${prontuario[key]}`;
-        const lines = doc.splitTextToSize(textContent, 180); // 180mm de largura
-        doc.text(lines, 10, y);
-        y += (lines.length * 5) + 5; // Aumenta o y com base no número de linhas
+    // Linha 1: Paciente e Profissional
+    doc.text(`Paciente: ${fullPatientData?.nome || prontuario.nome || 'N/A'}`, margin, y);
+    doc.text(`Profissional: ${prontuario.profissional?.nome || 'N/A'}`, margin + contentWidth / 2, y);
+    y += 6;
 
-        // Adiciona nova página se estiver muito perto do fim
-        if (y > 270) {
-          doc.addPage();
-          y = 20;
-        }
+    // Linha 2: CPF e Data de Nascimento
+    doc.text(`CPF: ${fullPatientData?.cpf || prontuario.cpf || 'N/A'}`, margin, y);
+    doc.text(`Data de Nascimento: ${fullPatientData?.dataNascimento ? new Date(fullPatientData.dataNascimento).toLocaleDateString('pt-BR') : 'N/A'}`, margin + contentWidth / 2, y);
+    y += 6;
+
+    // Linha 3: RG e Sexo
+    doc.text(`RG: ${fullPatientData?.rg || 'N/A'}`, margin, y);
+    doc.text(`Sexo: ${fullPatientData?.sexo || 'N/A'}`, margin + contentWidth / 2, y);
+    y += 6;
+
+    // Linha 4: Profissão e Tel/Cel
+    doc.text(`Profissão: ${fullPatientData?.profissao || 'N/A'}`, margin, y);
+    doc.text(`Tel/Cel: ${fullPatientData?.telefone || 'N/A'}`, margin + contentWidth / 2, y);
+    y += 6;
+
+    // Linha 5: E-mail
+    doc.text(`E-mail: ${fullPatientData?.email || 'N/A'}`, margin, y);
+    y += 6;
+
+    // Endereço
+    const endereco = fullPatientData?.endereco;
+    if (endereco?.rua || endereco?.numero || endereco?.bairro || endereco?.cidade || endereco?.estado || endereco?.cep) {
+      doc.text(`Endereço: ${endereco?.rua || ''}, ${endereco?.numero || ''} - ${endereco?.bairro || ''}`, margin, y);
+      y += 6;
+      doc.text(`Cidade: ${endereco?.cidade || ''} - ${endereco?.estado || ''}, CEP: ${endereco?.cep || ''}`, margin, y);
+      y += 6;
+    }
+    y += 5; // Espaço extra após detalhes do paciente
+
+    // 3. DETALHES DA FICHA (Observações, Histórico, Evolução, Receituário)
+    addSectionTitle('DETALHES DA FICHA');
+    addKeyValuePair('Observações Clínicas', prontuario.observacoes);
+    addKeyValuePair('Histórico Familiar', prontuario.historicoFamiliar);
+    addKeyValuePair('Evolução do Tratamento', prontuario.evolucao);
+    if (prontuario.medicamento) addKeyValuePair('Receituário', `${prontuario.medicamento} - ${prontuario.dosagem}`);
+
+    // 4. Anamnese (se existir)
+    if (prontuario.anamneseCompleta && Object.keys(prontuario.anamneseCompleta).length > 1) {
+      checkPageBreak(20);
+      y += 5;
+      doc.setFontSize(12);
+      addSectionTitle('ANAMNESE / HISTÓRICO MÉDICO');
+      y += 8;
+      doc.setFontSize(10);
+
+      const anamnese = prontuario.anamneseCompleta;
+      const renderAnamneseItem = (label, value) => {
+        if (!value || value === 'nao' || value === '') return; // Ignora 'nao' e campos vazios
+        checkPageBreak(6);
+        doc.setFont('helvetica', 'normal');
+        let text = `${label}: ${value}`;
+        // Simplifica a exibição para 'Sim'
+        if (value === 'sim') text = `${label}: Sim`;
+        doc.text(text, margin, y);
+        y += 6;
+      };
+
+      // ✅ NOVO: Organização mais detalhada da anamnese
+      // Doenças Referidas
+      addSectionTitle('DOENÇAS REFERIDAS');
+      renderAnamneseItem('Diabetes', anamnese.diabetes);
+      if (anamnese.diabetes === 'sim') renderAnamneseItem('Faz dieta para DM', anamnese.diabetesDieta);
+      renderAnamneseItem('Hipertensão', anamnese.hipertensao);
+      if (anamnese.hipertensao === 'sim') renderAnamneseItem('Faz dieta Hipossódica', anamnese.hipertensaoDieta);
+      renderAnamneseItem('Problemas Cardíacos', anamnese.problemasCardiacos);
+      if (anamnese.problemasCardiacos === 'sim') addKeyValuePair('Quais problemas cardíacos', anamnese.problemasCardiacosQuais);
+      renderAnamneseItem('AVC', anamnese.avc);
+      renderAnamneseItem('Doença da Tireoide', anamnese.doencaTireoide);
+      if (anamnese.doencaTireoide === 'sim') renderAnamneseItem('Tipo de Tireoide', anamnese.tipoTireoide);
+      renderAnamneseItem('Asma', anamnese.asma);
+      renderAnamneseItem('Ulcera Gástrica', anamnese.ulceraGastrica);
+      renderAnamneseItem('Anemia', anamnese.anemia);
+      if (anamnese.anemia === 'sim') addKeyValuePair('Qual tipo de anemia', anamnese.anemiaQual);
+      renderAnamneseItem('Hemofilia', anamnese.hemofilia);
+      renderAnamneseItem('Hemorragia', anamnese.hemorragia);
+      renderAnamneseItem('Problema no Fígado', anamnese.problemaFigado);
+      if (anamnese.problemaFigado === 'sim') addKeyValuePair('Qual problema no fígado', anamnese.problemaFigadoQual);
+      renderAnamneseItem('Problema Renal', anamnese.problemaRenal);
+      if (anamnese.problemaRenal === 'sim') addKeyValuePair('Qual problema renal', anamnese.problemaRenalQual);
+      renderAnamneseItem('Convulsão', anamnese.convulsao);
+      if (anamnese.convulsao === 'sim') renderAnamneseItem('Faz tratamento para convulsão', anamnese.convulsaoTratamento);
+      renderAnamneseItem('Epilepsia', anamnese.epilepsia);
+      renderAnamneseItem('Problema Pulmonar', anamnese.problemaPulmonar);
+      if (anamnese.problemaPulmonar === 'sim') addKeyValuePair('Qual problema pulmonar', anamnese.problemaPulmonarQual);
+      renderAnamneseItem('Hepatite', anamnese.hepatite);
+      renderAnamneseItem('Tuberculose', anamnese.tuberculose);
+      renderAnamneseItem('Sífilis', anamnese.sifilis);
+      renderAnamneseItem('HIV+', anamnese.hiv);
+      renderAnamneseItem('Febre Reumática', anamnese.febreReumatica);
+      renderAnamneseItem('Outras Infectocontagiosas', anamnese.outrasInfectocontagiosas);
+      if (anamnese.outrasInfectocontagiosas === 'sim') {
+        renderAnamneseItem('Ativa', anamnese.outrasInfectocontagiosasAtiva);
+        addKeyValuePair('Quais outras infectocontagiosas', anamnese.outrasInfectocontagiosasQuais);
       }
+      renderAnamneseItem('Tumor/Câncer', anamnese.tumorCancer);
+      if (anamnese.tumorCancer === 'sim') addKeyValuePair('Local do tumor/câncer', anamnese.tumorCancerLocal);
+      renderAnamneseItem('Fez Quimio', anamnese.fezQuimio);
+      if (anamnese.fezQuimio === 'sim') {
+        addKeyValuePair('Tempo da Quimio', anamnese.fezQuimioTempo);
+        renderAnamneseItem('Faz Quimio atualmente', anamnese.fazQuimio);
+      }
+      renderAnamneseItem('Fez Radio', anamnese.fezRadio);
+      if (anamnese.fezRadio === 'sim') {
+        addKeyValuePair('Tempo da Radio', anamnese.fezRadioTempo);
+        renderAnamneseItem('Faz Radio atualmente', anamnese.fazRadio);
+      }
+      if (anamnese.acompanhamentoMedico) addKeyValuePair('Acompanhamento Médico', anamnese.acompanhamentoMedico);
+
+      // Antecedentes Cirúrgicos
+      addSectionTitle('ANTECEDENTES CIRÚRGICOS');
+      renderAnamneseItem('Já se submeteu a alguma tratamento cirúrgico', anamnese.cirurgia);
+      if (anamnese.cirurgia === 'sim') addKeyValuePair('Qual cirurgia', anamnese.cirurgiaQual);
+      renderAnamneseItem('Possui alteração de cicatrização', anamnese.alteracaoCicatrizacao);
+      if (anamnese.alteracaoCicatrizacao === 'sim') addKeyValuePair('Qual alteração de cicatrização', anamnese.alteracaoCicatrizacaoQual);
+      renderAnamneseItem('Já teve hemorragia cirúrgica', anamnese.hemorragiaCirurgica);
+      renderAnamneseItem('Já se submeteu a alguma cirurgia Odontológica', anamnese.cirurgiaOdontologica);
+      if (anamnese.cirurgiaOdontologica === 'sim') addKeyValuePair('Qual cirurgia Odontológica', anamnese.cirurgiaOdontologicaQual);
+
+      // Hábitos
+      addSectionTitle('HÁBITOS');
+      renderAnamneseItem('Tabagista', anamnese.tabagista);
+      if (anamnese.tabagista === 'sim') {
+        renderAnamneseItem('Tabagista Ativo', anamnese.tabagistaAtivo);
+        if (anamnese.tabagistaAtivo === 'nao') addKeyValuePair('Parou há quanto tempo', anamnese.tabagistaParouHa);
+        addKeyValuePair('Frequência', anamnese.tabagistaFrequencia);
+        addKeyValuePair('Quantidade/Dia', anamnese.tabagistaQuantidade);
+        addKeyValuePair('Produto', anamnese.tabagistaProduto);
+      }
+      renderAnamneseItem('Alcoolista', anamnese.alcoolista);
+      if (anamnese.alcoolista === 'sim') {
+        renderAnamneseItem('Alcoolista Ativo', anamnese.alcoolistaAtivo);
+        if (anamnese.alcoolistaAtivo === 'nao') addKeyValuePair('Parou há quanto tempo', anamnese.alcoolistaParouHa);
+        addKeyValuePair('Frequência', anamnese.alcoolistaFrequencia);
+        addKeyValuePair('Quantidade/Dia', anamnese.alcoolistaQuantidade);
+      }
+      renderAnamneseItem('Pratica Atividade Física', anamnese.atividadeFisica);
+
+      // Dados de Saúde
+      addSectionTitle('DADOS DE SAÚDE');
+      addKeyValuePair('Pressão Arterial', anamnese.pressaoArterial);
+      if (anamnese.pressaoArterialObs) addKeyValuePair('OBS (Pressão Arterial)', anamnese.pressaoArterialObs);
+      addKeyValuePair('Pulso', anamnese.pulso);
+      if (anamnese.pulsoObs) addKeyValuePair('OBS (Pulso)', anamnese.pulsoObs);
+      addKeyValuePair('Temperatura', anamnese.temperatura);
+      if (anamnese.temperaturaObs) addKeyValuePair('OBS (Temperatura)', anamnese.temperaturaObs);
+      addKeyValuePair('Índice Glicêmico', anamnese.indiceGlicemico);
+      if (anamnese.indiceGlicemicoObs) addKeyValuePair('OBS (Índice Glicêmico)', anamnese.indiceGlicemicoObs);
+      addKeyValuePair('Peso', anamnese.peso);
+      if (anamnese.pesoObs) addKeyValuePair('OBS (Peso)', anamnese.pesoObs);
+      addKeyValuePair('Altura', anamnese.altura);
+      renderAnamneseItem('Gravidez', anamnese.gravidez);
+      if (anamnese.gravidezObs) addKeyValuePair('OBS (Gravidez)', anamnese.gravidezObs);
+      renderAnamneseItem('Está em Tratamento médico', anamnese.emTratamentoMedico);
+      if (anamnese.emTratamentoMedico === 'sim') addKeyValuePair('Qual tratamento médico', anamnese.tratamentoMedicoQual);
+      renderAnamneseItem('Tem alguma alergia', anamnese.alergia);
+      if (anamnese.alergia === 'sim') addKeyValuePair('Qual alergia', anamnese.alergiaQual);
+      renderAnamneseItem('Está em uso de medicação', anamnese.medicacaoEmUso);
+
+      if (anamnese.medicacoes && anamnese.medicacoes.some(m => m.nome)) {
+        checkPageBreak(15);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Medicações em uso:', margin, y);
+        y += 6;
+        doc.setFont('helvetica', 'normal');
+        anamnese.medicacoes.forEach((med, index) => {
+          if (med.nome) {
+            checkPageBreak(6);
+            doc.text(`${index + 1}- ${med.nome} (${med.dosagem})`, margin + 5, y);
+            y += 6;
+          }
+        });
+      }
+      y += 5;
+
+      // Responsável Legal
+      if (anamnese.responsavelNome || anamnese.responsavelRg) {
+        addSectionTitle('RESPONSÁVEL LEGAL');
+        addKeyValuePair('Nome do Responsável', anamnese.responsavelNome);
+        addKeyValuePair('RG do Responsável', anamnese.responsavelRg);
+        y += 5;
+      }
+
+      // Declaração Final
+      addSectionTitle('DECLARAÇÃO');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      const declarationText = "O paciente ou seu responsável se compromete a seguir as orientações do Cirurgião-Dentista, comunicando imediatamente qualquer alteração em decorrência do tratamento realizado, compromete-se a veracidade das informações prestada para seu tratamento, comparecer pontualmente as consultas marcadas, justificando as faltas com antecedência mínima de 24 (vinte e quatro) horas. Faltas não justificadas, serão sujeitas a cobrança da consulta.";
+      const declarationLines = doc.splitTextToSize(declarationText, contentWidth);
+      doc.text(declarationLines, margin, y);
+      y += (declarationLines.length * 4) + 5;
     }
 
-    if (prontuario.assinaturaProfissional) {
-      // Verifica se precisa de nova página para a assinatura
-      if (y > 220) {
-        doc.addPage();
-        y = 20;
+    // 5. Assinaturas
+    const addSignature = (label, signatureData) => {
+      if (signatureData) {
+        checkPageBreak(45);
+        y += 10;
+        doc.setFont('helvetica', 'bold');
+        doc.text(label, margin, y);
+        doc.addImage(signatureData, 'PNG', margin, y + 5, 70, 30);
+        y += 40;
       }
-      doc.text("Assinatura do Profissional:", 10, y);
-      doc.addImage(prontuario.assinaturaProfissional, "PNG", 10, y + 5, 80, 40);
-      y += 50;
+    };
+
+    addSectionTitle('ASSINATURAS');
+    addSignature('Assinatura do Profissional:', prontuario.assinaturaProfissional);
+    addSignature('Assinatura do Paciente/Responsável:', prontuario.assinaturaPaciente);
+
+    // 6. Rodapé (Número da Página)
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(SECONDARY_TEXT_COLOR);
+      doc.text(`Página ${i} de ${pageCount}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
     }
 
-    if (prontuario.assinaturaPaciente) {
-      if (y > 220) {
-        doc.addPage();
-        y = 20;
-      }
-      doc.text("Assinatura do Paciente:", 10, y);
-      doc.addImage(prontuario.assinaturaPaciente, "PNG", 10, y + 5, 80, 40);
-      y += 50;
-    }
-
-    doc.save(`Prontuario_${prontuario.nome}.pdf`);
+    // 7. Salvar o PDF
+    const fileName = `Prontuario_${fullPatientData?.nome || prontuario.nome || 'Paciente'}.pdf`;
+    doc.save(fileName.replace(/ /g, '_'));
   };
 
   const handleEditar = (id) => {
