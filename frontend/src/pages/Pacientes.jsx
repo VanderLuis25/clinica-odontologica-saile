@@ -27,14 +27,18 @@ const validatePhone = (tel) => /^\(?\d{2}\)?[\s-]?\d{4,5}-?\d{4}$/.test(tel);
 
 // --- Formulário ---
 const PatientForm = ({ patient, onClose, onSave }) => {
-    const initialMedicalHistory = {
-        bloodType: '', allergies: '', chronicDiseases: '', habits: '',
-        medications: '', surgeries: '', familyHistory: '', lastVisit: '', currentComplaints: ''
-    };
-
     const [formData, setFormData] = useState({
-        nome: '', idade: '', cpf: '', telefone: '', email: '', dataNascimento: '',
-        medicalHistory: { ...initialMedicalHistory }
+        nome: '',
+        dataNascimento: '',
+        sexo: '',
+        profissao: '',
+        telefone: '',
+        email: '',
+        rg: '',
+        cpf: '',
+        endereco: {
+            rua: '', numero: '', bairro: '', cidade: '', estado: '', cep: ''
+        }
     });
 
     useEffect(() => {
@@ -48,29 +52,24 @@ const PatientForm = ({ patient, onClose, onSave }) => {
                 return date.toISOString().split('T')[0];
             };
 
-            const cleanedPatientData = {
-                nome: cleanValue(patient.nome),
-                // 💡 Idade calculada para preenchimento do campo (mas o valor salvo é a data)
-                idade: calculateAge(patient.dataNascimento), 
-                cpf: cleanValue(patient.cpf),
-                telefone: cleanValue(patient.telefone),
-                email: cleanValue(patient.email),
-                dataNascimento: formatDate(patient.dataNascimento), 
-                _id: patient._id
-            };
-
-            const patientHistory = patient.medicalHistory || {}; 
-            const cleanedMedicalHistory = {};
-            for (const key in initialMedicalHistory) {
-                // Formatação para campos de data dentro do histórico
-                cleanedMedicalHistory[key] = (key === 'lastVisit' && patientHistory[key]) 
-                    ? formatDate(patientHistory[key]) 
-                    : cleanValue(patientHistory[key]);
-            }
-            
             setFormData({
-                ...cleanedPatientData,
-                medicalHistory: cleanedMedicalHistory
+                _id: patient._id,
+                nome: cleanValue(patient.nome),
+                dataNascimento: formatDate(patient.dataNascimento),
+                sexo: cleanValue(patient.sexo),
+                profissao: cleanValue(patient.profissao),
+                telefone: cleanValue(patient.telefone),
+ _email: cleanValue(patient.email),
+                rg: cleanValue(patient.rg),
+                cpf: cleanValue(patient.cpf),
+                endereco: {
+                    rua: cleanValue(patient.endereco?.rua),
+                    numero: cleanValue(patient.endereco?.numero),
+                    bairro: cleanValue(patient.endereco?.bairro),
+                    cidade: cleanValue(patient.endereco?.cidade),
+                    estado: cleanValue(patient.endereco?.estado),
+        _cep: cleanValue(patient.endereco?.cep),
+                }
             });
         }
     }, [patient]);
@@ -78,22 +77,15 @@ const PatientForm = ({ patient, onClose, onSave }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => {
-            const updated = { ...prev, [name]: value };
-            
-            // 💡 Calcule a idade em tempo real ao mudar a data de nascimento
-            if (name === 'dataNascimento') {
-                 updated.idade = calculateAge(value);
-            }
-            
-            return updated;
+            return { ...prev, [name]: value };
         });
     };
 
-    const handleMedicalHistoryChange = (e) => {
+    const handleEnderecoChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            medicalHistory: { ...prev.medicalHistory, [name]: value }
+            endereco: { ...prev.endereco, [name]: value }
         }));
     };
 
@@ -101,7 +93,6 @@ const PatientForm = ({ patient, onClose, onSave }) => {
         e.preventDefault();
         // Nota: O campo 'idade' será enviado, mas o backend deve ignorá-lo e usar 'dataNascimento'
         if (!formData.dataNascimento) { alert("Data de Nascimento é obrigatória."); return; }
-        if (!formData.cpf || !validateCPF(formData.cpf)) { alert("CPF inválido. Formato: 000.000.000-00"); return; }
         if (formData.email && !validateEmail(formData.email)) { alert("Email inválido."); return; }
         if (formData.telefone && !validatePhone(formData.telefone)) { alert("Telefone inválido."); return; }
         
@@ -113,56 +104,21 @@ const PatientForm = ({ patient, onClose, onSave }) => {
             <div className="modal-content">
                 <span className="close-button" onClick={onClose}>&times;</span>
                 <h2>{patient ? 'Editar Paciente' : 'Cadastrar Paciente'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <label htmlFor="nome">Nome:</label>
-                    <input id="nome" type="text" name="nome" value={formData.nome} onChange={handleChange} required /> 
-                    
-                    {/* Campo dataNascimento é a fonte de verdade */}
-                    <label htmlFor="dataNascimento">Data de Nascimento:</label>
-                    <input id="dataNascimento" type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} required />
-                    
-                    {/* Idade calculada, apenas para visualização/preenchimento opcional */}
-                    <label htmlFor="idade">Idade (Calculada):</label>
-                    {/* 💡 Idade é calculada automaticamente (readOnly ou calculado no handleChange) */}
-                    <input id="idade" type="number" name="idade" value={formData.idade} readOnly /> 
-                    
-                    <label htmlFor="cpf">CPF:</label>
-                    <input id="cpf" type="text" name="cpf" value={formData.cpf} onChange={handleChange} placeholder="000.000.000-00" maxLength={14} required />
-                    
-                    <label htmlFor="telefone">Telefone:</label>
-                    <input id="telefone" type="tel" name="telefone" value={formData.telefone} onChange={handleChange} />
-                    
-                    <label htmlFor="email">Email:</label>
-                    <input id="email" type="email" name="email" value={formData.email} onChange={handleChange} />
-
-                    {/* HISTÓRICO MÉDICO */}
-                    <label htmlFor="bloodType">Tipo Sanguíneo:</label>
-                    <input id="bloodType" type="text" name="bloodType" value={formData.medicalHistory.bloodType} onChange={handleMedicalHistoryChange} />
-                    
-                    <label htmlFor="allergies">Alergias:</label>
-                    <textarea id="allergies" name="allergies" value={formData.medicalHistory.allergies} onChange={handleMedicalHistoryChange}></textarea>
-                    
-                    <label htmlFor="chronicDiseases">Doenças Crônicas:</label>
-                    <textarea id="chronicDiseases" name="chronicDiseases" value={formData.medicalHistory.chronicDiseases} onChange={handleMedicalHistoryChange}></textarea>
-                    
-                    <label htmlFor="habits">Hábitos:</label>
-                    <textarea id="habits" name="habits" value={formData.medicalHistory.habits} onChange={handleMedicalHistoryChange}></textarea>
-                    
-                    <label htmlFor="medications">Medicações:</label>
-                    <textarea id="medications" name="medications" value={formData.medicalHistory.medications} onChange={handleMedicalHistoryChange}></textarea>
-                    
-                    <label htmlFor="surgeries">Cirurgias:</label>
-                    <textarea id="surgeries" name="surgeries" value={formData.medicalHistory.surgeries} onChange={handleMedicalHistoryChange}></textarea>
-                    
-                    <label htmlFor="familyHistory">Histórico Familiar:</label>
-                    <textarea id="familyHistory" name="familyHistory" value={formData.medicalHistory.familyHistory} onChange={handleMedicalHistoryChange}></textarea>
-                    
-                    <label htmlFor="lastVisit">Última Consulta:</label>
-                    <input id="lastVisit" type="date" name="lastVisit" value={formData.medicalHistory.lastVisit} onChange={handleMedicalHistoryChange} />
-                    
-                    <label htmlFor="currentComplaints">Queixas Atuais:</label>
-                    <textarea id="currentComplaints" name="currentComplaints" value={formData.medicalHistory.currentComplaints} onChange={handleMedicalHistoryChange}></textarea>
-
+                <form onSubmit={handleSubmit} className="patient-form-grid">
+                    <div className="form-group span-3"><label>Paciente:</label><input type="text" name="nome" value={formData.nome} onChange={handleChange} required /></div>
+          _         <div className="form-group span-1"><label>Nasc.:</label><input type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} required /></div>
+                    <div className="form-group span-1"><label>Sexo:</label><input type="text" name="sexo" value={formData.sexo} onChange={handleChange} /></div>
+                    <div className="form-group span-3"><label>End.:</label><input type="text" name="rua" value={formData.endereco.rua} onChange={handleEnderecoChange} /></div>
+                    <div className="form-group span-1"><label>Nº:</label><input type="text" name="numero" value={formData.endereco.numero} onChange={handleEnderecoChange} /></div>
+                    <div className="form-group span-2"><label>Bairro:</label><input type="text" name="bairro" value={formData.endereco.bairro} onChange={handleEnderecoChange} /></div>
+                    <div className="form-group span-1"><label>Estado:</label><input type="text" name="estado" value={formData.endereco.estado} onChange={handleEnderecoChange} /></div>
+                    <div className="form-group span-2"><label>Cidade:</label><input type="text" name="cidade" value={formData.endereco.cidade} onChange={handleEnderecoChange} /></div>
+                    <div className="form-group span-1"><label>CEP:</label><input type="text" name="cep" value={formData.endereco.cep} onChange={handleEnderecoChange} /></div>
+                    <div className="form-group span-3"><label>Profissão:</label><input type="text" name="profissao" value={formData.profissao} onChange={handleChange} /></div>
+                    <div className="form-group span-2"><label>Tel/Cel:</label><input type="tel" name="telefone" value={formData.telefone} onChange={handleChange} /></div>
+                    <div className="form-group span-3"><label>E-mail:</label><input type="email" name="email" value={formData.email} onChange={handleChange} /></div>
+                    <div className="form-group span-2"><label>RG:</label><input type="text" name="rg" value={formData.rg} onChange={handleChange} /></div>
+                    <div className="form-group span-2"><label>CPF:</label><input type="text" name="cpf" value={formData.cpf} onChange={handleChange} required /></div>
                     <div className="form-actions">
                         <button type="submit">Salvar</button>
                         <button type="button" onClick={onClose}>Cancelar</button>
