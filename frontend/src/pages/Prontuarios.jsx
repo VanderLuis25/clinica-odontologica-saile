@@ -774,10 +774,11 @@ export default function Prontuario() {
       doc.setFont('helvetica', 'bold');
       doc.text(`${label}:`, margin, y);
       doc.setFont('helvetica', 'normal');
-      // ✅ CORREÇÃO: Calcula a posição do valor dinamicamente para evitar sobreposição
-      const labelWidth = doc.getTextWidth(`${label}: `);
-      const textLines = doc.splitTextToSize(String(value), contentWidth - labelWidth - 5);
-      doc.text(textLines, margin + labelWidth, y);
+      // ✅ CORREÇÃO: Calcula a posição do valor dinamicamente para evitar sobreposição.
+      const labelWidth = doc.getTextWidth(`${label}: `); // Mede a largura do texto do rótulo
+      const valueXPosition = margin + labelWidth; // Posição X do valor é o início da margem + largura do rótulo
+      const textLines = doc.splitTextToSize(String(value), contentWidth - labelWidth - 2); // Quebra o texto do valor se for muito longo
+      doc.text(textLines, valueXPosition, y); // Posiciona o valor corretamente
       y += (textLines.length * 5) + 2;
     };
 
