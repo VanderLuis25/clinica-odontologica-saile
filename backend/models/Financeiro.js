@@ -56,6 +56,14 @@ const financeiroSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Procedimento',
   },
+
+  // ✅ NOVO: Referência à Clínica para filtragem por usuário
+  clinica: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Clinica',
+    required: true,
+  },
+
   // Metadados
   createdAt: {
     type: Date,

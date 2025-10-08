@@ -57,24 +57,28 @@ router.post('/', async (req, res) => {
             clinica: clinicaId // Associa à clínica correta.
         });
         await novoProcedimento.save();
-
-        // 💡 LÓGICA ADICIONADA: Criar registro financeiro correspondente
-        if (novoProcedimento.valor && novoProcedimento.valor > 0) {
+        
+        // 💡 Melhoria: Popula o paciente no procedimento recém-criado para obter os dados
+        const procedimentoRetorno = await Procedimento.findById(novoProcedimento._id).populate('paciente', 'nome cpf');
+        
+        // 💡 LÓGICA ATUALIZADA: Criar registro financeiro correspondente com todos os dados
+        if (procedimentoRetorno && procedimentoRetorno.valor > 0) {
             const registroFinanceiro = new Financeiro({
-                descricao: `Procedimento: ${novoProcedimento.nome}`,
-                valor: novoProcedimento.valor,
+                descricao: `Procedimento: ${procedimentoRetorno.nome}`,
+                valor: procedimentoRetorno.valor,
                 tipo: 'receita',
                 data: new Date().toISOString().split('T')[0], // Usa a data atual
                 statusPagamento: 'pendente',
                 clinica: clinicaId, // ✅ Adiciona a clínica ao registro financeiro
-                procedimento: novoProcedimento._id, // Vincula ao procedimento
-                nomePaciente: novoProcedimento.paciente?.nome, // Se houver paciente populado
+                procedimento: procedimentoRetorno._id, // Vincula ao procedimento
+                // ✅ CORREÇÃO: Pega os dados do paciente populado
+                nomePaciente: procedimentoRetorno.paciente?.nome, 
+                cpfPaciente: procedimentoRetorno.paciente?.cpf,
             });
             await registroFinanceiro.save();
         }
         
-        // 💡 Melhoria: Popula o paciente no procedimento recém-criado antes de enviar ao cliente
-        const procedimentoRetorno = await Procedimento.findById(novoProcedimento._id).populate('paciente');
+        // Retorna o procedimento já populado para o frontend
         
         res.status(201).json(procedimentoRetorno);
     } catch (error) {
