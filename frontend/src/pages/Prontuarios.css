@@ -436,3 +436,49 @@
   .form-grid { grid-template-columns: 1fr; }
   .signature-canvas { height: 120px; }
 }
+
+/* ✅ INÍCIO: Estilização moderna para os Dados do Paciente */
+
+.patient-form-grid {
+  display: grid;
+  /* Define um grid com 12 colunas para maior flexibilidade */
+  grid-template-columns: repeat(12, 1fr);
+  /* Espaçamento consistente entre os campos */
+  gap: 16px 24px;
+  padding-top: 10px;
+}
+
+/* Ajusta os spans para o novo grid de 12 colunas */
+.patient-form-grid .span-2 { grid-column: span 2; }
+.patient-form-grid .span-3 { grid-column: span 3; }
+.patient-form-grid .span-4 { grid-column: span 4; }
+.patient-form-grid .span-5 { grid-column: span 5; }
+.patient-form-grid .span-6 { grid-column: span 6; }
+.patient-form-grid .span-7 { grid-column: span 7; }
+.patient-form-grid .span-12 { grid-column: span 12; }
+
+.patient-form-grid .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-form-grid .form-group label {
+  font-size: 0.75rem; /* 12px */
+  color: var(--cor-texto-secundario);
+  margin-bottom: 4px;
+  font-weight: 500;
+  text-transform: uppercase; /* Deixa o rótulo mais sutil */
+}
+
+.patient-form-grid .form-group input[readOnly] {
+  background-color: transparent; /* Fundo transparente */
+  border: none;
+  border-bottom: 1px solid var(--cor-borda); /* Linha sutil abaixo */
+  padding: 6px 2px; /* Ajuste no padding */
+  font-size: 0.95rem; /* 15px */
+  font-weight: 500;
+  color: var(--cor-texto);
+  cursor: default; /* Cursor padrão, não de texto */
+  outline: none; /* Remove o contorno ao focar (não é necessário aqui) */
+}
+/* ✅ FIM: Estilização moderna */
