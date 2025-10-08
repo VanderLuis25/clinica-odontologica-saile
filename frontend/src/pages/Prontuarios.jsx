@@ -733,6 +733,122 @@ export default function Prontuario() {
     doc.save(fileName.replace(/ /g, '_'));
   };
 
+  // ✅ NOVA FUNÇÃO: Gera PDF apenas para a aba selecionada
+  const handleBaixarAbaPDF = async () => {
+    if (!editId) {
+      showMessage("Selecione e edite um prontuário salvo para baixar o PDF da aba.", "error");
+      return;
+    }
+
+    const prontuario = formData; // Usa os dados do formulário em edição
+    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+    const margin = 15;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const contentWidth = pageWidth - (margin * 2);
+    let y = 20;
+
+    // Cores e fontes
+    const PRIMARY_COLOR = '#800580';
+    const TEXT_COLOR = '#343a40';
+    const BORDER_COLOR = '#dee2e6';
+
+    // --- Funções Auxiliares (reutilizadas) ---
+    const addSectionTitle = (title) => {
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(PRIMARY_COLOR);
+      doc.text(title, margin, y);
+      doc.setDrawColor(BORDER_COLOR);
+      doc.setLineWidth(0.2);
+      doc.line(margin, y + 2, pageWidth - margin, y + 2);
+      y += 10;
+      doc.setTextColor(TEXT_COLOR);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+    };
+
+    const addKeyValuePair = (label, value) => {
+      if (!value) return;
+      y += (y > 30 ? 6 : 0); // Adiciona espaço
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${label}:`, margin, y);
+      doc.setFont('helvetica', 'normal');
+      const textLines = doc.splitTextToSize(String(value), contentWidth - doc.getTextWidth(`${label}: `) - 5);
+      doc.text(textLines, margin + 35, y);
+      y += (textLines.length * 5) + 2;
+    };
+
+    // --- 1. Cabeçalho e Dados do Paciente (comuns a todos os PDFs) ---
+    const logoImg = new Image();
+    logoImg.src = logo;
+    doc.addImage(logoImg, "PNG", margin, margin, 40, 15);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(PRIMARY_COLOR);
+    doc.text(`PRONTUÁRIO - ${selectedTab.replace(/([A-Z])/g, ' $1').toUpperCase()}`, pageWidth / 2, margin + 10, { align: 'center' });
+    doc.setLineWidth(0.5);
+    doc.setDrawColor(PRIMARY_COLOR);
+    doc.line(margin, margin + 20, pageWidth - margin, margin + 20);
+    y = margin + 30;
+    doc.setTextColor(TEXT_COLOR);
+
+    addSectionTitle('DADOS DO PACIENTE');
+    doc.text(`Paciente: ${prontuario.paciente?.nome || prontuario.nome || 'N/A'}`, margin, y);
+    doc.text(`CPF: ${prontuario.paciente?.cpf || prontuario.cpf || 'N/A'}`, margin + 100, y);
+    y += 6;
+    doc.text(`Data da Ficha: ${new Date(prontuario.data).toLocaleDateString('pt-BR')}`, margin, y);
+    doc.text(`Profissional: ${prontuario.profissional?.nome || 'N/A'}`, margin + 100, y);
+    y += 10;
+
+    // --- 2. Conteúdo Específico da Aba ---
+    switch (selectedTab) {
+      case 'fichaAdulto':
+      case 'fichaInfantil':
+        addSectionTitle('FICHA DE AVALIAÇÃO');
+        addKeyValuePair('Observações Clínicas', prontuario.observacoes);
+        if (selectedTab === 'fichaInfantil') {
+          addKeyValuePair('Histórico Familiar', prontuario.historicoFamiliar);
+        }
+        break;
+
+      case 'evolucao':
+        addSectionTitle('EVOLUÇÃO DO TRATAMENTO');
+        addKeyValuePair('Descrição', prontuario.evolucao);
+        break;
+
+      case 'receituario':
+        addSectionTitle('RECEITUÁRIO');
+        addKeyValuePair('Medicamento', prontuario.medicamento);
+        addKeyValuePair('Dosagem', prontuario.dosagem);
+        addKeyValuePair('Observações/Posologia', prontuario.observacoes);
+        break;
+
+      case 'historicoMedico':
+        // Para o histórico, que é longo, chamamos a função completa
+        // mas poderíamos criar uma versão resumida se necessário.
+        // Por simplicidade, vamos apenas indicar que é o histórico.
+        addSectionTitle('HISTÓRICO MÉDICO');
+        doc.text("O PDF completo do Histórico Médico está disponível no download geral do prontuário.", margin, y);
+        y += 10;
+        doc.text("Para gerar um PDF detalhado da anamnese, use o botão 'Baixar PDF' na tabela de prontuários salvos.", margin, y, { maxWidth: contentWidth });
+        break;
+
+      default:
+        doc.text('Nenhum conteúdo para esta aba.', margin, y);
+    }
+
+    // --- 3. Assinaturas ---
+    y += 20;
+    addSectionTitle('ASSINATURAS');
+    if (prontuario.assinaturaProfissional) doc.addImage(prontuario.assinaturaProfissional, 'PNG', margin, y + 5, 60, 25);
+    doc.line(margin, y + 35, margin + 70, y + 35);
+    doc.text('Assinatura do Profissional', margin, y + 40);
+
+    // --- 4. Salvar PDF ---
+    const fileName = `Prontuario_${prontuario.nome}_${selectedTab}.pdf`;
+    doc.save(fileName.replace(/ /g, '_'));
+  };
+
   const handleEditar = (id) => {
     const prontuarioParaEditar = prontuarios.find((p) => p._id === id);
     if (prontuarioParaEditar) {
@@ -900,6 +1016,12 @@ export default function Prontuario() {
         {editId && (
           <button type="button" onClick={limparFormulario} className="btn-cancelar-edicao">
             <FaTimes /> Cancelar Edição
+          </button>
+        )}
+        {/* ✅ NOVO: Botão para baixar PDF da aba, visível apenas na edição */}
+        {editId && (
+          <button type="button" onClick={handleBaixarAbaPDF} className="btn-baixar-aba">
+            <FaDownload /> Baixar PDF da Aba
           </button>
         )}
       </form>

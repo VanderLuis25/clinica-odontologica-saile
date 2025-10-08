@@ -482,3 +482,22 @@
   outline: none; /* Remove o contorno ao focar (não é necessário aqui) */
 }
 /* ✅ FIM: Estilização moderna */
+
+/* ✅ NOVO: Estilo para o botão de baixar PDF da aba */
+.btn-baixar-aba {
+  background-color: var(--cor-aviso);
+  color: var(--cor-texto);
+  padding: 12px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-baixar-aba:hover { background-color: #e0a800; }
