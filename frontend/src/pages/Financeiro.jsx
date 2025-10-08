@@ -241,9 +241,10 @@ export default function Financeiro() {
 
   const filteredData = financeiro.filter(
     (item) =>
-      (item.descricao?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (item.procedimento?.paciente?.nome?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-      (item.procedimento?.paciente?.cpf?.toLowerCase() || "").includes(searchTerm.toLowerCase())
+      (item.descricao?.toLowerCase() || "").includes(searchTerm.toLowerCase()) || // Busca na descrição
+      (item.nomePaciente?.toLowerCase() || "").includes(searchTerm.toLowerCase()) || // Busca no nome do paciente (campo direto)
+      (item.cpfPaciente?.toLowerCase() || "").includes(searchTerm.toLowerCase()) || // Busca no CPF do paciente (campo direto)
+      (item.procedimento?.paciente?.nome?.toLowerCase() || "").includes(searchTerm.toLowerCase()) // Fallback para registros antigos
   );
 
   return (
