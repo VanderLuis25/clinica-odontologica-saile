@@ -290,8 +290,8 @@ export default function Financeiro() {
           <tbody>
             {filteredData.map((registro) => (
               <tr key={registro._id}>
-                <td>{registro.procedimento?.paciente?.nome || "N/A"}</td>
-                <td>{registro.procedimento?.paciente?.cpf || "N/A"}</td>
+                <td>{registro.nomePaciente || registro.procedimento?.paciente?.nome || "N/A"}</td>
+                <td>{registro.cpfPaciente || registro.procedimento?.paciente?.cpf || "N/A"}</td>
                 <td>{registro.descricao}</td>
                 <td>R$ {Number(registro.valor).toFixed(2)}</td>
                 <td>{registro.tipo}</td>
