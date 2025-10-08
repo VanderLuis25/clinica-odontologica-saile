@@ -13,8 +13,6 @@ const prontuarioSchema = new mongoose.Schema(
     cpf: { type: String, required: true },
     data: { type: String, required: true },
     observacoes: { type: String, default: "" },
-    anamnese: { type: String, default: "" },
-    historicoMedico: { type: String, default: "" },
     historicoFamiliar: { type: String, default: "" },
     evolucao: { type: String, default: "" },
     medicamento: { type: String, default: "" },

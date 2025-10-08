@@ -65,8 +65,6 @@ export default function Prontuario() {
     cpf: "",
     data: new Date().toISOString().split("T")[0], // ✅ CORREÇÃO: Inicializa com a data atual
     observacoes: "",
-    anamnese: "",
-    historicoMedico: "",
     historicoFamiliar: "",
     evolucao: "",
     medicamento: "",
@@ -154,8 +152,8 @@ export default function Prontuario() {
 
   const limparFormulario = () => {
     setFormData({
-      nome: "", cpf: "", data: new Date().toISOString().split("T")[0], observacoes: "", anamnese: "", historicoMedico: "",
-      historicoFamiliar: "", evolucao: "", medicamento: "", dosagem: "", assinaturaProfissional: null,
+      nome: "", cpf: "", data: new Date().toISOString().split("T")[0], observacoes: "", historicoFamiliar: "", 
+      evolucao: "", medicamento: "", dosagem: "", assinaturaProfissional: null,
       assinaturaPaciente: null, areaAplicacao: "", dose: "",
     });
     if (sigPadRef.current) {
@@ -358,8 +356,6 @@ export default function Prontuario() {
             {selectedTab === "fichaAdulto" && (
               <>
                 <textarea name="observacoes" placeholder="Observações Clínicas" value={formData.observacoes} onChange={handleInputChange} className="full-width"></textarea>
-                <input type="text" name="anamnese" placeholder="Anamnese" value={formData.anamnese} onChange={handleInputChange} />
-                <input type="text" name="historicoMedico" placeholder="Histórico Médico" value={formData.historicoMedico} onChange={handleInputChange} />
               </>
             )}
 
