@@ -31,6 +31,7 @@ router.get("/", async (req, res) => {
         .populate('profissional', 'nome') // Popula o nome do profissional
         // ✅ CORREÇÃO: Popula o paciente de forma segura, evitando erros se não existir.
         .populate('paciente', 'nome cpf') 
+        .populate('clinica', 'nome') // Popula o nome da clínica
         .sort({ createdAt: -1 });
     res.json(prontuarios);
   } catch (err) {

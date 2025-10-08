@@ -18,6 +18,14 @@ const prontuarioSchema = new mongoose.Schema(
     assinaturaProfissional: { type: String, required: true },
     assinaturaPaciente: { type: String, required: false }, // Assinatura do Paciente
     tipoFicha: { type: String, required: true },
+
+    // ✅ CORREÇÃO: Adiciona a referência à clínica
+    clinica: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Clinica',
+      required: true,
+      index: true // Otimiza consultas por clínica
+    },
   },
   { timestamps: true }
 );
