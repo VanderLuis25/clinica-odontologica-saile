@@ -71,6 +71,7 @@ export const apiService = {
 
   // ------------------ Pacientes ------------------
   getPacientes: () => api.get('/pacientes'),
+  getPacienteById: (id) => api.get(`/pacientes/${id}`), // ✅ Rota para buscar um paciente específico
   createPaciente: (item) => api.post('/pacientes', item),
   updatePaciente: (id, item) => api.put(`/pacientes/${id}`, item),
   deletePaciente: (id) => api.delete(`/pacientes/${id}`),

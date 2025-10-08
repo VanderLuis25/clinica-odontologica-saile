@@ -79,6 +79,17 @@ router.get('/search', async (req, res) => {
     }
 });
 
+// ✅ NOVA ROTA: GET /:id (Buscar um paciente específico por ID)
+router.get('/:id', async (req, res) => {
+    try {
+        const paciente = await Paciente.findById(req.params.id);
+        if (!paciente) return res.status(404).json({ message: 'Paciente não encontrado.' });
+        res.status(200).json(paciente);
+    } catch (error) {
+        console.error('Erro ao buscar paciente por ID:', error);
+        res.status(500).json({ message: 'Erro interno do servidor.' });
+    }
+});
 
 // 3. ROTA POST: Criar novo paciente
 router.post('/', async (req, res) => {

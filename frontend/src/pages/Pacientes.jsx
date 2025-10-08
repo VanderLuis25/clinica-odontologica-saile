@@ -134,6 +134,7 @@ export default function Pacientes() {
     const { pacientes, fetchPacientes, createPaciente, updatePaciente, deletePaciente, loading } = useContext(SystemDataContext);
 
     const [selectedPatient, setSelectedPatient] = useState(null);
+    const [editingPatientData, setEditingPatientData] = useState(null); // ✅ NOVO: Estado para os dados completos do paciente em edição
     const [searchTerm, setSearchTerm] = useState(""); // ✅ NOVO: Estado para a busca
     const [showForm, setShowForm] = useState(false);
 
@@ -166,6 +167,21 @@ export default function Pacientes() {
             alert('Erro ao salvar paciente. Verifique o console para detalhes.'); 
         }
     };
+
+    // ✅ NOVA FUNÇÃO: Lida com o clique no botão de editar
+    const handleEditClick = async (patientId) => {
+        try {
+            // 1. Busca os dados completos do paciente na API
+            const { data: fullPatientData } = await apiService.getPacienteById(patientId);
+            // 2. Armazena esses dados no novo estado
+            setEditingPatientData(fullPatientData);
+            // 3. Abre o formulário
+            setShowForm(true);
+        } catch (error) {
+            console.error("Erro ao buscar dados do paciente para edição:", error);
+            alert("Não foi possível carregar os dados completos do paciente.");
+        }
+    };
 
     const handleDelete = async (id) => {
         if (window.confirm("Tem certeza que deseja excluir este paciente?")) {
@@ -221,7 +237,7 @@ export default function Pacientes() {
                                 <td>{p.telefone}</td>
                                 <td>{p.clinica?.nome || 'N/A'}</td>
                                 <td className="actions-cell">
-                                    <button className="edit-button" onClick={() => { setSelectedPatient(p); setShowForm(true); }}>
+                                    <button className="edit-button" onClick={() => handleEditClick(p._id)}>
                                         Editar
                                     </button>
                                     <button className="delete-button" onClick={() => handleDelete(p._id)}>
@@ -236,8 +252,8 @@ export default function Pacientes() {
 
             {showForm && (
                 <PatientForm
-                    patient={selectedPatient}
-                    onClose={() => { setShowForm(false); setSelectedPatient(null); }}
+                    patient={editingPatientData} // ✅ Passa os dados completos para o formulário
+                    onClose={() => { setShowForm(false); setEditingPatientData(null); }} // Limpa o estado ao fechar
                     onSave={handleSavePatient}
                 />
             )}
