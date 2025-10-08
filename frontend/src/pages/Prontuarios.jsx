@@ -543,7 +543,7 @@ export default function Prontuario() {
           {/* ✅ NOVO: Layout detalhado dos dados do paciente */}
           <div className="patient-form-grid">
             <div className="form-group span-3"><label>Paciente:</label><input type="text" value={selectedPaciente?.nome || ''} readOnly /></div>
-            <div className="form-group span-1"><label>Nasc.:</label><input type="date" value={selectedPaciente?.dataNascimento ? new Date(selectedPaciente.dataNascimento).toISOString().split('T')[0] : ''} readOnly /></div>
+            <div className="form-group span-1"><label>Data de Nascimento:</label><input type="date" value={selectedPaciente?.dataNascimento ? new Date(selectedPaciente.dataNascimento).toISOString().split('T')[0] : ''} readOnly /></div>
             <div className="form-group span-1"><label>Sexo:</label><input type="text" value={selectedPaciente?.sexo || ''} readOnly /></div>
             <div className="form-group span-3"><label>End.:</label><input type="text" value={selectedPaciente?.endereco?.rua || ''} readOnly /></div>
             <div className="form-group span-1"><label>Nº:</label><input type="text" value={selectedPaciente?.endereco?.numero || ''} readOnly /></div>
