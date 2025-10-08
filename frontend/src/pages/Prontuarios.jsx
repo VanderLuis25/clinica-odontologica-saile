@@ -67,10 +67,8 @@ export default function Prontuario() {
     observacoes: "",
     historicoFamiliar: "",
     evolucao: "",
-    medicamento: "",
-    dosagem: "",
-    historicoMedico: "", // Campo renomeado
-    queixaPrincipal: "", // Campo renomeado
+    medicamento: "", // Mantido para receituário
+    dosagem: "", // Mantido para receituário
     assinaturaProfissional: null,
     assinaturaPaciente: null,
   });
@@ -136,6 +134,21 @@ export default function Prontuario() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleAnamneseChange = useCallback((fieldName, value) => {
+    setFormData(prev => ({
+      ...prev,
+      anamneseCompleta: { ...prev.anamneseCompleta, [fieldName]: value }
+    }));
+  }, []);
+
+  const handleMedicacaoChange = useCallback((index, field, value) => {
+    setFormData(prev => {
+      const newMedicacoes = [...prev.anamneseCompleta.medicacoes];
+      newMedicacoes[index] = { ...newMedicacoes[index], [field]: value };
+      return { ...prev, anamneseCompleta: { ...prev.anamneseCompleta, medicacoes: newMedicacoes } };
+    });
+  }, []);
+
   useEffect(() => {
     if (selectedPaciente) {
       setFormData((prev) => ({ ...prev, nome: selectedPaciente.nome, cpf: selectedPaciente.cpf }));
@@ -153,8 +166,8 @@ export default function Prontuario() {
   const limparFormulario = () => {
     setFormData({
       nome: "", cpf: "", data: new Date().toISOString().split("T")[0], observacoes: "", historicoFamiliar: "", 
-      evolucao: "", medicamento: "", dosagem: "", historicoMedico: "", queixaPrincipal: "", 
-      assinaturaProfissional: null, assinaturaPaciente: null,
+      evolucao: "", medicamento: "", dosagem: "", assinaturaProfissional: null, assinaturaPaciente: null,
+      anamneseCompleta: initialAnamneseState, // Limpa a anamnese
     });
     if (sigPadRef.current) {
       sigPadRef.current.clear();
@@ -286,7 +299,13 @@ export default function Prontuario() {
     const prontuarioParaEditar = prontuarios.find((p) => p._id === id);
     if (prontuarioParaEditar) {
       setEditId(id);
-      setFormData({ ...prontuarioParaEditar });
+      // Garante que o estado da anamnese seja preenchido, mesmo que venha vazio do DB
+      const anamneseData = {
+        ...initialAnamneseState,
+        ...prontuarioParaEditar.anamneseCompleta,
+        medicacoes: prontuarioParaEditar.anamneseCompleta?.medicacoes?.length ? prontuarioParaEditar.anamneseCompleta.medicacoes : initialAnamneseState.medicacoes
+      };
+      setFormData({ ...prontuarioParaEditar, anamneseCompleta: anamneseData });
       setSelectedTab(prontuarioParaEditar.tipoFicha || "fichaAdulto");
 
       // Limpa o canvas. A assinatura antiga já está no `formData`.
@@ -294,7 +313,10 @@ export default function Prontuario() {
       if (sigPadPacienteRef.current) sigPadPacienteRef.current.clear();
 
       const pacienteOriginal = pacientes.find(p => p.cpf === prontuarioParaEditar.cpf);
-      if (pacienteOriginal) setSelectedPaciente(pacienteOriginal);
+      if (pacienteOriginal) {
+        // Busca o paciente completo para preencher o formulário de dados pessoais
+        apiService.getPacienteById(pacienteOriginal._id).then(response => setSelectedPaciente(response.data));
+      }
       setSearchTerm(prontuarioParaEditar.nome);
     }
   };
@@ -379,10 +401,12 @@ export default function Prontuario() {
             )}
 
             {selectedTab === "historicoMedico" && (
-              <>
-                <textarea name="queixaPrincipal" placeholder="Queixa Principal" value={formData.queixaPrincipal} onChange={handleInputChange} className="full-width" />
-                <textarea name="historicoMedico" placeholder="Histórico da Doença Atual / Histórico Médico Pregresso" value={formData.historicoMedico} onChange={handleInputChange} className="full-width" />
-              </>
+              <AnamneseForm 
+                data={formData.anamneseCompleta || initialAnamneseState}
+                onAnamneseChange={handleAnamneseChange}
+                onMedicacaoChange={handleMedicacaoChange}
+                paciente={selectedPaciente}
+              />
             )}
           </div>
         </fieldset>
