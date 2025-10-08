@@ -61,7 +61,47 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Erro ao criar registro financeiro.', error });
   }
 });
-router.put('/:id', async (req, res) => { const updated = await Financeiro.findByIdAndUpdate(req.params.id, req.body, { new: true }); res.json(updated); });
-router.delete('/:id', async (req, res) => { await Financeiro.findByIdAndDelete(req.params.id); res.json({ message: 'Deletado com sucesso' }); });
+
+router.put('/:id', async (req, res) => {
+  try {
+    const registro = await Financeiro.findById(req.params.id);
+    if (!registro) {
+      return res.status(404).json({ message: 'Registro financeiro não encontrado.' });
+    }
+
+    if (req.usuario.perfil === 'funcionario') {
+      const funcionarioLogado = await User.findById(req.usuario.id);
+      if (registro.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+        return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para alterar este registro.' });
+      }
+    }
+
+    const updated = await Financeiro.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar registro financeiro.', error });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const registro = await Financeiro.findById(req.params.id);
+    if (!registro) {
+      return res.status(404).json({ message: 'Registro financeiro não encontrado.' });
+    }
+
+    if (req.usuario.perfil === 'funcionario') {
+      const funcionarioLogado = await User.findById(req.usuario.id);
+      if (registro.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+        return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para excluir este registro.' });
+      }
+    }
+
+    await Financeiro.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Deletado com sucesso' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao excluir registro financeiro.', error });
+  }
+});
 
 export default router;
