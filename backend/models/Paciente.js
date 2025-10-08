@@ -1,20 +1,4 @@
 // models/Paciente.js
-import mongoose from 'mongoose';
-import Clinica from './Clinica.js'; // Importar para referência
-
-const { Schema, model } = mongoose;
-
-const medicalHistorySchema = new Schema({
-  bloodType: String,
-  allergies: String,
-  chronicDiseases: String,
-  habits: String,
-  medications: String,
-  surgeries: String,
-  familyHistory: String,
-  lastVisit: Date,
-  currentComplaints: String
-}, { _id: false });
 
 const pacienteSchema = new Schema({
   nome: {
@@ -48,7 +32,22 @@ const pacienteSchema = new Schema({
     trim: true,
     lowercase: true,
   },
-  medicalHistory: medicalHistorySchema,
+
+  // ✅ NOVOS CAMPOS ADICIONADOS CONFORME SOLICITAÇÃO
+  sexo: { type: String },
+  rg: { type: String, unique: true, sparse: true },
+  profissao: { type: String },
+
+  endereco: {
+    rua: { type: String },
+    numero: { type: String },
+    bairro: { type: String },
+    cidade: { type: String },
+    estado: { type: String },
+    cep: { type: String },
+  },
+  // FIM DOS NOVOS CAMPOS
+
 
   // ✅ NOVO: Adiciona a referência à clínica
   clinica: {
