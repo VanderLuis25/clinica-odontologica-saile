@@ -104,6 +104,21 @@ const AnamneseForm = ({ data, onAnamneseChange, onMedicacaoChange, paciente }) =
     onAnamneseChange(name, value);
   };
 
+  const handleMedicacaoChange = (index, field, e) => {
+    const { value } = e.target;
+    onMedicacaoChange(index, field, value);
+  };
+
+  // Helper para inputs condicionais
+  const renderConditionalInput = (condition, name, placeholder) => {
+    if (condition !== 'sim') return null;
+    return (
+      <div className="conditional-input">
+        <input type="text" name={name} value={data[name] || ''} onChange={handleInputChange} placeholder={placeholder} />
+      </div>
+    );
+  };
+
   return (
     <div className="anamnese-form-container">
       {/* Dados Pessoais */}
@@ -131,13 +146,96 @@ const AnamneseForm = ({ data, onAnamneseChange, onMedicacaoChange, paciente }) =
       <fieldset className="anamnese-fieldset">
         <legend>Doenças Referidas</legend>
         <div className="anamnese-questions">
-          <RadioGroup name="diabetes" value={data.diabetes} onChange={handleRadioChange} legend="Diabetes:" />
-          {data.diabetes === 'sim' && <RadioGroup name="diabetesDieta" value={data.diabetesDieta} onChange={handleRadioChange} legend="Faz dieta para DM?" />}
-          <RadioGroup name="hipertensao" value={data.hipertensao} onChange={handleRadioChange} legend="Hipertensão:" />
-          {data.hipertensao === 'sim' && <RadioGroup name="hipertensaoDieta" value={data.hipertensaoDieta} onChange={handleRadioChange} legend="Faz dieta Hipossódica?" />}
-          {/* Outros campos podem ser adicionados aqui seguindo o mesmo padrão */}
+          <div className="question-row"><RadioGroup name="diabetes" value={data.diabetes} onChange={handleRadioChange} legend="Diabetes:" /> {data.diabetes === 'sim' && <RadioGroup name="diabetesDieta" value={data.diabetesDieta} onChange={handleRadioChange} legend="Faz dieta para DM?" />}</div>
+          <div className="question-row"><RadioGroup name="hipertensao" value={data.hipertensao} onChange={handleRadioChange} legend="Hipertensão:" /> {data.hipertensao === 'sim' && <RadioGroup name="hipertensaoDieta" value={data.hipertensaoDieta} onChange={handleRadioChange} legend="Faz dieta Hipossódica?" />}</div>
+          <div className="question-row"><RadioGroup name="problemasCardiacos" value={data.problemasCardiacos} onChange={handleRadioChange} legend="Problemas Cardíacos:" /> {renderConditionalInput(data.problemasCardiacos, 'problemasCardiacosQuais', 'Quais?')}</div>
+          <div className="question-row"><RadioGroup name="avc" value={data.avc} onChange={handleRadioChange} legend="AVC:" /></div>
+          <div className="question-row"><RadioGroup name="doencaTireoide" value={data.doencaTireoide} onChange={handleRadioChange} legend="Doença da Tireoide:" /> {data.doencaTireoide === 'sim' && <div className="conditional-input"><label><input type="radio" name="tipoTireoide" value="hipotireoidismo" checked={data.tipoTireoide === 'hipotireoidismo'} onChange={handleRadioChange} /> Hipotireoidismo</label> <label><input type="radio" name="tipoTireoide" value="hipertireoidismo" checked={data.tipoTireoide === 'hipertireoidismo'} onChange={handleRadioChange} /> Hipertireoidismo</label></div>}</div>
+          <div className="question-row"><RadioGroup name="asma" value={data.asma} onChange={handleRadioChange} legend="Asma:" /></div>
+          <div className="question-row"><RadioGroup name="ulceraGastrica" value={data.ulceraGastrica} onChange={handleRadioChange} legend="Ulcera Gástrica:" /></div>
+          <div className="question-row"><RadioGroup name="anemia" value={data.anemia} onChange={handleRadioChange} legend="Anemia:" /> {renderConditionalInput(data.anemia, 'anemiaQual', 'Qual tipo?')}</div>
+          <div className="question-row"><RadioGroup name="hemofilia" value={data.hemofilia} onChange={handleRadioChange} legend="Hemofilia:" /></div>
+          <div className="question-row"><RadioGroup name="hemorragia" value={data.hemorragia} onChange={handleRadioChange} legend="Hemorragia:" /></div>
+          <div className="question-row"><RadioGroup name="problemaFigado" value={data.problemaFigado} onChange={handleRadioChange} legend="Problema no Fígado:" /> {renderConditionalInput(data.problemaFigado, 'problemaFigadoQual', 'Qual?')}</div>
+          <div className="question-row"><RadioGroup name="problemaRenal" value={data.problemaRenal} onChange={handleRadioChange} legend="Problema Renal:" /> {renderConditionalInput(data.problemaRenal, 'problemaRenalQual', 'Qual?')}</div>
+          <div className="question-row"><RadioGroup name="convulsao" value={data.convulsao} onChange={handleRadioChange} legend="Convulsão:" /> {data.convulsao === 'sim' && <RadioGroup name="convulsaoTratamento" value={data.convulsaoTratamento} onChange={handleRadioChange} legend="Faz tratamento?" />}</div>
+          <div className="question-row"><RadioGroup name="epilepsia" value={data.epilepsia} onChange={handleRadioChange} legend="Epilepsia:" /></div>
+          <div className="question-row"><RadioGroup name="problemaPulmonar" value={data.problemaPulmonar} onChange={handleRadioChange} legend="Problema Pulmonar:" /> {renderConditionalInput(data.problemaPulmonar, 'problemaPulmonarQual', 'Qual?')}</div>
+          <div className="question-row"><RadioGroup name="hepatite" value={data.hepatite} onChange={handleRadioChange} legend="Hepatite:" /></div>
+          <div className="question-row"><RadioGroup name="tuberculose" value={data.tuberculose} onChange={handleRadioChange} legend="Tuberculose:" /></div>
+          <div className="question-row"><RadioGroup name="sifilis" value={data.sifilis} onChange={handleRadioChange} legend="Sífilis:" /></div>
+          <div className="question-row"><RadioGroup name="hiv" value={data.hiv} onChange={handleRadioChange} legend="HIV+:" /></div>
+          <div className="question-row"><RadioGroup name="febreReumatica" value={data.febreReumatica} onChange={handleRadioChange} legend="Febre Reumática:" /></div>
+          <div className="question-row"><RadioGroup name="outrasInfectocontagiosas" value={data.outrasInfectocontagiosas} onChange={handleRadioChange} legend="Outras Infectocontagiosas:" /> {data.outrasInfectocontagiosas === 'sim' && <RadioGroup name="outrasInfectocontagiosasAtiva" value={data.outrasInfectocontagiosasAtiva} onChange={handleRadioChange} legend="Ativa?" />} {renderConditionalInput(data.outrasInfectocontagiosas, 'outrasInfectocontagiosasQuais', 'Quais?')}</div>
+          <div className="question-row"><RadioGroup name="tumorCancer" value={data.tumorCancer} onChange={handleRadioChange} legend="Tumor/Câncer:" /> {renderConditionalInput(data.tumorCancer, 'tumorCancerLocal', 'Qual o local?')}</div>
+          <div className="question-row"><RadioGroup name="fezQuimio" value={data.fezQuimio} onChange={handleRadioChange} legend="Fez Quimio?" /> {renderConditionalInput(data.fezQuimio, 'fezQuimioTempo', 'Há quanto tempo (anos)?')} {data.fezQuimio === 'sim' && <RadioGroup name="fazQuimio" value={data.fazQuimio} onChange={handleRadioChange} legend="Faz quimio?" />}</div>
+          <div className="question-row"><RadioGroup name="fezRadio" value={data.fezRadio} onChange={handleRadioChange} legend="Fez Radio?" /> {renderConditionalInput(data.fezRadio, 'fezRadioTempo', 'Há quanto tempo (anos)?')} {data.fezRadio === 'sim' && <RadioGroup name="fazRadio" value={data.fazRadio} onChange={handleRadioChange} legend="Faz radio?" />}</div>
+          <div className="form-group span-full"><label>Qual seu acompanhamento médico?</label><textarea name="acompanhamentoMedico" value={data.acompanhamentoMedico || ''} onChange={handleInputChange}></textarea></div>
         </div>
       </fieldset>
+
+      <fieldset className="anamnese-fieldset">
+        <legend>Antecedentes Cirúrgicos</legend>
+        <div className="anamnese-questions">
+          <div className="question-row"><RadioGroup name="cirurgia" value={data.cirurgia} onChange={handleRadioChange} legend="Já se submeteu a alguma tratamento cirúrgico?" /> {renderConditionalInput(data.cirurgia, 'cirurgiaQual', 'Qual?')}</div>
+          <div className="question-row"><RadioGroup name="alteracaoCicatrizacao" value={data.alteracaoCicatrizacao} onChange={handleRadioChange} legend="Possui alteração de cicatrização?" /> {renderConditionalInput(data.alteracaoCicatrizacao, 'alteracaoCicatrizacaoQual', 'Qual?')}</div>
+          <div className="question-row"><RadioGroup name="hemorragiaCirurgica" value={data.hemorragiaCirurgica} onChange={handleRadioChange} legend="Já teve hemorragia cirúrgica?" /></div>
+          <div className="question-row"><RadioGroup name="cirurgiaOdontologica" value={data.cirurgiaOdontologica} onChange={handleRadioChange} legend="Já se submeteu a alguma cirurgia Odontológica?" /> {renderConditionalInput(data.cirurgiaOdontologica, 'cirurgiaOdontologicaQual', 'Qual?')}</div>
+        </div>
+      </fieldset>
+
+      <fieldset className="anamnese-fieldset">
+        <legend>Hábitos</legend>
+        <div className="anamnese-questions">
+          <div className="question-row"><RadioGroup name="tabagista" value={data.tabagista} onChange={handleRadioChange} legend="Tabagista:" /> {data.tabagista === 'sim' && <RadioGroup name="tabagistaAtivo" value={data.tabagistaAtivo} onChange={handleRadioChange} legend="Ativo?" />} {data.tabagistaAtivo === 'nao' && renderConditionalInput(data.tabagista, 'tabagistaParouHa', 'Parou há quanto tempo?')}</div>
+          {data.tabagista === 'sim' && <div className="form-group-inline"><input type="text" name="tabagistaFrequencia" value={data.tabagistaFrequencia || ''} onChange={handleInputChange} placeholder="Frequência" /><input type="text" name="tabagistaQuantidade" value={data.tabagistaQuantidade || ''} onChange={handleInputChange} placeholder="Quantidade/Dia" /><input type="text" name="tabagistaProduto" value={data.tabagistaProduto || ''} onChange={handleInputChange} placeholder="Produto" /></div>}
+          <div className="question-row"><RadioGroup name="alcoolista" value={data.alcoolista} onChange={handleRadioChange} legend="Alcoolista:" /> {data.alcoolista === 'sim' && <RadioGroup name="alcoolistaAtivo" value={data.alcoolistaAtivo} onChange={handleRadioChange} legend="Ativo?" />} {data.alcoolistaAtivo === 'nao' && renderConditionalInput(data.alcoolista, 'alcoolistaParouHa', 'Parou há quanto tempo?')}</div>
+          {data.alcoolista === 'sim' && <div className="form-group-inline"><input type="text" name="alcoolistaFrequencia" value={data.alcoolistaFrequencia || ''} onChange={handleInputChange} placeholder="Frequência" /><input type="text" name="alcoolistaQuantidade" value={data.alcoolistaQuantidade || ''} onChange={handleInputChange} placeholder="Quantidade/Dia" /></div>}
+          <div className="question-row"><RadioGroup name="atividadeFisica" value={data.atividadeFisica} onChange={handleRadioChange} legend="Pratica Atividade Física?" /></div>
+        </div>
+      </fieldset>
+
+      <fieldset className="anamnese-fieldset">
+        <legend>Dados de Saúde</legend>
+        <div className="dados-saude-grid">
+          <label>Pressão Arterial:</label><input type="text" name="pressaoArterial" value={data.pressaoArterial || ''} onChange={handleInputChange} /><label>OBS:</label><input type="text" name="pressaoArterialObs" value={data.pressaoArterialObs || ''} onChange={handleInputChange} />
+          <label>Pulso:</label><input type="text" name="pulso" value={data.pulso || ''} onChange={handleInputChange} /><label>OBS:</label><input type="text" name="pulsoObs" value={data.pulsoObs || ''} onChange={handleInputChange} />
+          <label>Temperatura:</label><input type="text" name="temperatura" value={data.temperatura || ''} onChange={handleInputChange} /><label>OBS:</label><input type="text" name="temperaturaObs" value={data.temperaturaObs || ''} onChange={handleInputChange} />
+          <label>Índice glicêmico:</label><input type="text" name="indiceGlicemico" value={data.indiceGlicemico || ''} onChange={handleInputChange} /><label>OBS:</label><input type="text" name="indiceGlicemicoObs" value={data.indiceGlicemicoObs || ''} onChange={handleInputChange} />
+          <label>Peso:</label><input type="text" name="peso" value={data.peso || ''} onChange={handleInputChange} /><label>OBS:</label><input type="text" name="pesoObs" value={data.pesoObs || ''} onChange={handleInputChange} />
+          <label>Altura:</label><input type="text" name="altura" value={data.altura || ''} onChange={handleInputChange} /><div></div><div></div>
+          <label>Gravidez:</label><input type="text" name="gravidez" value={data.gravidez || ''} onChange={handleInputChange} /><label>OBS:</label><input type="text" name="gravidezObs" value={data.gravidezObs || ''} onChange={handleInputChange} />
+        </div>
+        <div className="anamnese-questions">
+          <div className="question-row"><RadioGroup name="emTratamentoMedico" value={data.emTratamentoMedico} onChange={handleRadioChange} legend="Está em Tratamento médico?" /> {renderConditionalInput(data.emTratamentoMedico, 'tratamentoMedicoQual', 'Qual?')}</div>
+          <div className="question-row"><RadioGroup name="alergia" value={data.alergia} onChange={handleRadioChange} legend="Tem alguma alergia?" /> {renderConditionalInput(data.alergia, 'alergiaQual', 'Qual?')}</div>
+          <div className="question-row"><RadioGroup name="medicacaoEmUso" value={data.medicacaoEmUso} onChange={handleRadioChange} legend="Está em uso de medicação?" /></div>
+        </div>
+        {data.medicacaoEmUso === 'sim' && (
+          <div className="medicacoes-list">
+            {data.medicacoes.map((med, index) => (
+              <div key={index} className="medicacao-item">
+                <span>{index + 1}-</span>
+                <input type="text" placeholder="Nome" value={med.nome} onChange={(e) => handleMedicacaoChange(index, 'nome', e)} />
+                <input type="text" placeholder="Dosagem" value={med.dosagem} onChange={(e) => handleMedicacaoChange(index, 'dosagem', e)} />
+              </div>
+            ))}
+          </div>
+        )}
+      </fieldset>
+
+      <fieldset className="anamnese-fieldset">
+        <legend>Responsável Legal</legend>
+        <div className="form-group-inline">
+          <input type="text" name="responsavelNome" placeholder="Nome do Responsável" value={data.responsavelNome || ''} onChange={handleInputChange} />
+          <input type="text" name="responsavelRg" placeholder="RG do Responsável" value={data.responsavelRg || ''} onChange={handleInputChange} />
+        </div>
+      </fieldset>
+
+      <div className="declaracao-final">
+        <h5>O paciente ou seu responsável se compromete a seguir as orientações do Cirurgião-Dentista, comunicando imediatamente qualquer alteração em decorrência do tratamento realizado, compromete-se a veracidade das informações prestada para seu tratamento, comparecer pontualmente as consultas marcadas, justificando as faltas com antecedência mínima de 24 (vinte e quatro) horas. Faltas não justificadas, serão sujeitas a cobrança da consulta.</h5>
+      </div>
+
     </div>
   );
 };
@@ -263,7 +361,7 @@ export default function Prontuario() {
 
   const limparFormulario = () => {
     setFormData({
-      nome: "", cpf: "", data: new Date().toISOString().split("T")[0], observacoes: "", historicoFamiliar: "", 
+      nome: "", cpf: "", data: new Date().toISOString().split("T")[0], observacoes: "", historicoFamiliar: "",
       evolucao: "", medicamento: "", dosagem: "", assinaturaProfissional: null, assinaturaPaciente: null,
       anamneseCompleta: initialAnamneseState, // Limpa a anamnese
     });
@@ -457,8 +555,8 @@ export default function Prontuario() {
               : selectedTab === "evolucao"
                 ? "Evolução de Tratamento"
                 : selectedTab === "receituario" ? "Receituário"
-                : selectedTab === "historicoMedico" ? "Histórico Médico" // Título atualizado
-                : "Ficha"}
+                  : selectedTab === "historicoMedico" ? "Histórico Médico" // Título atualizado
+                    : "Ficha"}
         </h2>
 
         <fieldset>
@@ -499,7 +597,7 @@ export default function Prontuario() {
             )}
 
             {selectedTab === "historicoMedico" && (
-              <AnamneseForm 
+              <AnamneseForm
                 data={formData.anamneseCompleta || initialAnamneseState}
                 onAnamneseChange={handleAnamneseChange}
                 onMedicacaoChange={handleMedicacaoChange}
@@ -600,7 +698,7 @@ export default function Prontuario() {
                 : tab === "evolucao"
                   ? "Evolução"
                   : tab === "receituario"
-                    ? "Receituário" 
+                    ? "Receituário"
                     : "Histórico Médico"}
           </button>
         ))}
@@ -628,7 +726,7 @@ export default function Prontuario() {
                   <tr key={p._id}>
                     <td>{p.paciente?.nome || p.nome || 'N/A'}</td>
                     <td>{new Date(p.createdAt).toLocaleDateString("pt-BR")}</td>
-                    <td>{new Date(p.createdAt).toLocaleDateString("pt-BR")}</td>
+                    <td>{p.profissional?.nome || 'N/A'}</td>
                     <td className="acoes">
                       <button onClick={() => handleBaixarPDF(p)} title="Baixar PDF"><FaDownload /></button>
                       <button onClick={() => handleEditar(p._id)} title="Editar Prontuário"><FaEdit /></button>
