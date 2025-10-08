@@ -46,10 +46,16 @@ router.post("/", async (req, res) => {
     // ✅ CORREÇÃO: Garante que a clínica seja a do funcionário logado.
     if (req.usuario.perfil === 'funcionario') {
         const funcionarioLogado = await User.findById(req.usuario.id);
-        clinicaId = funcionarioLogado?.clinica;
+        clinicaId = funcionarioLogado?.clinica; // Pega a clínica do funcionário
     } else {
-        // Para o patrão, continua usando o cabeçalho.
+        // Para o patrão, usa a clínica selecionada no cabeçalho.
         clinicaId = req.headers['x-clinic-id'];
+        // ✅ CORREÇÃO: Se o patrão estiver na "Visão Geral" (sem clínica selecionada),
+        // e um paciente for selecionado, usa a clínica do paciente para salvar o prontuário.
+        if (!clinicaId && req.body.paciente) {
+            const paciente = await Paciente.findById(req.body.paciente);
+            if (paciente) clinicaId = paciente.clinica;
+        }
     }
 
     if (!clinicaId) return res.status(400).json({ message: "O usuário não está associado a nenhuma clínica." });

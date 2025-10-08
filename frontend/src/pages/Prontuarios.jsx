@@ -504,8 +504,8 @@ export default function Prontuario() {
               <tbody>
                 {prontuarios.map((p) => (
                   <tr key={p._id}>
-                    <td>{p.nome}</td>
-                    <td>{p.profissional?.nome || 'N/A'}</td>
+                    <td>{p.paciente?.nome || p.nome || 'N/A'}</td>
+                    <td>{new Date(p.createdAt).toLocaleDateString("pt-BR")}</td>
                     <td>{new Date(p.createdAt).toLocaleDateString("pt-BR")}</td>
                     <td className="acoes">
                       <button onClick={() => handleBaixarPDF(p)} title="Baixar PDF"><FaDownload /></button>
