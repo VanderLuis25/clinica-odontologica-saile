@@ -2,6 +2,7 @@ import express from "express";
 import Prontuario from "../models/Prontuario.js";
 import Clinica from '../models/Clinica.js'; // Importar Clinica
 import User from '../models/User.js'; // Importar User para filtro de funcionário
+import Paciente from "../models/Paciente.js"; // ✅ CORREÇÃO: Importar o modelo Paciente
 
 const router = express.Router();
 
