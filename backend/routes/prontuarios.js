@@ -13,16 +13,10 @@ router.get("/", async (req, res) => {
 
     if (req.usuario.perfil === 'patrao') {
         const clinicaId = req.headers['x-clinic-id'];
-        if (clinicaId) {
-            const matriz = await Clinica.findOne().sort({ createdAt: 1 });
-            if (matriz && matriz._id.toString() === clinicaId) {
-                // Patrão na Matriz: vê dados da matriz e dados antigos sem clínica.
-                filtro.$or = [{ clinica: clinicaId }, { clinica: null }, { clinica: { $exists: false } }];
-            } else {
-                // Patrão em outra clínica: vê apenas dados daquela clínica.
-                filtro.clinica = clinicaId;
-            }
-        }
+        // Se uma clínica específica for selecionada, filtra por ela.
+        // Se não (Visão Geral), o filtro fica vazio e busca de TODAS as clínicas.
+        if (clinicaId) filtro.clinica = clinicaId;
+
     } else if (req.usuario.perfil === 'funcionario') {
         const funcionarioLogado = await User.findById(req.usuario.id);
         if (funcionarioLogado && funcionarioLogado.clinica) {
@@ -65,7 +59,8 @@ router.post("/", async (req, res) => {
     await novoProntuario.save();
     res.status(201).json(novoProntuario);
   } catch (err) {
-    res.status(400).json({ message: "Erro ao criar prontuário", error: err.message });
+    console.error("Erro ao criar prontuário:", err);
+    res.status(500).json({ message: "Erro ao criar prontuário", error: err.message });
   }
 });
 
@@ -102,12 +97,24 @@ router.put("/:id", async (req, res) => {
 // DELETE: Excluir prontuário
 router.delete("/:id", async (req, res) => {
   try {
-    const prontuarioDeletado = await Prontuario.findByIdAndDelete(req.params.id);
-    if (!prontuarioDeletado) {
-      return res.status(404).json({ message: "Prontuário não encontrado" });
+    // ✅ INÍCIO DA VERIFICAÇÃO DE SEGURANÇA
+    const prontuario = await Prontuario.findById(req.params.id);
+    if (!prontuario) {
+      return res.status(404).json({ message: "Prontuário não encontrado." });
     }
-    res.json({ message: "Prontuário excluído com sucesso" });
+
+    if (req.usuario.perfil === 'funcionario') {
+      const funcionarioLogado = await User.findById(req.usuario.id);
+      if (prontuario.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+        return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para excluir este prontuário.' });
+      }
+    }
+    // ✅ FIM DA VERIFICAÇÃO DE SEGURANÇA
+
+    const prontuarioDeletado = await Prontuario.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Prontuário excluído com sucesso" });
   } catch (err) {
+    console.error("Erro ao excluir prontuário:", err);
     res.status(500).json({ message: "Erro ao excluir prontuário", error: err.message });
   }
 });
