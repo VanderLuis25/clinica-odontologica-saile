@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { FaSearch } from "react-icons/fa";
 import './Pacientes.css';
+import { apiService } from "../services/api.js"; // ✅ CORREÇÃO: Importa o apiService
 import { SystemDataContext } from "../context/SystemDataContext.jsx"; 
 
 // 💡 FUNÇÃO DE CÁLCULO DE IDADE
