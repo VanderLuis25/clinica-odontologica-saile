@@ -71,8 +71,8 @@ router.post("/", async (req, res) => {
     await novoProntuario.save();
     res.status(201).json(novoProntuario);
   } catch (err) {
-    console.error("Erro ao criar prontuário:", err);
-    res.status(500).json({ message: "Erro ao criar prontuário", error: err.message });
+    console.error("Erro ao criar prontuário:", err); // Mantém o log detalhado
+    res.status(400).json({ message: "Erro ao criar prontuário", error: err.message }); // ✅ CORREÇÃO: Retorna 400 para erros de validação
   }
 });
 

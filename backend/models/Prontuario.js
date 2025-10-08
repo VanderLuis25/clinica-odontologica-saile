@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const prontuarioSchema = new mongoose.Schema(
   {
+    // ✅ CORREÇÃO: Adiciona a referência ao profissional que criou o prontuário
+    profissional: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
     paciente: { type: mongoose.Schema.Types.ObjectId, ref: 'Paciente', required: true },
     nome: { type: String, required: true },
     cpf: { type: String, required: true },
