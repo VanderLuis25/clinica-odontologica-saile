@@ -774,8 +774,10 @@ export default function Prontuario() {
       doc.setFont('helvetica', 'bold');
       doc.text(`${label}:`, margin, y);
       doc.setFont('helvetica', 'normal');
-      const textLines = doc.splitTextToSize(String(value), contentWidth - doc.getTextWidth(`${label}: `) - 5);
-      doc.text(textLines, margin + 35, y);
+      // ✅ CORREÇÃO: Calcula a posição do valor dinamicamente para evitar sobreposição
+      const labelWidth = doc.getTextWidth(`${label}: `);
+      const textLines = doc.splitTextToSize(String(value), contentWidth - labelWidth - 5);
+      doc.text(textLines, margin + labelWidth, y);
       y += (textLines.length * 5) + 2;
     };
 
