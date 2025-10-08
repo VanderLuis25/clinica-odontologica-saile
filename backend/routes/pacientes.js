@@ -42,15 +42,15 @@ router.get('/', async (req, res) => {
 
 // 2. ROTA DE BUSCA: GET /search
 router.get('/search', async (req, res) => {
-    const { termo } = req.query;
+    const { q: termo } = req.query; // ✅ CORREÇÃO: Usa 'q' como parâmetro, conforme definido no frontend (api.js)
 
     try {
         if (!termo) {
             return res.status(200).json([]);
         }
         const regex = new RegExp(termo, 'i');
-        const filtro = {};
-
+        const filtro = {}; // Inicia o filtro
+        
         // ✅ CORREÇÃO: Garante que a busca respeite a clínica do usuário.
         if (req.usuario.perfil === 'patrao') {
             const clinicaId = req.headers['x-clinic-id'];
@@ -64,7 +64,7 @@ router.get('/search', async (req, res) => {
             }
         }
 
-        filtro.$or = [
+        filtro.$or = [ // Adiciona a condição de busca por nome ou CPF ao filtro existente
                 { nome: { $regex: regex } },
                 { cpf: { $regex: regex } }
             ];
