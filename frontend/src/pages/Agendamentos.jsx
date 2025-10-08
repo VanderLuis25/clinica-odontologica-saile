@@ -366,7 +366,7 @@ const Agendamentos = () => {
 
                                 {/* Procedimento */}
                                 <div>
-                                    <label>Procedimento *:</label>
+                                    <label>Procedimento:</label>
                                     <select name="procedimento" value={formData.procedimento} onChange={handleChange}>
                                         <option value="">Selecione...</option>
                                         {procedimentos.map(p => <option key={p._id} value={p._id}>{p.nome}</option>)}
@@ -376,7 +376,7 @@ const Agendamentos = () => {
 
                                 {/* Profissional */}
                                 <div>
-                                    <label>Profissional *:</label>
+                                    <label>Profissional:</label>
                                     <select name="profissional" value={formData.profissional} onChange={handleChange} required>
                                         <option value="">Selecione...</option>
                                         {profissionais.map(p => <option key={p._id} value={p._id}>{p.nome}</option>)}
