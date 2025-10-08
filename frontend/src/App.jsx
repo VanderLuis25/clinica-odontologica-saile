@@ -1,25 +1,3 @@
-// Ignora erros de extensões que fecham a porta antes de responder
-window.addEventListener("error", (event) => {
-  if (
-    event.message &&
-    event.message.includes("The message port closed before a response was received")
-  ) {
-    event.stopImmediatePropagation();
-    console.warn("Mensagem de extensão ignorada:", event.message);
-  }
-});
-
-window.addEventListener("unhandledrejection", (event) => {
-  if (
-    event.reason &&
-    event.reason.message &&
-    event.reason.message.includes("The message port closed before a response was received")
-  ) {
-    event.preventDefault();
-    console.warn("Promise rejeitada por extensão ignorada:", event.reason.message);
-  }
-});
-
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, Link, useLocation, useNavigate } from "react-router-dom";
 import {
