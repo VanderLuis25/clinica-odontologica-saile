@@ -72,15 +72,28 @@ router.post("/", async (req, res) => {
 // PUT: Atualizar prontuário
 router.put("/:id", async (req, res) => {
   try {
+    // ✅ INÍCIO DA VERIFICAÇÃO DE SEGURANÇA
+    const prontuario = await Prontuario.findById(req.params.id);
+    if (!prontuario) {
+      return res.status(404).json({ message: "Prontuário não encontrado." });
+    }
+
+    if (req.usuario.perfil === 'funcionario') {
+      const funcionarioLogado = await User.findById(req.usuario.id);
+      // Verifica se o prontuário pertence à clínica do funcionário
+      if (prontuario.clinica.toString() !== funcionarioLogado.clinica.toString()) {
+        return res.status(403).json({ message: 'Acesso negado. Você não tem permissão para alterar este prontuário.' });
+      }
+    }
+    // ✅ FIM DA VERIFICAÇÃO DE SEGURANÇA
+
     const prontuarioAtualizado = await Prontuario.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
-    );
-    if (!prontuarioAtualizado) {
-      return res.status(404).json({ message: "Prontuário não encontrado" });
-    }
-    res.json(prontuarioAtualizado);
+    ).populate('profissional', 'nome'); // Popula o profissional ao retornar
+
+    res.status(200).json(prontuarioAtualizado);
   } catch (err) {
     res.status(400).json({ message: "Erro ao atualizar prontuário", error: err.message });
   }
