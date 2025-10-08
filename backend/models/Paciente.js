@@ -1,6 +1,9 @@
 // models/Paciente.js
+// ✅ CORREÇÃO: Importa o mongoose e desestrutura Schema e model
+import mongoose from 'mongoose';
+const { Schema, model } = mongoose;
 
-const pacienteSchema = new Schema({
+const pacienteSchema = new mongoose.Schema({
   nome: {
     type: String,
     required: true,
@@ -62,5 +65,5 @@ const pacienteSchema = new Schema({
 // Isso permite que o mesmo CPF seja cadastrado em clínicas diferentes.
 pacienteSchema.index({ clinica: 1, cpf: 1 }, { unique: true });
 
-const Paciente = model('Paciente', pacienteSchema);
+const Paciente = mongoose.model('Paciente', pacienteSchema);
 export default Paciente;
