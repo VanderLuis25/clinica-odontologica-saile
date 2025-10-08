@@ -59,7 +59,7 @@ const PatientForm = ({ patient, onClose, onSave }) => {
                 sexo: cleanValue(patient.sexo),
                 profissao: cleanValue(patient.profissao),
                 telefone: cleanValue(patient.telefone),
- _email: cleanValue(patient.email),
+                email: cleanValue(patient.email),
                 rg: cleanValue(patient.rg),
                 cpf: cleanValue(patient.cpf),
                 endereco: {
@@ -68,7 +68,7 @@ const PatientForm = ({ patient, onClose, onSave }) => {
                     bairro: cleanValue(patient.endereco?.bairro),
                     cidade: cleanValue(patient.endereco?.cidade),
                     estado: cleanValue(patient.endereco?.estado),
-        _cep: cleanValue(patient.endereco?.cep),
+                    cep: cleanValue(patient.endereco?.cep),
                 }
             });
         }

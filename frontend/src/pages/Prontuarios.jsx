@@ -540,10 +540,22 @@ export default function Prontuario() {
 
         <fieldset>
           <legend>Dados do Paciente</legend>
-          <div className="form-grid">
-            <input type="text" name="nome" placeholder="Nome do Paciente" value={formData.nome} onChange={handleInputChange} readOnly />
-            <input type="text" name="cpf" placeholder="CPF do Paciente" value={formData.cpf} onChange={handleInputChange} readOnly />
-            <input type="date" name="data" value={formData.data} onChange={handleInputChange} required />
+          {/* ✅ NOVO: Layout detalhado dos dados do paciente */}
+          <div className="patient-form-grid">
+            <div className="form-group span-3"><label>Paciente:</label><input type="text" value={selectedPaciente?.nome || ''} readOnly /></div>
+            <div className="form-group span-1"><label>Nasc.:</label><input type="date" value={selectedPaciente?.dataNascimento ? new Date(selectedPaciente.dataNascimento).toISOString().split('T')[0] : ''} readOnly /></div>
+            <div className="form-group span-1"><label>Sexo:</label><input type="text" value={selectedPaciente?.sexo || ''} readOnly /></div>
+            <div className="form-group span-3"><label>End.:</label><input type="text" value={selectedPaciente?.endereco?.rua || ''} readOnly /></div>
+            <div className="form-group span-1"><label>Nº:</label><input type="text" value={selectedPaciente?.endereco?.numero || ''} readOnly /></div>
+            <div className="form-group span-2"><label>Bairro:</label><input type="text" value={selectedPaciente?.endereco?.bairro || ''} readOnly /></div>
+            <div className="form-group span-1"><label>Estado:</label><input type="text" value={selectedPaciente?.endereco?.estado || ''} readOnly /></div>
+            <div className="form-group span-2"><label>Cidade:</label><input type="text" value={selectedPaciente?.endereco?.cidade || ''} readOnly /></div>
+            <div className="form-group span-1"><label>CEP:</label><input type="text" value={selectedPaciente?.endereco?.cep || ''} readOnly /></div>
+            <div className="form-group span-3"><label>Profissão:</label><input type="text" value={selectedPaciente?.profissao || ''} readOnly /></div>
+            <div className="form-group span-2"><label>Tel/Cel:</label><input type="tel" value={selectedPaciente?.telefone || ''} readOnly /></div>
+            <div className="form-group span-3"><label>E-mail:</label><input type="email" value={selectedPaciente?.email || ''} readOnly /></div>
+            <div className="form-group span-2"><label>RG:</label><input type="text" value={selectedPaciente?.rg || ''} readOnly /></div>
+            <div className="form-group span-2"><label>CPF:</label><input type="text" value={selectedPaciente?.cpf || ''} readOnly /></div>
           </div>
         </fieldset>
 
