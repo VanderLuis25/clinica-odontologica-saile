@@ -298,11 +298,20 @@ export default function Prontuario() {
     setSearchResults(resultados);
   }, [searchTerm, pacientes]);
 
-  const handleSelectPaciente = (p) => {
-    setSelectedPaciente(p);
-    setSearchTerm(p.nome);
+  const handleSelectPaciente = async (paciente) => {
+    setSearchTerm(paciente.nome);
     setSearchResults([]);
-  };
+    try {
+      // ✅ CORREÇÃO: Busca os dados completos do paciente pela API
+      const { data: fullPatientData } = await apiService.getPacienteById(paciente._id);
+      // Atualiza o estado com os dados completos, que preencherão o formulário
+      setSelectedPaciente(fullPatientData);
+    } catch (error) {
+      console.error("Erro ao buscar detalhes do paciente:", error);
+      showMessage("Não foi possível carregar os dados completos do paciente.", "error");
+      setSelectedPaciente(paciente); // Mantém os dados parciais como fallback
+    }
+  };  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
