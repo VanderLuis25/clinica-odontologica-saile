@@ -27,11 +27,14 @@ router.get("/", async (req, res) => {
     }
 
     const prontuarios = await Prontuario.find(filtro)
-        .populate('profissional', 'nome') // ✅ Popula o nome do profissional
+        .populate('profissional', 'nome') // Popula o nome do profissional
+        // ✅ CORREÇÃO: Popula o paciente de forma segura, evitando erros se não existir.
+        .populate('paciente', 'nome cpf') 
         .sort({ createdAt: -1 });
     res.json(prontuarios);
   } catch (err) {
-    res.status(500).json({ message: "Erro ao buscar prontuários", error: err.message });
+    console.error("Erro detalhado ao buscar prontuários:", err); // Log detalhado no servidor
+    res.status(500).json({ message: "Erro interno ao buscar prontuários.", error: err.message });
   }
 });
 
@@ -54,7 +57,8 @@ router.post("/", async (req, res) => {
     const novoProntuario = new Prontuario({
       ...req.body,
       clinica: clinicaId, // Associa à clínica correta.
-      profissional: req.usuario.id // ✅ Salva o ID do profissional que criou
+      profissional: req.usuario.id, // Salva o ID do profissional que criou
+      paciente: req.body.paciente // Garante que o ID do paciente seja salvo
     });
     await novoProntuario.save();
     res.status(201).json(novoProntuario);
