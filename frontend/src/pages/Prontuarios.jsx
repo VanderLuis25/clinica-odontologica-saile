@@ -551,20 +551,20 @@ export default function Prontuario() {
           <legend>Dados do Paciente</legend>
           {/* ✅ NOVO: Layout detalhado dos dados do paciente */}
           <div className="patient-form-grid">
-            <div className="form-group span-3"><label>Paciente:</label><input type="text" value={selectedPaciente?.nome || ''} readOnly /></div>
-            <div className="form-group span-1"><label>Data de Nascimento:</label><input type="date" value={selectedPaciente?.dataNascimento ? new Date(selectedPaciente.dataNascimento).toISOString().split('T')[0] : ''} readOnly /></div>
-            <div className="form-group span-1"><label>Sexo:</label><input type="text" value={selectedPaciente?.sexo || ''} readOnly /></div>
-            <div className="form-group span-3"><label>End.:</label><input type="text" value={selectedPaciente?.endereco?.rua || ''} readOnly /></div>
-            <div className="form-group span-1"><label>Nº:</label><input type="text" value={selectedPaciente?.endereco?.numero || ''} readOnly /></div>
-            <div className="form-group span-2"><label>Bairro:</label><input type="text" value={selectedPaciente?.endereco?.bairro || ''} readOnly /></div>
+            <div className="form-group span-4"><label>Paciente:</label><input type="text" value={selectedPaciente?.nome || ''} readOnly /></div>
+            <div className="form-group span-2"><label>Data de Nascimento:</label><input type="date" value={selectedPaciente?.dataNascimento ? new Date(selectedPaciente.dataNascimento).toISOString().split('T')[0] : ''} readOnly /></div>
+            <div className="form-group span-4"><label>End.:</label><input type="text" value={selectedPaciente?.endereco?.rua || ''} readOnly /></div>
+            <div className="form-group span-2"><label>Nº:</label><input type="text" value={selectedPaciente?.endereco?.numero || ''} readOnly /></div>
+            <div className="form-group span-3"><label>Bairro:</label><input type="text" value={selectedPaciente?.endereco?.bairro || ''} readOnly /></div>
+            <div className="form-group span-3"><label>Cidade:</label><input type="text" value={selectedPaciente?.endereco?.cidade || ''} readOnly /></div>
             <div className="form-group span-1"><label>Estado:</label><input type="text" value={selectedPaciente?.endereco?.estado || ''} readOnly /></div>
-            <div className="form-group span-2"><label>Cidade:</label><input type="text" value={selectedPaciente?.endereco?.cidade || ''} readOnly /></div>
-            <div className="form-group span-1"><label>CEP:</label><input type="text" value={selectedPaciente?.endereco?.cep || ''} readOnly /></div>
+            <div className="form-group span-2"><label>CEP:</label><input type="text" value={selectedPaciente?.endereco?.cep || ''} readOnly /></div>
             <div className="form-group span-3"><label>Profissão:</label><input type="text" value={selectedPaciente?.profissao || ''} readOnly /></div>
-            <div className="form-group span-2"><label>Tel/Cel:</label><input type="tel" value={selectedPaciente?.telefone || ''} readOnly /></div>
-            <div className="form-group span-3"><label>E-mail:</label><input type="email" value={selectedPaciente?.email || ''} readOnly /></div>
-            <div className="form-group span-2"><label>RG:</label><input type="text" value={selectedPaciente?.rg || ''} readOnly /></div>
-            <div className="form-group span-2"><label>CPF:</label><input type="text" value={selectedPaciente?.cpf || ''} readOnly /></div>
+            <div className="form-group span-3"><label>Tel/Cel:</label><input type="tel" value={selectedPaciente?.telefone || ''} readOnly /></div>
+            <div className="form-group span-6"><label>E-mail:</label><input type="email" value={selectedPaciente?.email || ''} readOnly /></div>
+            <div className="form-group span-3"><label>RG:</label><input type="text" value={selectedPaciente?.rg || ''} readOnly /></div>
+            <div className="form-group span-3"><label>CPF:</label><input type="text" value={selectedPaciente?.cpf || ''} readOnly /></div>
+            <div className="form-group span-3"><label>Sexo:</label><input type="text" value={selectedPaciente?.sexo || ''} readOnly /></div>
           </div>
         </fieldset>
 
