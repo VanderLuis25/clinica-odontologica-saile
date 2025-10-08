@@ -121,27 +121,6 @@ const AnamneseForm = ({ data, onAnamneseChange, onMedicacaoChange, paciente }) =
 
   return (
     <div className="anamnese-form-container">
-      {/* Dados Pessoais */}
-      <fieldset className="anamnese-fieldset">
-        <legend>Dados Pessoais</legend>
-        <div className="patient-form-grid">
-          <div className="form-group span-3"><label>Paciente:</label><input type="text" value={paciente?.nome || ''} readOnly /></div>
-          <div className="form-group span-1"><label>Nasc.:</label><input type="date" value={paciente?.dataNascimento ? new Date(paciente.dataNascimento).toISOString().split('T')[0] : ''} readOnly /></div>
-          <div className="form-group span-1"><label>Sexo:</label><input type="text" value={paciente?.sexo || ''} readOnly /></div>
-          <div className="form-group span-3"><label>End.:</label><input type="text" value={paciente?.endereco?.rua || ''} readOnly /></div>
-          <div className="form-group span-1"><label>Nº:</label><input type="text" value={paciente?.endereco?.numero || ''} readOnly /></div>
-          <div className="form-group span-2"><label>Bairro:</label><input type="text" value={paciente?.endereco?.bairro || ''} readOnly /></div>
-          <div className="form-group span-1"><label>Estado:</label><input type="text" value={paciente?.endereco?.estado || ''} readOnly /></div>
-          <div className="form-group span-2"><label>Cidade:</label><input type="text" value={paciente?.endereco?.cidade || ''} readOnly /></div>
-          <div className="form-group span-1"><label>CEP:</label><input type="text" value={paciente?.endereco?.cep || ''} readOnly /></div>
-          <div className="form-group span-3"><label>Profissão:</label><input type="text" value={paciente?.profissao || ''} readOnly /></div>
-          <div className="form-group span-2"><label>Tel/Cel:</label><input type="tel" value={paciente?.telefone || ''} readOnly /></div>
-          <div className="form-group span-3"><label>E-mail:</label><input type="email" value={paciente?.email || ''} readOnly /></div>
-          <div className="form-group span-2"><label>RG:</label><input type="text" value={paciente?.rg || ''} readOnly /></div>
-          <div className="form-group span-2"><label>CPF:</label><input type="text" value={paciente?.cpf || ''} readOnly /></div>
-        </div>
-      </fieldset>
-
       {/* Doenças Referidas */}
       <fieldset className="anamnese-fieldset">
         <legend>Doenças Referidas</legend>
