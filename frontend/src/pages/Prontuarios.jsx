@@ -778,7 +778,7 @@ export default function Prontuario() {
       doc.setFont('helvetica', 'normal');
       // ✅ CORREÇÃO: Calcula a posição do valor dinamicamente para evitar sobreposição.
       const labelWidth = doc.getTextWidth(`${label}: `); // Mede a largura do texto do rótulo
-      const valueXPosition = margin + labelWidth + 2; // ✅ CORREÇÃO: Adiciona 2mm de espaço
+      const valueXPosition = margin + labelWidth + 3; // ✅ CORREÇÃO: Aumenta o espaço para 3mm
       const textLines = doc.splitTextToSize(String(value), contentWidth - labelWidth - 2); // Quebra o texto do valor se for muito longo
       doc.text(textLines, valueXPosition, y);
       y += (textLines.length * 5) + 2;
