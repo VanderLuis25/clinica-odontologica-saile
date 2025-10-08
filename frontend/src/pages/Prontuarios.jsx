@@ -484,8 +484,10 @@ export default function Prontuario() {
       doc.setFont('helvetica', 'bold');
       doc.text(`${label}:`, xOffset, y);
       doc.setFont('helvetica', 'normal');
-      const textLines = doc.splitTextToSize(String(value), width - doc.getTextWidth(`${label}: `));
-      doc.text(textLines, xOffset + doc.getTextWidth(`${label}: `), y);
+      // ✅ CORREÇÃO: Adiciona 2mm de espaço após o rótulo para melhor legibilidade
+      const labelWidth = doc.getTextWidth(`${label}: `);
+      const textLines = doc.splitTextToSize(String(value), width - labelWidth - 2);
+      doc.text(textLines, xOffset + labelWidth + 2, y);
       y += (textLines.length * 4) + 2; // Ajusta a altura da linha
     };
 
@@ -776,9 +778,9 @@ export default function Prontuario() {
       doc.setFont('helvetica', 'normal');
       // ✅ CORREÇÃO: Calcula a posição do valor dinamicamente para evitar sobreposição.
       const labelWidth = doc.getTextWidth(`${label}: `); // Mede a largura do texto do rótulo
-      const valueXPosition = margin + labelWidth; // Posição X do valor é o início da margem + largura do rótulo
+      const valueXPosition = margin + labelWidth + 2; // ✅ CORREÇÃO: Adiciona 2mm de espaço
       const textLines = doc.splitTextToSize(String(value), contentWidth - labelWidth - 2); // Quebra o texto do valor se for muito longo
-      doc.text(textLines, valueXPosition, y); // Posiciona o valor corretamente
+      doc.text(textLines, valueXPosition, y);
       y += (textLines.length * 5) + 2;
     };
 
