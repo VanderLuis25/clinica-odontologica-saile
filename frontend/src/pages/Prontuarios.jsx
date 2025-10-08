@@ -735,8 +735,9 @@ export default function Prontuario() {
 
   // ✅ NOVA FUNÇÃO: Gera PDF apenas para a aba selecionada
   const handleBaixarAbaPDF = async () => {
-    if (!editId) {
-      showMessage("Selecione e edite um prontuário salvo para baixar o PDF da aba.", "error");
+    // ✅ CORREÇÃO: Agora verifica se um paciente está selecionado
+    if (!selectedPaciente) {
+      showMessage("Selecione um paciente para baixar o PDF da aba.", "error");
       return;
     }
 
@@ -792,9 +793,10 @@ export default function Prontuario() {
     y = margin + 30;
     doc.setTextColor(TEXT_COLOR);
 
+    // ✅ CORREÇÃO: Usa o `selectedPaciente` para os dados, garantindo que sempre estejam preenchidos
     addSectionTitle('DADOS DO PACIENTE');
-    doc.text(`Paciente: ${prontuario.paciente?.nome || prontuario.nome || 'N/A'}`, margin, y);
-    doc.text(`CPF: ${prontuario.paciente?.cpf || prontuario.cpf || 'N/A'}`, margin + 100, y);
+    doc.text(`Paciente: ${selectedPaciente?.nome || 'N/A'}`, margin, y);
+    doc.text(`CPF: ${selectedPaciente?.cpf || 'N/A'}`, margin + 100, y);
     y += 6;
     doc.text(`Data da Ficha: ${new Date(prontuario.data).toLocaleDateString('pt-BR')}`, margin, y);
     doc.text(`Profissional: ${prontuario.profissional?.nome || 'N/A'}`, margin + 100, y);
@@ -1018,8 +1020,8 @@ export default function Prontuario() {
             <FaTimes /> Cancelar Edição
           </button>
         )}
-        {/* ✅ NOVO: Botão para baixar PDF da aba, visível apenas na edição */}
-        {editId && (
+        {/* ✅ CORREÇÃO: Botão agora aparece quando um paciente é selecionado */}
+        {selectedPaciente && (
           <button type="button" onClick={handleBaixarAbaPDF} className="btn-baixar-aba">
             <FaDownload /> Baixar PDF da Aba
           </button>
