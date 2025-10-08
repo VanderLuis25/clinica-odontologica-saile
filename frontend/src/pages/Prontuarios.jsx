@@ -69,8 +69,8 @@ export default function Prontuario() {
     evolucao: "",
     medicamento: "",
     dosagem: "",
-    areaAplicacao: "",
-    dose: "",
+    historicoMedico: "", // Campo renomeado
+    queixaPrincipal: "", // Campo renomeado
     assinaturaProfissional: null,
     assinaturaPaciente: null,
   });
@@ -153,8 +153,8 @@ export default function Prontuario() {
   const limparFormulario = () => {
     setFormData({
       nome: "", cpf: "", data: new Date().toISOString().split("T")[0], observacoes: "", historicoFamiliar: "", 
-      evolucao: "", medicamento: "", dosagem: "", assinaturaProfissional: null,
-      assinaturaPaciente: null, areaAplicacao: "", dose: "",
+      evolucao: "", medicamento: "", dosagem: "", historicoMedico: "", queixaPrincipal: "", 
+      assinaturaProfissional: null, assinaturaPaciente: null,
     });
     if (sigPadRef.current) {
       sigPadRef.current.clear();
@@ -336,9 +336,9 @@ export default function Prontuario() {
               ? "Ficha Infantil"
               : selectedTab === "evolucao"
                 ? "Evolução de Tratamento"
-                : selectedTab === "receituario"
-                  ? "Receituário"
-                  : "Procedimentos"}
+                : selectedTab === "receituario" ? "Receituário"
+                : selectedTab === "historicoMedico" ? "Histórico Médico" // Título atualizado
+                : "Ficha"}
         </h2>
 
         <fieldset>
@@ -378,11 +378,10 @@ export default function Prontuario() {
               </>
             )}
 
-            {selectedTab === "procedimentos" && (
+            {selectedTab === "historicoMedico" && (
               <>
-                <input type="text" name="areaAplicacao" placeholder="Área de Aplicação" value={formData.areaAplicacao} onChange={handleInputChange} />
-                <input type="text" name="dose" placeholder="Dose Utilizada" value={formData.dose} onChange={handleInputChange} />
-                <textarea name="observacoes" placeholder="Observações" value={formData.observacoes} onChange={handleInputChange} className="full-width"></textarea>
+                <textarea name="queixaPrincipal" placeholder="Queixa Principal" value={formData.queixaPrincipal} onChange={handleInputChange} className="full-width" />
+                <textarea name="historicoMedico" placeholder="Histórico da Doença Atual / Histórico Médico Pregresso" value={formData.historicoMedico} onChange={handleInputChange} className="full-width" />
               </>
             )}
           </div>
@@ -470,7 +469,7 @@ export default function Prontuario() {
 
       {/* Tabs */}
       <div className="tabs">
-        {["fichaAdulto", "fichaInfantil", "evolucao", "receituario", "procedimentos"].map((tab) => (
+        {["fichaAdulto", "fichaInfantil", "evolucao", "receituario", "historicoMedico"].map((tab) => (
           <button key={tab} className={selectedTab === tab ? "active" : ""} onClick={() => setSelectedTab(tab)}>
             {tab === "fichaAdulto"
               ? "Ficha Adulto"
@@ -479,8 +478,8 @@ export default function Prontuario() {
                 : tab === "evolucao"
                   ? "Evolução"
                   : tab === "receituario"
-                    ? "Receituário"
-                    : "Procedimentos"}
+                    ? "Receituário" 
+                    : "Histórico Médico"}
           </button>
         ))}
       </div>

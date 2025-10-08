@@ -16,9 +16,9 @@ const prontuarioSchema = new mongoose.Schema(
     historicoFamiliar: { type: String, default: "" },
     evolucao: { type: String, default: "" },
     medicamento: { type: String, default: "" },
-    dosagem: { type: String, default: "" },
-    areaAplicacao: { type: String, default: "" },
-    dose: { type: String, default: "" },
+    dosagem: { type: String, default: "" }, // Para receituário
+    historicoMedico: { type: String, default: "" }, // Novo campo para o histórico
+    queixaPrincipal: { type: String, default: "" }, // Novo campo para o histórico
     assinaturaProfissional: { type: String, required: true },
     assinaturaPaciente: { type: String, required: false }, // Assinatura do Paciente
     tipoFicha: { type: String, required: true },
