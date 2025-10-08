@@ -174,12 +174,14 @@ export default function App() {
                 </li>
               )}
 
-              {/* Menu Comum para todos */}
-              <li>
-                <Link to="/agendamentos" className={location.pathname === "/agendamentos" ? "active" : ""} onClick={() => setMobileMenu(false)}>
-                  <FaCalendarAlt className="icon" /><span className="label">Agendamentos</span>
-                </Link>
-              </li>
+              {/* Menu de Agendamentos (Patrão e Atendente) */}
+              {(perfil === 'patrao' || tipoProfissional === 'Atendente') && (
+                <li>
+                  <Link to="/agendamentos" className={location.pathname === "/agendamentos" ? "active" : ""} onClick={() => setMobileMenu(false)}>
+                    <FaCalendarAlt className="icon" /><span className="label">Agendamentos</span>
+                  </Link>
+                </li>
+              )}
 
               {/* Menu Financeiro (Patrão e Atendente) */}
               {(perfil === 'patrao' || tipoProfissional === 'Atendente') && (
@@ -224,11 +226,13 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/home" element={<Home />} />
-              <Route path="/agendamentos" element={<Agendamentos />} />
 
               {/* Rotas do Atendente */}
               {(perfil === 'patrao' || tipoProfissional === 'Atendente') && (
                 <>
+                  {/* Rota de Agendamentos movida para cá */}
+                  <Route path="/agendamentos" element={<Agendamentos />} />
+
                   <Route path="/pacientes" element={<Pacientes />} />
                   <Route path="/financeiro" element={<Financeiro />} />
                 </>
