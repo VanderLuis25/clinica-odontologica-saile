@@ -203,7 +203,12 @@ export default function Prontuario() {
       }
     }
 
-    // Adiciona o ID do paciente e o tipo de ficha
+    // ✅ CORREÇÃO: Garante que nome e cpf do paciente selecionado sejam enviados.
+    // Isso corrige o erro 400 (Bad Request) por falta de campos obrigatórios.
+    if (selectedPaciente) {
+      prontuarioData.nome = selectedPaciente.nome;
+      prontuarioData.cpf = selectedPaciente.cpf;
+    }
     prontuarioData.paciente = selectedPaciente?._id || formData.paciente;
     prontuarioData.tipoFicha = selectedTab;
 
