@@ -308,3 +308,43 @@
     color: #777;
     font-style: italic;
 }
+
+/* =============================================== */
+/* ====== RESPONSIVIDADE PARA TELAS MENORES ====== */
+/* =============================================== */
+
+@media (max-width: 768px) {
+    .profissionais-page {
+        padding: 15px;
+    }
+
+    .cards-container {
+        /* Em telas menores, força uma única coluna */
+        grid-template-columns: 1fr;
+    }
+
+    .profissionais-page .modal-content {
+        width: 100%;
+        padding: 15px;
+        max-height: 95vh;
+    }
+
+    .profissionais-page .modal-content h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Ajustes no calendário para telas menores */
+    .profissionais-page .calendario-simples {
+        gap: 3px; /* Reduz o espaçamento entre os dias */
+    }
+
+    .profissionais-page .dia-agenda {
+        padding: 5px 2px; /* Reduz o padding interno dos dias */
+        min-height: 50px; /* Altura mínima menor */
+        font-size: 0.7rem; /* Reduz a fonte do status */
+    }
+
+    .profissionais-page .dia-agenda .data {
+        font-size: 0.9rem; /* Tamanho da data um pouco menor */
+    }
+}
