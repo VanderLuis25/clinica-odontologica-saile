@@ -275,3 +275,138 @@
         font-size: 1.8rem;
     }
 }
+
+/* =======================================================
+   ====== MODAL DE CONSENTIMENTO FINANCEIRO ======
+   ======================================================= */
+
+.financeiro-container .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 30, 40, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1.5rem;
+}
+
+.financeiro-container .modal-box {
+    background: var(--cor-fundo);
+    padding: 2rem;
+    border-radius: var(--raio-borda);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.financeiro-container .consentimento-content {
+    overflow-y: auto;
+    padding-right: 1rem; /* Espaço para a barra de rolagem */
+    flex-grow: 1;
+}
+
+.financeiro-container .consentimento-logo {
+    display: block;
+    margin: 0 auto 1rem;
+    max-width: 180px;
+}
+
+.financeiro-container .consentimento-content h3 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--cor-primaria);
+    margin-bottom: 1.5rem;
+}
+
+.financeiro-container .consentimento-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: var(--cor-texto);
+}
+
+/* Tabela do Plano de Pagamento */
+.financeiro-container .consentimento-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+
+.financeiro-container .consentimento-table th,
+.financeiro-container .consentimento-table td {
+    border: 1px solid var(--cor-borda);
+    padding: 0.8rem;
+    text-align: left;
+}
+
+.financeiro-container .consentimento-table th {
+    background-color: var(--cor-secundaria);
+    color: white;
+    font-weight: 600;
+}
+
+.financeiro-container .consentimento-table input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+.financeiro-container .consentimento-table input:disabled {
+    background-color: #f3f4f6;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+}
+
+.financeiro-container .remove-row-btn {
+    background: transparent;
+    border: none;
+    color: var(--cor-despesa);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.financeiro-container .add-row-btn {
+    background: var(--cor-receita);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.financeiro-container .consentimento-declaracao {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--cor-texto-secundario);
+    margin: 2rem 0;
+}
+
+.financeiro-container .consentimento-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--cor-texto-secundario);
+    margin-top: 2rem;
+    border-top: 1px solid var(--cor-borda);
+    padding-top: 1rem;
+}
+
+/* Botões de Ação do Modal */
+.financeiro-container .consentimento-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--cor-borda);
+}
