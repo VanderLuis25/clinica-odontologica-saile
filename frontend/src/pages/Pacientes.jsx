@@ -176,14 +176,10 @@ export default function Pacientes() {
             fetchPacientes(); 
         } catch (error) { 
             // ✅ MELHORIA: Tratamento de erro específico para CPF duplicado
-            console.error("Erro ao salvar paciente:", error);
-            if (error.response && error.response.status === 409) {
-                // Se o erro for 409 (Conflict), mostra uma mensagem amigável.
-                alert('Erro: O CPF informado já está cadastrado no sistema.');
-            } else {
-                // Para outros erros, mantém a mensagem genérica.
-                alert('Erro ao salvar paciente. Verifique o console para mais detalhes.');
-            }
+            // O SystemDataContext já formata a mensagem de erro para nós.
+            // Se for um erro 409, a mensagem será específica (ex: "email já cadastrado").
+            // Para outros erros, será a mensagem genérica do Axios.
+            alert(`Erro ao salvar paciente: ${error.message}`);
             throw error; // Re-lança o erro para que o handleSubmit filho possa pegá-lo
         }
     };
