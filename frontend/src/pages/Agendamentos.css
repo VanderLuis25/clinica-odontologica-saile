@@ -30,7 +30,6 @@
 /* --- 1. Layout e Tipografia Base --- */
 .agendamentos-container {
     background: var(--background-color);
-    width: 100%;
     min-height: 100vh;
     padding: 30px;
     font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
