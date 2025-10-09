@@ -164,8 +164,15 @@ export default function Pacientes() {
             // Rebusca para atualizar a lista com o novo ou editado paciente
             fetchPacientes(); 
         } catch (error) { 
-            console.error(error); 
-            alert('Erro ao salvar paciente. Verifique o console para detalhes.'); 
+            // ✅ MELHORIA: Tratamento de erro específico para CPF duplicado
+            console.error("Erro ao salvar paciente:", error);
+            if (error.response && error.response.status === 409) {
+                // Se o erro for 409 (Conflict), mostra uma mensagem amigável.
+                alert('Erro: O CPF informado já está cadastrado no sistema.');
+            } else {
+                // Para outros erros, mantém a mensagem genérica.
+                alert('Erro ao salvar paciente. Verifique o console para mais detalhes.');
+            }
         }
     };
 
