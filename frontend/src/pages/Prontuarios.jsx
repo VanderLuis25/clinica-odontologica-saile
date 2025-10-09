@@ -550,7 +550,8 @@ export default function Prontuario() {
     if (prontuario.medicamento) addKeyValuePair('Receituário', `${prontuario.medicamento} - ${prontuario.dosagem}`);
 
     // 4. Anamnese (se existir)
-    if (prontuario.anamneseCompleta && Object.keys(prontuario.anamneseCompleta).length > 1) {
+    // ✅ CORREÇÃO: Garante que a anamnese seja impressa se houver qualquer dado nela.
+    if (prontuario.anamneseCompleta && Object.values(prontuario.anamneseCompleta).some(v => v && v.length > 0)) {
       checkPageBreak(20);
       y += 5;
       doc.setFontSize(12);
