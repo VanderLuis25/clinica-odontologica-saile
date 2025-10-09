@@ -471,8 +471,8 @@
     }
 }
 
-/* ✅ NOVO: Media query para trocar tabela por cards */
-@media (max-width: 960px) {
+/* ✅ CORRIGIDO: Media query para trocar tabela por cards apenas em telas de celular */
+@media (max-width: 768px) {
     .agendamentos-table {
         display: none; /* Esconde a tabela em telas menores */
     }
