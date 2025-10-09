@@ -1,463 +1,250 @@
 /* =======================================================
    Estilos Profissionais para a Página Financeira
-   (Versão com Modal de Edição Preservado)
 ========================================================== */
 
 :root {
-  --cor-primaria: #800580;
-  --cor-secundaria: #5e035e;
-  --cor-fundo: #f8f9fa;
-  --cor-card: #ffffff;
-  --cor-texto: #343a40;
-  --cor-texto-secundario: #6c757d;
-  --cor-borda: #dee2e6;
-  --cor-sucesso: #28a745;
-  --cor-aviso: #ffc107;
-  --cor-perigo: #dc3545;
-  --sombra-card: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --raio-borda: 0.75rem;
-  --transicao-padrao: all 0.3s ease;
+    --cor-primaria: #800580;
+    --cor-secundaria: #5e035e;
+    --cor-fundo: #f8f9fa;
+    --cor-card: #ffffff;
+    --cor-texto: #343a40;
+    --cor-texto-secundario: #6c757d;
+    --cor-borda: #dee2e6;
+    --cor-receita: #28a745;
+    --cor-despesa: #dc3545;
+    --cor-pendente: #ffc107;
+    --sombra-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --raio-borda: 0.75rem;
+    --transicao-padrao: all 0.3s ease;
 }
 
-/* --- Layout Geral --- */
+/* ====== Container Principal ====== */
 .financeiro-container {
-  padding: 1.5rem;
-  background: var(--cor-fundo);
-  min-height: 100vh;
-  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-  color: var(--cor-texto);
-  /* As margens foram removidas para permitir que o contêiner ocupe
-     todo o espaço do 'main-content' da aplicação, evitando quebras de layout. */
+    padding: 1.5rem;
+    background: var(--cor-fundo);
+    font-family: 'Roboto', sans-serif;
 }
 
-h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  color: var(--cor-primaria);
-  border-bottom: 2px solid var(--cor-primaria);
-  padding-bottom: 0.5rem;
-}
-
-/* --- Formulário de Cadastro/Edição --- */
-.financeiro-form {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  padding: 1.5rem;
-  background: var(--cor-card);
-  border-radius: var(--raio-borda);
-  box-shadow: var(--sombra-card);
-  margin-bottom: 2rem;
-  align-items: center;
-}
-
-.financeiro-form input,
-.financeiro-form select {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--cor-borda);
-  border-radius: var(--raio-borda);
-  font-size: 1rem;
-  transition: var(--transicao-padrao);
-}
-
-.financeiro-form input:focus,
-.financeiro-form select:focus {
-  outline: none;
-  border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(128, 5, 128, 0.15);
-}
-
-.financeiro-form button {
-  background: var(--cor-primaria);
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: var(--raio-borda);
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: var(--transicao-padrao);
-  font-size: 1rem;
-  text-transform: uppercase;
-  height: fit-content;
-}
-
-.financeiro-form button:hover {
-  background: var(--cor-secundaria);
-  transform: translateY(-2px);
-}
-
-/* --- Barra de Ações (Pesquisa e PDF) --- */
-.financeiro-search {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: var(--cor-card);
-  border-radius: var(--raio-borda);
-  box-shadow: var(--sombra-card);
-}
-
-.financeiro-search input {
-  flex-grow: 1;
-  padding: 0.8rem 1rem 0.8rem 2.5rem; /* Espaço para o ícone */
-  border: 1px solid var(--cor-borda);
-  border-radius: var(--raio-borda);
-  font-size: 1rem;
-  position: relative;
-}
-
-.financeiro-search .fa-search {
-  position: absolute;
-  margin-left: 1rem;
-  color: var(--cor-texto-secundario);
-}
-
-.financeiro-search button {
-  background: var(--cor-texto-secundario);
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: var(--raio-borda);
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: var(--transicao-padrao);
-  white-space: nowrap;
-}
-
-.financeiro-search button:hover {
-  background: var(--cor-texto);
-}
-
-/* --- Tabela Financeira --- */
-.financeiro-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--cor-card);
-  border-radius: var(--raio-borda);
-  box-shadow: var(--sombra-card);
-  overflow: hidden;
-}
-
-th,
-td {
-  padding: 1rem 1.2rem;
-  border-bottom: 1px solid var(--cor-borda);
-  text-align: left;
-  vertical-align: middle;
-}
-
-th {
-  background-color: var(--cor-secundaria);
-  color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-}
-
-tbody tr:hover {
-  background-color: #f1eef3;
-}
-
-.acoes-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-start;
-}
-
-.acoes-buttons button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transicao-padrao);
-  font-size: 1.1rem;
-}
-
-.acoes-buttons button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  transform: scale(1.1);
-}
-
-/* --- Modal de Edição/Criação (Estilo Antigo Restaurado) --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 500px;
-    animation: fadeInScale 0.3s ease-out;
-}
-
-.modal-content h3 {
-    margin-top: 0;
-    color: #4b034b;
+.financeiro-container h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
     text-align: center;
-    margin-bottom: 20px;
+    color: var(--cor-primaria);
 }
 
-.modal-content form {
+/* ====== KPIs / Resumo Financeiro ====== */
+.financeiro-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card-financeiro {
+    background: var(--cor-card);
+    padding: 1.5rem;
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra-card);
+    text-align: center;
+    border-left: 5px solid;
+}
+
+.kpi-card-financeiro h3 {
+    font-size: 1rem;
+    color: var(--cor-texto-secundario);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.kpi-card-financeiro p {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.kpi-receitas { border-left-color: var(--cor-receita); color: var(--cor-receita); }
+.kpi-despesas { border-left-color: var(--cor-despesa); color: var(--cor-despesa); }
+.kpi-saldo { border-left-color: var(--cor-primaria); color: var(--cor-primaria); }
+
+/* ====== Filtros ====== */
+.financeiro-filters {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--cor-card);
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra-card);
 }
 
-.modal-content form input,
-.modal-content form select {
+.financeiro-filters input,
+.financeiro-filters select {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.7rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+    font-size: 0.95rem;
+}
+
+/* ====== Tabela Desktop ====== */
+.financeiro-table-wrapper {
+    background: var(--cor-card);
+    padding: 1.5rem;
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra-card);
+    overflow-x: auto;
+}
+
+.financeiro-table-desktop {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box;
+    border-collapse: collapse;
+    text-align: left;
 }
 
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.modal-actions button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.modal-actions button[type="submit"] {
-    background-color: #800580;
-    color: white;
-}
-
-.modal-actions button[type="submit"]:hover {
-    background-color: #6a046a;
-}
-
-.modal-actions button[type="button"] {
-    background-color: #ccc;
-    color: #333;
-}
-
-.modal-actions button[type="button"]:hover {
-    background-color: #bbb;
-}
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* --- Modal de Consentimento (Plano de Tratamento) --- */
-.consentimento-modal {
-  max-width: 800px;
-  width: 95%;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.consentimento-content {
-  padding: 2rem;
-  overflow-y: auto;
-  flex-grow: 1;
-  background: #fff;
-  font-family: 'Times New Roman', Times, serif;
-  color: #000;
-}
-
-.consentimento-logo {
-  display: block;
-  margin: 0 auto 20px auto;
-  max-width: 150px;
-}
-
-.consentimento-content h3 {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-}
-
-.consentimento-table {
-  width: 100%;
-  margin: 1.5rem 0;
-  border-collapse: collapse;
-  font-size: 0.9em;
-}
-
-.consentimento-table th,
-.consentimento-table td {
-  border: 1px solid #000;
-  padding: 8px;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.consentimento-table th {
-  background-color: #800580;
-  color: white;
-}
-
-/* Styles for editable inputs in the modal table */
-.consentimento-table input {
-  width: 100%;
-  padding: 6px;
-  border: none;
-  background: transparent;
-  font-family: inherit;
-  font-size: 1em;
-  transition: border-color 0.2s;
-}
-
-.consentimento-table.editable input:focus {
-  outline: none;
-  border-color: #800580;
-}
-
-.consentimento-table input:not(:disabled) {
-  border-bottom: 1px solid var(--cor-borda);
-}
-
-.consentimento-table input:disabled {
-  background-color: #f9f9f9;
-  color: #000;
-}
-
-.pdf-input-value {
-    display: inline-block;
-    padding: 6px;
-    width: 100%;
-    border: 1px solid transparent; /* Match layout of inputs */
-    min-height: 28px; /* Match layout of inputs */
-    line-height: 1.5;
+.financeiro-table-desktop th,
+.financeiro-table-desktop td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--cor-borda);
     vertical-align: middle;
 }
 
-.add-row-btn {
-  margin-top: 10px;
-  padding: 0.5rem 1rem;
-  background-color: #800580;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: background-color 0.3s;
-}
-
-.add-row-btn:hover {
-    background-color: #6a046a;
-}
-
-.remove-row-btn {
-  background: none;
-  border: none;
-  color: #c0392b;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.3s;
-}
-
-.remove-row-btn:hover {
-    color: #e74c3c;
-}
-
-.consentimento-declaracao {
-  margin: 2rem 0;
-  font-size: 0.9em;
-  text-align: justify;
-  line-height: 1.5;
-}
-
-.consentimento-footer {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 0.8em;
-  color: #555;
-}
-
-.consentimento-actions {
-  padding: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  background-color: var(--cor-fundo);
-  border-radius: 0 0 var(--raio-borda) var(--raio-borda);
-  flex-shrink: 0;
-}
-
-.consentimento-actions button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    border-radius: var(--raio-borda);
-    border: none;
-    cursor: pointer;
+.financeiro-table-desktop th {
+    background-color: var(--cor-secundaria);
+    color: white;
     font-weight: 600;
-    transition: var(--transicao-padrao);
 }
 
-.consentimento-actions button:hover {
-    transform: translateY(-2px);
+.financeiro-table-desktop tbody tr:hover {
+    background-color: #f1eef3;
 }
 
-/* Primary action button (Save) */
-.consentimento-actions .btn-primary {
-    background-color: var(--cor-sucesso);
+/* Estilos para status e tipo */
+.status-pago {
+    background-color: var(--cor-receita);
     color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
 }
 
-/* Danger action button (Delete) */
-.consentimento-actions .btn-danger {
-    background-color: var(--cor-perigo);
-    color: white;
+.status-pendente {
+    background-color: var(--cor-pendente);
+    color: var(--cor-texto);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
 }
 
-/* --- Responsividade --- */
+.tipo-receita { color: var(--cor-receita); font-weight: 700; }
+.tipo-despesa { color: var(--cor-despesa); font-weight: 700; }
+
+/* ====== Cards Mobile ====== */
+.financeiro-cards-mobile {
+    display: none; /* Oculto por padrão */
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.financeiro-item-card {
+    background: var(--cor-card);
+    padding: 1rem;
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra-card);
+    border-left: 5px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.financeiro-item-card.receita { border-left-color: var(--cor-receita); }
+.financeiro-item-card.despesa { border-left-color: var(--cor-despesa); }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+}
+
+.card-header .valor {
+    font-size: 1.2rem;
+}
+
+.card-body {
+    font-size: 0.9rem;
+    color: var(--cor-texto-secundario);
+}
+
+.card-body p {
+    margin: 4px 0;
+}
+
+.card-body strong {
+    color: var(--cor-texto);
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+}
+
+.card-actions button {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* ====== Botões de Ação (Genérico) ====== */
+.btn-action-edit { color: var(--cor-pendente); }
+.btn-action-delete { color: var(--cor-despesa); }
+.btn-action-pay { color: var(--cor-receita); }
+
+/* =============================================== */
+/* ====== RESPONSIVIDADE PARA TELAS MENORES ====== */
+/* =============================================== */
+
+@media (max-width: 960px) {
+    /* Esconde a tabela e mostra os cards */
+    .financeiro-table-desktop {
+        display: none;
+    }
+    .financeiro-cards-mobile {
+        display: flex;
+    }
+    .financeiro-table-wrapper {
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+    }
+}
+
 @media (max-width: 768px) {
-  .financeiro-form {
-    grid-template-columns: 1fr;
-  }
-  .financeiro-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+    .financeiro-container {
+        padding: 1rem;
+    }
+    .financeiro-kpis {
+        grid-template-columns: 1fr;
+    }
+    .financeiro-filters {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .financeiro-container h2 {
+        font-size: 1.6rem;
+    }
+    .kpi-card-financeiro p {
+        font-size: 1.8rem;
+    }
 }
