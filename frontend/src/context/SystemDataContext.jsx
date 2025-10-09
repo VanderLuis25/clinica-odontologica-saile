@@ -230,8 +230,14 @@ export const SystemDataProvider = ({ children }) => {
         await fetchPacientes(); 
         return pacienteSalvo;
       } catch (err) {
-        // Apenas repassa o erro para o componente que chamou a função.
-        throw err; 
+        // Melhora o tratamento de erro para fornecer mais contexto à UI.
+        if (err.response && err.response.status === 409) {
+          // Lança um erro específico para que a UI possa tratá-lo adequadamente.
+          // A mensagem do backend, se houver, pode ser útil.
+          const errorMessage = err.response.data?.message || "O paciente já existe ou há um conflito de dados.";
+          throw new Error(errorMessage);
+        }
+        throw err; // Repassa outros erros
       }
     }, [fetchPacientes] // Adicionado fetchPacientes para consistência e recarga da lista
   );
