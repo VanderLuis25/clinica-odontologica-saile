@@ -224,7 +224,7 @@ export default function Pacientes() {
             </div>
 
             {(filteredPacientes.length === 0) ? <p>Nenhum paciente encontrado.</p> : (
-                <table>
+                <table className="pacientes-table-desktop">
                     <thead>
                         <tr><th>Nome</th><th>Idade</th><th>CPF</th><th>Telefone</th><th>Clínica</th><th>Ações</th></tr>
                     </thead>
@@ -250,6 +250,33 @@ export default function Pacientes() {
                     </tbody>
                 </table>
             )}
+
+            {/* ✅ NOVO: Cards para visualização em Mobile */}
+            <div className="pacientes-cards-mobile">
+                {filteredPacientes.length === 0 && !loading.pacientes ? <p>Nenhum paciente encontrado.</p> : (
+                    filteredPacientes.map(p => (
+                        <div key={p._id} className="paciente-card-mobile">
+                            <div className="card-header-paciente">
+                                <span>{p.nome}</span>
+                            </div>
+                            <div className="card-body-paciente">
+                                <p><strong>Idade:</strong> {calculateAge(p.dataNascimento)}</p>
+                                <p><strong>CPF:</strong> {p.cpf || 'N/A'}</p>
+                                <p><strong>Telefone:</strong> {p.telefone || 'N/A'}</p>
+                                <p><strong>Clínica:</strong> {p.clinica?.nome || 'N/A'}</p>
+                            </div>
+                            <div className="card-actions-paciente">
+                                <button className="edit-button" onClick={() => handleEditClick(p._id)}>
+                                    Editar
+                                </button>
+                                <button className="delete-button" onClick={() => handleDelete(p._id)}>
+                                    Excluir
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
 
             {showForm && (
                 <PatientForm

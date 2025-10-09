@@ -1,122 +1,119 @@
-/* =======================================================
-   Estilos Profissionais para a Página de Pacientes
-========================================================== */
-
-:root {
-    --cor-primaria: #800580;
-    --cor-secundaria: #5e035e;
-    --cor-fundo: #f8f9fa;
-    --cor-card: #ffffff;
-    --cor-texto: #343a40;
-    --cor-texto-secundario: #6c757d;
-    --cor-borda: #dee2e6;
-    --cor-aviso: #ffc107;
-    --cor-perigo: #dc3545;
-    --sombra-card: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --raio-borda: 0.75rem;
-    --transicao-padrao: all 0.3s ease;
+/* =====================
+   Estilo Geral
+===================== */
+.container {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f9;
+    min-height: 100vh;
 }
 
-/* ====== Container Principal ====== */
-.pacientes-container {
-    padding: 1.5rem;
-    background: var(--cor-fundo);
-    font-family: 'Roboto', sans-serif;
+/* Título principal */
+h2 {
+    color: #333;
+    border-bottom: 2px solid #800580;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.pacientes-container h1,
-.pacientes-container h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    color: var(--cor-primaria);
-}
-
-/* ====== Formulário e Tabela ====== */
-.paciente-form,
-.pacientes-table-wrapper {
-    background: var(--cor-card);
-    padding: 1.5rem;
-    border-radius: var(--raio-borda);
-    box-shadow: var(--sombra-card);
-    margin-bottom: 2rem;
-}
-
-.paciente-form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.2rem;
-}
-
-.paciente-form input,
-.paciente-form select {
-    width: 100%;
-    padding: 0.8rem;
-    border: 1px solid var(--cor-borda);
-    border-radius: var(--raio-borda);
-    font-size: 1rem;
-}
-
-.paciente-form button {
-    background-color: var(--cor-primaria);
-    color: white;
-    padding: 0.8rem 1.5rem;
+/* Botão de Adicionar */
+.add-button {
+    background-color: #800580;
+    color: #fff;
+    padding: 12px 18px;
     border: none;
-    border-radius: var(--raio-borda);
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
-    transition: var(--transicao-padrao);
-    grid-column: 1 / -1; /* Ocupa a largura toda no grid */
-    margin-top: 1rem;
+    font-size: 16px;
+    transition: all 0.3s;
+    margin-bottom: 20px;
 }
 
-.paciente-form button:hover {
-    background-color: var(--cor-secundaria);
+.add-button:hover {
+    background-color: #500350;
 }
 
-/* ====== Tabela Desktop ====== */
+/* ✅ NOVO: Estilo da Barra de Pesquisa */
+.search-bar-pacientes {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.search-bar-pacientes .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.search-bar-pacientes input {
+    width: 100%;
+    padding: 12px 15px 12px 45px; /* Espaço para o ícone */
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* =====================
+   Tabela de Pacientes
+===================== */
 .pacientes-table-desktop {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.pacientes-table-desktop th, .pacientes-table-desktop td {
+    padding: 14px 10px;
     text-align: left;
 }
 
-.pacientes-table-desktop th,
-.pacientes-table-desktop td {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid var(--cor-borda);
-    vertical-align: middle;
-}
-
 .pacientes-table-desktop th {
-    background-color: var(--cor-secundaria);
-    color: white;
+    background-color: #800580;
+    color: #fff;
     font-weight: 600;
 }
 
-.pacientes-table-desktop tbody tr:hover {
-    background-color: #f1eef3;
+.pacientes-table-desktop tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-.acoes-buttons button {
-    background: transparent;
+.actions-cell button {
+    margin-right: 6px;
+    padding: 8px 14px;
     border: none;
-    font-size: 1.2rem;
+    border-radius: 5px;
     cursor: pointer;
-    padding: 5px;
-    margin: 0 4px;
-    transition: var(--transicao-padrao);
+    transition: all 0.3s;
 }
 
-.acoes-buttons button:hover {
-    transform: scale(1.2);
+.edit-button {
+    background-color: #ffc107;
+    color: #333;
 }
 
-.btn-action-edit { color: var(--cor-aviso); }
-.btn-action-delete { color: var(--cor-perigo); }
+.edit-button:hover {
+    background-color: #e0a800;
+}
 
-/* ====== Cards Mobile ====== */
+.delete-button {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}
+
+/* =====================
+   Cards Mobile
+===================== */
 .pacientes-cards-mobile {
     display: none; /* Oculto por padrão */
     flex-direction: column;
@@ -124,11 +121,11 @@
 }
 
 .paciente-card-mobile {
-    background: var(--cor-card);
+    background: #fff;
     padding: 1.2rem;
-    border-radius: var(--raio-borda);
-    box-shadow: var(--sombra-card);
-    border-left: 5px solid var(--cor-primaria);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-left: 5px solid #800580;
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
@@ -140,20 +137,20 @@
     align-items: center;
     font-weight: 700;
     font-size: 1.1rem;
-    color: var(--cor-texto);
+    color: #343a40;
 }
 
 .card-body-paciente p {
     margin: 4px 0;
     font-size: 0.95rem;
-    color: var(--cor-texto-secundario);
+    color: #6c757d;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
 .card-body-paciente strong {
-    color: var(--cor-texto);
+    color: #343a40;
     font-weight: 600;
 }
 
@@ -162,15 +159,155 @@
     gap: 0.5rem;
     justify-content: flex-end;
     margin-top: 0.5rem;
-    border-top: 1px solid var(--cor-borda);
+    border-top: 1px solid #dee2e6;
     padding-top: 0.8rem;
 }
 
-/* =============================================== */
-/* ====== RESPONSIVIDADE PARA TELAS MENORES ====== */
-/* =============================================== */
+.card-actions-paciente button {
+    margin-right: 6px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
 
-@media (max-width: 960px) {
+/* =====================
+   Modal (Formulário)
+===================== */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s forwards;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s forwards;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.close-button {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 26px;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.3s;
+}
+
+.close-button:hover {
+    color: #333;
+}
+
+/* =====================
+   Formulário Moderno
+===================== */
+.modal-content form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 20px;
+}
+
+.modal-content h4 {
+    grid-column: span 2;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #800580;
+    border-bottom: 1px solid #800580;
+    padding-bottom: 3px;
+}
+
+.modal-content label {
+    font-weight: bold;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="tel"],
+.modal-content input[type="email"],
+.modal-content input[type="number"],
+.modal-content input[type="date"],
+.modal-content textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+    border-color: #800580;
+    outline: none;
+}
+
+/* Textareas com altura maior */
+.modal-content textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+/* Botões do formulário */
+.form-actions {
+    grid-column: span 2;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.form-actions button[type="submit"] {
+    background-color: #800580;
+    color: #fff;
+}
+
+.form-actions button[type="submit"]:hover {
+    background-color: #490249;
+}
+
+.form-actions button[type="button"] {
+    background-color: #ccc;
+    color: #333;
+}
+
+.form-actions button[type="button"]:hover {
+    background-color: #aaa;
+}
+
+/* =====================
+   Responsividade
+===================== */
+@media screen and (max-width: 960px) {
     /* Esconde a tabela e mostra os cards */
     .pacientes-table-desktop {
         display: none;
@@ -178,29 +315,42 @@
     .pacientes-cards-mobile {
         display: flex;
     }
-    /* Remove o fundo branco do wrapper da tabela para não duplicar */
-    .pacientes-table-wrapper {
-        background: transparent;
-        padding: 0;
-        box-shadow: none;
+}
+
+@media screen and (max-width: 768px) {
+    .modal-content {
+        padding: 20px;
+    }
+
+    .modal-content form {
+        grid-template-columns: 1fr;
+    }
+
+    .add-button {
+        width: 100%;
+        margin-bottom: 15px;
     }
 }
 
-@media (max-width: 768px) {
-    .pacientes-container {
-        padding: 1rem;
-    }
-    .paciente-form-grid {
-        grid-template-columns: 1fr; /* Coluna única no formulário */
-    }
+/* =====================
+   Animações
+===================== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-@media (max-width: 480px) {
-    .pacientes-container h1,
-    .pacientes-container h2 {
-        font-size: 1.6rem;
-    }
-    .paciente-card-mobile {
-        padding: 1rem;
-    }
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-30px); opacity: 0; }
 }
