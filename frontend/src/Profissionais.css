@@ -111,7 +111,7 @@
 /* ====== MODAL DA AGENDA ====== */
 /* ======================================== */
 
-.modal-overlay {
+.profissionais-page .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -125,7 +125,7 @@
     padding: 20px;
 }
 
-.modal-content {
+.profissionais-page .modal-content {
     background: #f9f9f9;
     padding: 25px;
     border-radius: 15px;
@@ -137,14 +137,14 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.modal-content h2 {
+.profissionais-page .modal-content h2 {
     font-size: 1.8rem;
     color: #800580;
     margin-bottom: 20px;
     text-align: center;
 }
 
-.fechar-btn {
+.profissionais-page .fechar-btn {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -156,11 +156,11 @@
     transition: color 0.3s;
 }
 
-.fechar-btn:hover {
+.profissionais-page .fechar-btn:hover {
     color: #333;
 }
 
-.agenda-secao {
+.profissionais-page .agenda-secao {
     margin-bottom: 25px;
     background: #fff;
     padding: 20px;
@@ -168,7 +168,7 @@
     border: 1px solid #eee;
 }
 
-.agenda-secao h3 {
+.profissionais-page .agenda-secao h3 {
     font-size: 1.2rem;
     color: #333;
     margin-bottom: 15px;
@@ -177,30 +177,30 @@
     gap: 10px;
 }
 
-.lista-agendamentos {
+.profissionais-page .lista-agendamentos {
     list-style: none;
     padding: 0;
 }
 
-.agendamento-vazio {
+.profissionais-page .agendamento-vazio {
     color: #777;
     font-style: italic;
     padding: 10px;
 }
 
-.agendamento-item-detalhe {
+.profissionais-page .agendamento-item-detalhe {
     padding: 12px;
     border-bottom: 1px solid #f0f0f0;
 }
 
-.agendamento-info-principal {
+.profissionais-page .agendamento-info-principal {
     font-weight: 600;
     color: #333;
     display: flex;
     align-items: center;
 }
 
-.agendamento-detalhes {
+.profissionais-page .agendamento-detalhes {
     font-size: 0.9rem;
     color: #666;
     padding-left: 20px;
@@ -208,21 +208,21 @@
     line-height: 1.5;
 }
 
-.agendamento-detalhes p {
+.profissionais-page .agendamento-detalhes p {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
 /* Calendário */
-.navegacao-mes {
+.profissionais-page .navegacao-mes {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
 }
 
-.navegacao-mes h3 {
+.profissionais-page .navegacao-mes h3 {
     margin: 0;
     text-transform: capitalize;
 }
@@ -239,24 +239,24 @@
     align-items: center;
 }
 
-.calendario-simples {
+.profissionais-page .calendario-simples {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 5px;
 }
 
-.dias-semana-header {
+.profissionais-page .dias-semana-header {
     display: contents;
 }
 
-.dias-semana-header span {
+.profissionais-page .dias-semana-header span {
     text-align: center;
     font-weight: bold;
     color: #888;
     padding-bottom: 10px;
 }
 
-.dia-agenda {
+.profissionais-page .dia-agenda {
     padding: 8px;
     border-radius: 8px;
     text-align: center;
@@ -269,12 +269,12 @@
     min-height: 60px;
 }
 
-.dia-agenda .data {
+.profissionais-page .dia-agenda .data {
     font-weight: bold;
     font-size: 1.1rem;
 }
 
-.dia-agenda .status {
+.profissionais-page .dia-agenda .status {
     font-size: 0.75rem;
 }
 
@@ -287,7 +287,7 @@
 .dia-selecionado { background-color: #800580; color: #fff; transform: scale(1.05); }
 
 /* Detalhes do dia */
-.detalhes-dia-modal {
+.profissionais-page .detalhes-dia-modal {
     position: relative;
     margin-top: 20px;
     padding: 20px;
@@ -296,12 +296,12 @@
     border-radius: 10px;
 }
 
-.detalhes-dia-modal h4 {
+.profissionais-page .detalhes-dia-modal h4 {
     font-size: 1.3rem;
     color: #800580;
 }
 
-.fechar-detalhes-btn {
+.profissionais-page .fechar-detalhes-btn {
     position: absolute;
     top: 10px;
     right: 10px;
