@@ -398,6 +398,36 @@ export default function Procedimentos() {
                                     ))}
                                 </tbody>
                             </table>
+
+                            {/* ✅ NOVO: Cards para visualização em Mobile */}
+                            <div className="proc-procedimentos-cards">
+                                {procedimentosFiltrados.map(p => (
+                                    <div key={p._id} className="proc-procedimento-card">
+                                        <h4>{p.nome}</h4>
+                                        <div className="proc-procedimento-info">
+                                            <span><strong>Paciente:</strong> {p.paciente?.nome || 'N/A'}</span>
+                                            <span><strong>Valor:</strong> {formatCurrency(p.valor)}</span>
+                                            <span><strong>Clínica:</strong> {p.clinica?.nome || 'N/A'}</span>
+                                        </div>
+                                        <div className="proc-card-actions">
+                                            <button
+                                                className="proc-btn-edit"
+                                                onClick={() => handleEdit(p)}
+                                                title="Editar Procedimento"
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                            <button
+                                                className="proc-btn-delete"
+                                                onClick={() => handleDelete(p._id)}
+                                                title="Deletar Procedimento"
+                                            >
+                                                <FaTrashAlt />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
