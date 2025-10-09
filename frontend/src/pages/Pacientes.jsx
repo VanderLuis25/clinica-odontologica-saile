@@ -90,14 +90,22 @@ const PatientForm = ({ patient, onClose, onSave }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // Nota: O campo 'idade' será enviado, mas o backend deve ignorá-lo e usar 'dataNascimento'
         if (!formData.dataNascimento) { alert("Data de Nascimento é obrigatória."); return; }
         if (formData.email && !validateEmail(formData.email)) { alert("Email inválido."); return; }
         if (formData.telefone && !validatePhone(formData.telefone)) { alert("Telefone inválido."); return; }
         
-        onSave(formData);
+        try {
+            await onSave(formData);
+        } catch (error) {
+            // Tratamento de erro específico para CPF duplicado, vindo da função pai
+            if (error.response && error.response.status === 409) {
+                alert('Erro: O CPF informado já está cadastrado no sistema.');
+            }
+            // Não precisa de 'else' aqui, pois a função pai (handleSavePatient) já mostra um alerta genérico.
+        }
     };
 
     return (
@@ -156,8 +164,11 @@ export default function Pacientes() {
 
     const handleSavePatient = async (patientData) => {
         try {
-            if (patientData._id) await updatePaciente(patientData._id, patientData);
-            else await createPaciente(patientData);
+            if (patientData._id) {
+                await updatePaciente(patientData._id, patientData);
+            } else {
+                await createPaciente(patientData);
+            }
             
             setShowForm(false);
             setSelectedPatient(null);
@@ -173,6 +184,7 @@ export default function Pacientes() {
                 // Para outros erros, mantém a mensagem genérica.
                 alert('Erro ao salvar paciente. Verifique o console para mais detalhes.');
             }
+            throw error; // Re-lança o erro para que o handleSubmit filho possa pegá-lo
         }
     };
 
