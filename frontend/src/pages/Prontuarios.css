@@ -434,6 +434,11 @@
   .prontuarios-tabela .prontuarios-table-desktop { display: none; }
   .prontuarios-cards-mobile { display: flex; }
   .form-grid { grid-template-columns: 1fr; }
+  .patient-form-grid {
+    grid-template-columns: 1fr; /* Coluna única para todos os campos */
+  }
+  .patient-form-grid [class*="span-"] { grid-column: span 1; } /* Reseta spans */
+
   .signature-canvas { height: 120px; }
 }
 

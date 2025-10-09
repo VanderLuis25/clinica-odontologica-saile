@@ -279,6 +279,10 @@
         height: auto;
         min-height: 300px; /* Garante altura mínima para o gráfico empilhado */
     }
+
+    .clinicas-kpis-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -287,6 +291,10 @@
     }
 
     .relatorios-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .profissionais-grid {
         grid-template-columns: 1fr;
     }
 
