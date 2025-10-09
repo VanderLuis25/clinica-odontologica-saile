@@ -225,13 +225,13 @@ export const SystemDataProvider = ({ children }) => {
     async (novoPaciente) => {
       try {
         // ✅ CORREÇÃO: Remove a adição manual do 'clinicaId'.
-        // O cabeçalho 'x-clinic-id' já é enviado automaticamente pelo api.js.
         const { data: pacienteSalvo } = await apiService.createPaciente(novoPaciente);
-        setPacientes((prev) => [...prev, pacienteSalvo]); // Atualiza o estado local
-        return pacienteSalvo; // Retorna o paciente salvo
+        // ✅ MELHORIA: Recarrega a lista para garantir consistência.
+        await fetchPacientes(); 
+        return pacienteSalvo;
       } catch (err) {
-        console.error("Erro ao cadastrar paciente:", err);
-        throw err;
+        // Apenas repassa o erro para o componente que chamou a função.
+        throw err; 
       }
     }, [fetchPacientes] // Adicionado fetchPacientes para consistência e recarga da lista
   );
