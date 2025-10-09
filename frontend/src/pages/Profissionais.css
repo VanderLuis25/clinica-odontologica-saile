@@ -110,8 +110,8 @@
     flex: 1;
 }
 
-/* Modal da Agenda */
-.modal-overlay {
+/* ✅ CORREÇÃO: Modal da Agenda com seletores específicos */
+.profissionais-page .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -124,7 +124,7 @@
     z-index: 1000;
 }
 
-.modal-content {
+.profissionais-page .modal-content {
     background: #f9fafb;
     padding: 25px;
     border-radius: 15px;
@@ -135,12 +135,12 @@
     position: relative;
 }
 
-.modal-content h2 {
+.profissionais-page .modal-content h2 {
     color: #800580;
     margin-top: 0;
 }
 
-.fechar-btn {
+.profissionais-page .fechar-btn {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -151,7 +151,7 @@
     color: #888;
 }
 
-.agenda-secao {
+.profissionais-page .agenda-secao {
     margin-bottom: 20px;
     background: #fff;
     padding: 15px;
@@ -159,17 +159,17 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.lista-agendamentos {
+.profissionais-page .lista-agendamentos {
     list-style: none;
     padding: 0;
 }
 
-.agendamento-item-detalhe {
+.profissionais-page .agendamento-item-detalhe {
     padding: 10px;
     border-bottom: 1px solid #eee;
 }
 
-.agendamento-vazio {
+.profissionais-page .agendamento-vazio {
     color: #777;
     font-style: italic;
 }
@@ -190,7 +190,7 @@
         padding: 15px;
     }
 
-    .modal-content {
+    .profissionais-page .modal-content {
         width: 95%;
         padding: 15px;
     }
