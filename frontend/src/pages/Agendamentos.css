@@ -331,6 +331,78 @@
     color: var(--text-primary);
 }
 
+/* =======================================================
+   ====== CARDS PARA VISUALIZAÇÃO MOBILE ======
+   ======================================================= */
+
+.agendamentos-cards-mobile {
+    display: none; /* Oculto em telas grandes */
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 20px;
+}
+
+.agendamento-card {
+    background: var(--white-color);
+    padding: 1rem 1.2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-left: 5px solid; /* A cor será definida pela classe de status */
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Cores da borda baseadas no status */
+.agendamento-card.confirmado { border-left-color: var(--success-color); }
+.agendamento-card.cancelado { border-left-color: var(--danger-color); }
+.agendamento-card.falta { border-left-color: var(--warning-color); }
+.agendamento-card.pendente { border-left-color: var(--text-secondary); }
+
+.card-main-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-main-info .paciente-nome {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--purple-primary);
+}
+
+.card-main-info .horario {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.card-details p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.card-details strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Herda os estilos dos botões da tabela */
+.card-actions button {
+    width: 36px;
+    height: 36px;
+}
+
 /* --- 7. Responsividade --- */
 @media (min-width: 601px) {
     .btn-novo-agendamento {
@@ -396,5 +468,16 @@
     .agendamentos-table td {
         padding: 12px 10px;
         font-size: 0.85rem;
+    }
+}
+
+/* ✅ NOVO: Media query para trocar tabela por cards */
+@media (max-width: 960px) {
+    .agendamentos-table {
+        display: none; /* Esconde a tabela em telas menores */
+    }
+
+    .agendamentos-cards-mobile {
+        display: flex; /* Mostra os cards */
     }
 }
