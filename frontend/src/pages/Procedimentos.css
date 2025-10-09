@@ -462,7 +462,8 @@ textarea {
 }
 
 @media (max-width: 960px) {
-  .proc-prontuarios-table {
+  /* Esconde a tabela dentro do wrapper específico */
+  .proc-table-container .proc-prontuarios-table {
     display: none;
     /* esconde tabela desktop */
   }

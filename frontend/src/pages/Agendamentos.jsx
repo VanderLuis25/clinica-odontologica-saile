@@ -504,6 +504,41 @@ const Agendamentos = () => {
                         )}
                     </tbody>
                 </table>
+
+                {/* ✅ NOVO: Cards para visualização em Mobile */}
+                <div className="agendamentos-cards-mobile">
+                    {sortedAndFilteredAgendamentos.length === 0 ? (
+                        <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Nenhum agendamento encontrado.</p>
+                    ) : (
+                        sortedAndFilteredAgendamentos.map(ag => (
+                            <div key={ag._id} className={`agendamento-card ${ag.status?.toLowerCase() || 'pendente'}`}>
+                                <div className="card-main-info">
+                                    <span className="paciente-nome">{ag.paciente?.nome ?? 'N/A'}</span>
+                                    <span className="horario">{ag.hora}</span>
+                                </div>
+                                <div className="card-details">
+                                    <p><strong>Data:</strong> {new Date(ag.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</p>
+                                    <p><strong>Procedimento:</strong> {ag.procedimento?.nome ?? 'N/A'}</p>
+                                    <p><strong>Profissional:</strong> {ag.profissional?.nome ?? 'N/A'}</p>
+                                    <p>
+                                        <strong>Status:</strong>
+                                        <span className={`status-badge status-${ag.status?.toLowerCase() || 'confirmado'}`} style={{ marginLeft: '8px' }}>
+                                            {ag.status || 'Confirmado'}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div className="card-actions">
+                                    <button className="edit" onClick={() => handleEdit(ag)} title="Editar Agendamento">
+                                        <i className="fas fa-pen"></i>
+                                    </button>
+                                    <button className="delete" onClick={() => handleDelete(ag._id)} title="Excluir Agendamento">
+                                        <i className="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );
