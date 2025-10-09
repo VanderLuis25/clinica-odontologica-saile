@@ -274,48 +274,78 @@ export default function Financeiro() {
       </div>
 
       {loading.financeiro ? <p>Carregando...</p> : (
-        <table className="financeiro-table">
-          <thead>
-            <tr>
-              <th>Paciente</th>
-              <th>CPF</th>
-              <th>Descrição</th>
-              <th>Valor</th>
-              <th>Tipo</th>
-              <th>Data</th>
-              <th>Status</th>
-              <th>Clínica</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((registro) => (
-              <tr key={registro._id}>
-                <td>{registro.nomePaciente || registro.procedimento?.paciente?.nome || "N/A"}</td>
-                <td>{registro.cpfPaciente || registro.procedimento?.paciente?.cpf || "N/A"}</td>
-                <td>{registro.descricao}</td>
-                <td>R$ {Number(registro.valor).toFixed(2)}</td>
-                <td>{registro.tipo}</td>
-                <td>{new Date(registro.data).toLocaleDateString("pt-BR", { timeZone: "UTC" })}</td>
-                <td>
-                  <select value={registro.statusPagamento || 'pendente'} onChange={(e) => handleStatusChange(registro._id, e.target.value)}>
-                    <option value="pendente">Pendente</option>
-                    <option value="pago">Pago</option>
-                    <option value="cancelado">Cancelado</option>
-                  </select>
-                </td>
-                <td>{registro.clinica?.nome || "N/A"}</td>
-                <td className="acoes-buttons">
-                  <button onClick={() => handleEdit(registro)}><FaEdit /></button>
-                  <button onClick={() => handleDelete(registro._id)}><FaTrash /></button>
-                  {registro.procedimento?.paciente && (
-                    <button onClick={() => handleOpenConsentimentoModal(registro)}><FaFilePdf /></button>
-                  )}
-                </td>
+        <div className="financeiro-table-wrapper">
+          {/* Tabela para Desktop */}
+          <table className="financeiro-table-desktop">
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>CPF</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Clínica</th>
+                <th>Ações</th>
               </tr>
+            </thead>
+            <tbody>
+              {filteredData.map((registro) => (
+                <tr key={registro._id}>
+                  <td>{registro.nomePaciente || registro.procedimento?.paciente?.nome || "N/A"}</td>
+                  <td>{registro.cpfPaciente || registro.procedimento?.paciente?.cpf || "N/A"}</td>
+                  <td>{registro.descricao}</td>
+                  <td className={registro.tipo === 'receita' ? 'tipo-receita' : 'tipo-despesa'}>R$ {Number(registro.valor).toFixed(2)}</td>
+                  <td>{registro.tipo}</td>
+                  <td>{new Date(registro.data).toLocaleDateString("pt-BR", { timeZone: "UTC" })}</td>
+                  <td>
+                    <select value={registro.statusPagamento || 'pendente'} onChange={(e) => handleStatusChange(registro._id, e.target.value)}>
+                      <option value="pendente">Pendente</option>
+                      <option value="pago">Pago</option>
+                      <option value="cancelado">Cancelado</option>
+                    </select>
+                  </td>
+                  <td>{registro.clinica?.nome || "N/A"}</td>
+                  <td className="acoes-buttons">
+                    <button onClick={() => handleEdit(registro)} title="Editar"><FaEdit /></button>
+                    <button onClick={() => handleDelete(registro._id)} title="Excluir"><FaTrash /></button>
+                    {registro.procedimento?.paciente && (
+                      <button onClick={() => handleOpenConsentimentoModal(registro)} title="Gerar Consentimento"><FaFilePdf /></button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Cards para Mobile */}
+          <div className="financeiro-cards-mobile">
+            {filteredData.map((registro) => (
+              <div key={registro._id} className={`financeiro-item-card ${registro.tipo}`}>
+                <div className="card-header">
+                  <span>{registro.descricao}</span>
+                  <span className={`valor ${registro.tipo === 'receita' ? 'tipo-receita' : 'tipo-despesa'}`}>
+                    R$ {Number(registro.valor).toFixed(2)}
+                  </span>
+                </div>
+                <div className="card-body">
+                  <p><strong>Paciente:</strong> {registro.nomePaciente || registro.procedimento?.paciente?.nome || "N/A"}</p>
+                  <p><strong>Data:</strong> {new Date(registro.data).toLocaleDateString("pt-BR", { timeZone: "UTC" })}</p>
+                  <p><strong>Status:</strong> {registro.statusPagamento}</p>
+                  <p><strong>Clínica:</strong> {registro.clinica?.nome || "N/A"}</p>
+                </div>
+                <div className="card-actions">
+                  <button onClick={() => handleEdit(registro)} className="btn-action-edit" title="Editar"><FaEdit /></button>
+                  <button onClick={() => handleDelete(registro._id)} className="btn-action-delete" title="Excluir"><FaTrash /></button>
+                  {registro.procedimento?.paciente && (
+                    <button onClick={() => handleOpenConsentimentoModal(registro)} className="btn-action-pay" title="Gerar Consentimento"><FaFilePdf /></button>
+                  )}
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       )}
 
       {isConsentimentoModalOpen && selectedLancamento && (

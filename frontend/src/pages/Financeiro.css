@@ -66,6 +66,27 @@
 .kpi-despesas { border-left-color: var(--cor-despesa); color: var(--cor-despesa); }
 .kpi-saldo { border-left-color: var(--cor-primaria); color: var(--cor-primaria); }
 
+/* ====== Formulário de Cadastro e Pesquisa ====== */
+.financeiro-form, .financeiro-search {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--cor-card);
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra-card);
+    align-items: center;
+}
+
+.financeiro-form input, .financeiro-form select, .financeiro-search input {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.7rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+}
+
 /* ====== Filtros ====== */
 .financeiro-filters {
     display: flex;
@@ -237,6 +258,12 @@
     }
     .financeiro-filters {
         flex-direction: column;
+    }
+
+    /* Garante que o formulário e a pesquisa se adaptem */
+    .financeiro-form, .financeiro-search {
+        flex-direction: column;
+        align-items: stretch;
     }
 }
 
